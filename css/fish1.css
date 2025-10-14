@@ -1,0 +1,87 @@
+.fish1_1{
+
+ position: absolute;
+ z-index:100;
+ animation-name:swim1_1;
+ animation-duration:20s;
+ animation-timing-function: ease-in-out;
+ animation-iteration-count:infinite;
+
+}
+
+.fish1_1 img{
+ width: 200px;
+ height: auto;
+}
+
+@keyframes swim1_1{ 
+
+/* 開始時点　魚の位置決定  */    
+from{
+  left:80%;
+  top:30%;
+ }
+
+/* 30%経過　魚をゆがませる */    
+  30%{
+        transform: skew(20deg,10deg);
+    }    
+    
+/* 50%経過　魚を反転させる */  
+  50%{
+        left:10%;
+        top:50%;
+        transform:rotateY(180deg);  
+    }
+        
+/* 終了時点　反転を戻しながら位置も開始時点に戻す */  
+  to{
+        left:80%;
+        top:30%;        
+    }
+
+} 
+
+.fish1_2{
+
+ position: absolute;
+ z-index:100;
+ animation-name:swim1_2;
+ animation-duration:25s;
+ animation-timing-function: ease-in-out;
+ animation-iteration-count:infinite;
+
+}
+
+.fish1_2 img{
+ width: 200px;
+ height: auto;
+}
+
+@keyframes swim1_2{ 
+
+/* 開始時点　魚の位置決定  */    
+from{
+  left:80%;
+  top:70%;
+ }
+
+/* 30%経過　魚をゆがませる */    
+  30%{
+        transform: skew(20deg,10deg);
+    }    
+    
+/* 50%経過　魚を反転させる */  
+  50%{
+        left:5%;
+        top:10%;
+        transform:rotateY(180deg);  
+    }
+        
+/* 終了時点　反転を戻しながら位置も開始時点に戻す */  
+  to{
+        left:80%;
+        top:70%;        
+    }
+
+} 
