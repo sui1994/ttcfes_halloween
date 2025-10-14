@@ -6,7 +6,7 @@
 
 "use strict";
 
-window.bubbyOptimized = function (options) {
+window.bubblyOptimized = function (options) {
   const config = options || {};
   const canvas = config.canvas || document.createElement("canvas");
   let width = canvas.width;

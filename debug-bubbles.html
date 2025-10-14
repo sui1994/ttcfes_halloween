@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Debug Bubbles</title>
+  <script src="js/bubbly-optimized.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #000;
+      font-family: Arial, sans-serif;
+    }
+
+    .debug-info {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 15px;
+      border-radius: 5px;
+      z-index: 1000;
+      font-size: 12px;
+      max-width: 300px;
+    }
+
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+
+    .success {
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="debug-info">
+    <h3>🐛 Bubble Debug Info</h3>
+    <div id="status">Initializing...</div>
+    <div id="canvas-info"></div>
+    <div id="bubble-info"></div>
+    <div id="error-info"></div>
+  </div>
+
+  <script>
+    const statusDiv = document.getElementById('status');
+    const canvasDiv = document.getElementById('canvas-info');
+    const bubbleDiv = document.getElementById('bubble-info');
+    const errorDiv = document.getElementById('error-info');
+
+    function updateStatus(message, isError = false) {
+      console.log(message);
+      statusDiv.innerHTML = `<span class="${isError ? 'error' : 'success'}">${message}</span>`;
+    }
+
+    function updateCanvasInfo(canvas) {
+      if (canvas) {
+        canvasDiv.innerHTML = `
+                    <strong>Canvas Info:</strong><br>
+                    Width: ${canvas.width}px<br>
+                    Height: ${canvas.height}px<br>
+                    Parent: ${canvas.parentNode ? 'Attached' : 'Not attached'}<br>
+                    Z-index: ${canvas.style.zIndex}
+                `;
+      }
+    }
+
+    try {
+      updateStatus('Starting bubble initialization...');
+
+      // Check if function exists
+      if (typeof window.bubblyOptimized !== 'function') {
+        throw new Error('bubblyOptimized function not found!');
+      }
+
+      updateStatus('bubblyOptimized function found ✓');
+
+      // Initialize with debug settings
+      const bubbleEffect = window.bubblyOptimized({
+        colorStart: "#1a1a2e",
+        colorStop: "#16213e",
+        bubbles: 10, // Reduced for testing
+        animate: true,
+        shadowColor: "#4fc3f7",
+        blur: 6,
+        compose: "screen"
+      });
+
+      updateStatus('Bubble effect initialized ✓');
+
+      // Check canvas
+      if (bubbleEffect && bubbleEffect.canvas) {
+        updateCanvasInfo(bubbleEffect.canvas);
+        updateStatus('Canvas created and attached ✓');
+      } else {
+        // Try to find canvas manually
+        const canvases = document.querySelectorAll('canvas');
+        if (canvases.length > 0) {
+          updateCanvasInfo(canvases[0]);
+          updateStatus(`Found ${canvases.length} canvas element(s) ✓`);
+        } else {
+          throw new Error('No canvas elements found!');
+        }
+      }
+
+      // Monitor for a few seconds
+      let frameCount = 0;
+      const monitor = setInterval(() => {
+        frameCount++;
+        bubbleDiv.innerHTML = `<strong>Animation:</strong> Frame ${frameCount}`;
+
+        if (frameCount > 100) {
+          clearInterval(monitor);
+          updateStatus('Monitoring complete - bubbles should be visible');
+        }
+      }, 100);
+
+    } catch (error) {
+      updateStatus(`Error: ${error.message}`, true);
+      errorDiv.innerHTML = `<div class="error">
+                <strong>Error Details:</strong><br>
+                ${error.message}<br>
+                <strong>Stack:</strong><br>
+                ${error.stack}
+            </div>`;
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Debug Bubbles - Fixed</title>
+  <script src="js/bubbly-optimized.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #000;
+      font-family: Arial, sans-serif;
+    }
+
+    .debug-info {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 15px;
+      border-radius: 5px;
+      z-index: 1000;
+      font-size: 12px;
+      max-width: 300px;
+    }
+
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+
+    .success {
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="debug-info">
+    <h3>🐛 Bubble Debug Info</h3>
+    <div id="status">Initializing...</div>
+    <div id="canvas-info"></div>
+    <div id="bubble-info"></div>
+    <div id="error-info"></div>
+  </div>
+
+  <script>
+    const statusDiv = document.getElementById('status');
+    const canvasDiv = document.getElementById('canvas-info');
+    const bubbleDiv = document.getElementById('bubble-info');
+    const errorDiv = document.getElementById('error-info');
+
+    function updateStatus(message, isError = false) {
+      console.log(message);
+      statusDiv.innerHTML = `<span class="${isError ? 'error' : 'success'}">${message}</span>`;
+    }
+
+    try {
+      updateStatus('Starting bubble initialization...');
+
+      // Check if function exists
+      if (typeof window.bubblyOptimized !== 'function') {
+        throw new Error('bubblyOptimized function not found!');
+      }
+
+      updateStatus('bubblyOptimized function found ✓');
+
+      // Initialize with simple settings
+      const bubbleEffect = window.bubblyOptimized({
+        colorStart: "#3333ff",
+        colorStop: "#000066",
+        bubbles: 15,
+        animate: true
+      });
+
+      updateStatus('Bubble effect initialized ✓');
+
+      // Check canvas
+      setTimeout(() => {
+        const canvases = document.querySelectorAll('canvas');
+        canvasDiv.innerHTML = `<strong>Canvas found:</strong> ${canvases.length} elements`;
+
+        if (canvases.length > 0) {
+          const canvas = canvases[0];
+          bubbleDiv.innerHTML = `
+                        <strong>Canvas Details:</strong><br>
+                        Size: ${canvas.width}x${canvas.height}<br>
+                        Style: ${canvas.style.cssText}<br>
+                        Parent: ${canvas.parentNode ? 'Yes' : 'No'}
+                    `;
+          updateStatus('Canvas setup complete ✓');
+        } else {
+          updateStatus('No canvas found!', true);
+        }
+      }, 1000);
+
+    } catch (error) {
+      updateStatus(`Error: ${error.message}`, true);
+      errorDiv.innerHTML = `<div class="error">
+                <strong>Error:</strong> ${error.message}
+            </div>`;
+    }
+  </script>
+</body>
+
+</html>

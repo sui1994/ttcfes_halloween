@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Simple Bubble Test</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #000;
+      height: 100vh;
+    }
+  </style>
+</head>
+
+<body>
+  <h1 style="color: white; position: fixed; top: 20px; left: 20px; z-index: 100;">
+    Simple Bubble Test
+  </h1>
+
+  <script src="js/bubbly-optimized.js"></script>
+  <script>
+    console.log('Testing bubble function...');
+
+    if (typeof window.bubblyOptimized === 'function') {
+      console.log('✓ bubblyOptimized function found');
+
+      try {
+        const effect = window.bubblyOptimized({
+          colorStart: "#3333ff",
+          colorStop: "#000066",
+          bubbles: 20,
+          animate: true
+        });
+        console.log('✓ Bubble effect created:', effect);
+      } catch (error) {
+        console.error('✗ Error creating bubbles:', error);
+      }
+    } else {
+      console.error('✗ bubblyOptimized function not found');
+    }
+  </script>
+</body>
+
+</html>
