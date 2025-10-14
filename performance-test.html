@@ -33,7 +33,11 @@
   </a>
 
   <a href="main-optimized.html" class="test-link">
-    🚀 Optimized Version (CSS bubbles only)
+    🚀 CSS Optimized Version (CSS bubbles only)
+  </a>
+
+  <a href="main-canvas-optimized.html" class="test-link">
+    ⚡ Canvas Optimized Version (Optimized Canvas bubbles)
   </a>
 
   <h2>Test Instructions:</h2>
@@ -47,8 +51,21 @@
 
   <h2>Expected Results:</h2>
   <ul>
-    <li>CSS version: Lower CPU usage, higher FPS</li>
-    <li>Original version: Higher CPU usage, potential frame drops</li>
+    <li><strong>CSS version:</strong> Lowest CPU usage, highest FPS, best for mobile</li>
+    <li><strong>Canvas Optimized:</strong> Medium CPU usage, good FPS, better than original</li>
+    <li><strong>Original version:</strong> Highest CPU usage, potential frame drops</li>
+  </ul>
+
+  <h2>Canvas Optimizations Applied:</h2>
+  <ul>
+    <li>🚀 OffscreenCanvas for background pre-rendering</li>
+    <li>🚀 Reduced bubble count (15 vs dynamic)</li>
+    <li>🚀 Frame rate limiting (30fps vs 60fps)</li>
+    <li>🚀 Object pooling for bubbles</li>
+    <li>🚀 Batch rendering by opacity</li>
+    <li>🚀 Partial screen clearing with fade effect</li>
+    <li>🚀 Debounced resize handling</li>
+    <li>🚀 Dirty rectangle tracking</li>
   </ul>
 </body>
 
