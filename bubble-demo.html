@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Canvas Optimized Bubble Demo</title>
+  <script src="js/bubbly-optimized.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #000;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    .controls {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 15px;
+      border-radius: 10px;
+      color: white;
+    }
+
+    .control-group {
+      margin: 10px 0;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 12px;
+    }
+
+    input[type="range"] {
+      width: 150px;
+    }
+
+    button {
+      background: #4fc3f7;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+    }
+
+    button:hover {
+      background: #29b6f6;
+    }
+
+    .info {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="controls">
+    <h3>🫧 Canvas Bubble Controls</h3>
+
+    <div class="control-group">
+      <label>Bubble Count: <span id="bubbleCountValue">25</span></label>
+      <input type="range" id="bubbleCount" min="5" max="50" value="25">
+    </div>
+
+    <div class="control-group">
+      <label>Animation Speed: <span id="speedValue">1.0</span>x</label>
+      <input type="range" id="speed" min="0.1" max="3.0" step="0.1" value="1.0">
+    </div>
+
+    <div class="control-group">
+      <label>Blur Effect: <span id="blurValue">6</span>px</label>
+      <input type="range" id="blur" min="0" max="20" value="6">
+    </div>
+
+    <div class="control-group">
+      <button onclick="toggleAnimation()">⏯️ Toggle Animation</button>
+      <button onclick="resetBubbles()">🔄 Reset</button>
+    </div>
+  </div>
+
+  <div class="info">
+    <strong>Canvas Optimized Bubbles</strong><br>
+    🚀 30fps限定<br>
+    🫧 リアルな浮上効果<br>
+    ⚡ GPU最適化
+  </div>
+
+  <script>
+    let bubbleEffect;
+    let isAnimating = true;
+
+    // Initialize bubble effect
+    function initBubbles() {
+      if (bubbleEffect && bubbleEffect.stop) {
+        bubbleEffect.stop();
+      }
+
+      const bubbleCount = document.getElementById('bubbleCount').value;
+      const blur = document.getElementById('blur').value;
+
+      bubbleEffect = bubbyOptimized({
+        colorStart: "#1a1a2e",
+        colorStop: "#16213e",
+        bubbles: parseInt(bubbleCount),
+        animate: isAnimating,
+        shadowColor: "#4fc3f7",
+        blur: parseInt(blur),
+        compose: "screen"
+      });
+    }
+
+    // Control handlers
+    document.getElementById('bubbleCount').addEventListener('input', function (e) {
+      document.getElementById('bubbleCountValue').textContent = e.target.value;
+      initBubbles();
+    });
+
+    document.getElementById('speed').addEventListener('input', function (e) {
+      document.getElementById('speedValue').textContent = e.target.value;
+      // Speed control would need to be implemented in the bubble effect
+    });
+
+    document.getElementById('blur').addEventListener('input', function (e) {
+      document.getElementById('blurValue').textContent = e.target.value;
+      initBubbles();
+    });
+
+    function toggleAnimation() {
+      isAnimating = !isAnimating;
+      if (bubbleEffect) {
+        if (isAnimating) {
+          bubbleEffect.start();
+        } else {
+          bubbleEffect.stop();
+        }
+      }
+    }
+
+    function resetBubbles() {
+      initBubbles();
+    }
+
+    // Initialize on load
+    window.addEventListener('load', initBubbles);
+  </script>
+</body>
+
+</html>

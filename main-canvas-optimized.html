@@ -35,12 +35,19 @@
 
   <!-- 最適化されたCanvas背景 -->
   <script>
-    bubbyOptimized({
-      colorStart: "#3333ff",
-      colorStop: "#000066",
-      bubbles: 15, // 削減されたバブル数
-      animate: true
+    // Halloween水族館用の最適化されたバブル設定
+    const bubbleEffect = bubbyOptimized({
+      colorStart: "#1a1a2e",     // 深い海の色
+      colorStop: "#16213e",      // より深い青
+      bubbles: 25,               // バブル数を増加
+      animate: true,
+      shadowColor: "#4fc3f7",    // 青い光の影
+      blur: 6,                   // ぼかし効果
+      compose: "screen"          // より明るい合成モード
     });
+
+    // デバッグ用：バブル効果の制御
+    console.log("Canvas Optimized Bubbles initialized:", bubbleEffect);
   </script>
 
   <!-- 既存の背景とコンテンツ -->
