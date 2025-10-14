@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>🎃 HALLOWEEN DIGITAL AQUARIUM 🦇</title>
+
+  <!-- ハローウィン専用JavaScript -->
+  <script src="js/bubbly-optimized.js"></script>
+  
+  <!-- 魚のアニメーションCSS -->
+  <!-- <link rel="stylesheet" type="text/css" href="css/fish1.css">
+  <link rel="stylesheet" type="text/css" href="css/fish2.css">
+  <link rel="stylesheet" type="text/css" href="css/fish3.css">
+  <link rel="stylesheet" type="text/css" href="css/fish4.css">
+  <link rel="stylesheet" type="text/css" href="css/fish5.css">
+  <link rel="stylesheet" type="text/css" href="css/fish6.css"> -->
+
+  <!-- 植物・装飾CSS -->
+  <!-- <link rel="stylesheet" type="text/css" href="preset_css/leaf.css">
+  <link rel="stylesheet" type="text/css" href="preset_css/stick.css">
+  <link rel="stylesheet" type="text/css" href="preset_css/preset_fish.css"> -->
+  
+  <!-- ハローウィン専用CSS -->
+  <link rel="stylesheet" type="text/css" href="preset_css/halloween-bkg.css">
+
+  <style>
+    body {
+      background: #1a1a1a;
+      overflow: hidden;
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+    }
+    
+    /* ハローウィン専用レイヤー構造 */
+    .halloween-bg-grd {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -4;
+      background: linear-gradient(135deg,
+        #0a0a0a 0%,        /* 深い黒 */
+        #1a0d2e 15%,       /* 深紫 */
+        #2e1065 30%,       /* ダークパープル */
+        #6a1b9a 45%,       /* パープル */
+        #ff6b35 60%,       /* ハローウィンオレンジ */
+        #ffc107 75%,       /* ゴールド */
+        #ff8f00 85%,       /* 深いゴールド */
+        #1a0d2e 100%       /* 深紫 */
+      );
+      background-size: 400% 400%;
+      animation: halloweenMagic 25s ease infinite;
+    }
+    
+    @keyframes halloweenMagic {
+      0% { background-position: 0% 50%; }
+      20% { background-position: 100% 0%; }
+      40% { background-position: 100% 100%; }
+      60% { background-position: 50% 50%; }
+      80% { background-position: 0% 100%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    .halloween-sea-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -3;
+      background: 
+        radial-gradient(ellipse at 20% 80%, rgba(255, 107, 53, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(106, 27, 154, 0.2) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(255, 193, 7, 0.1) 0%, transparent 70%);
+    }
+    
+    .halloween-sea-image {
+      position: absolute;
+      opacity: 0.3;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      filter: sepia(0.4) hue-rotate(25deg) saturate(1.3) brightness(0.7);
+    }
+    
+    /* ハローウィン装飾 */
+    .halloween-title {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      color: #ff6b35;
+      font-size: 32px;
+      font-weight: bold;
+      z-index: 1000;
+      text-shadow: 
+        2px 2px 4px rgba(0, 0, 0, 0.8),
+        0 0 20px rgba(255, 107, 53, 0.6);
+      animation: spookyPulse 4s ease-in-out infinite;
+    }
+    
+    .halloween-subtitle {
+      position: fixed;
+      top: 65px;
+      left: 25px;
+      color: #ffc107;
+      font-size: 14px;
+      z-index: 1000;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+      animation: ghostlyFloat 6s ease-in-out infinite;
+    }
+    
+    @keyframes spookyPulse {
+      0%, 100% { 
+        transform: scale(1);
+        text-shadow: 
+          2px 2px 4px rgba(0, 0, 0, 0.8),
+          0 0 20px rgba(255, 107, 53, 0.6);
+      }
+      50% { 
+        transform: scale(1.05);
+        text-shadow: 
+          2px 2px 8px rgba(0, 0, 0, 0.9),
+          0 0 30px rgba(255, 107, 53, 1);
+      }
+    }
+    
+    @keyframes ghostlyFloat {
+      0%, 100% { opacity: 0.8; transform: translateY(0px); }
+      50% { opacity: 1; transform: translateY(-3px); }
+    }
+    
+    /* ハローウィンフィルター効果 */
+    .halloween-filter {
+      filter: 
+        sepia(0.2) 
+        hue-rotate(15deg) 
+        saturate(1.2) 
+        brightness(0.9) 
+        contrast(1.1);
+    }
+    
+    /* 魔法の光効果 */
+    .magic-glow {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 193, 7, 0.3) 0%, transparent 70%);
+      animation: magicFloat 8s ease-in-out infinite;
+      pointer-events: none;
+    }
+    
+    .magic-glow:nth-child(1) {
+      top: 20%;
+      left: 10%;
+      animation-delay: 0s;
+    }
+    
+    .magic-glow:nth-child(2) {
+      top: 60%;
+      right: 15%;
+      animation-delay: 3s;
+    }
+    
+    .magic-glow:nth-child(3) {
+      bottom: 30%;
+      left: 70%;
+      animation-delay: 6s;
+    }
+    
+    @keyframes magicFloat {
+      0%, 100% { 
+        transform: translateY(0px) scale(1);
+        opacity: 0.3;
+      }
+      50% { 
+        transform: translateY(-20px) scale(1.2);
+        opacity: 0.6;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ハローウィンタイトル -->
+  <!-- <div class="halloween-title">🎃 HALLOWEEN AQUARIUM 🦇</div>
+  <div class="halloween-subtitle">~ 魔法にかかった水族館 ~</div> -->
+
+  <!-- ハローウィン背景レイヤー -->
+  <div class="halloween-bg-grd"></div>
+  <div class="halloween-sea-overlay"></div>
+  
+  <!-- 海の画像（ハローウィンフィルター適用） -->
+  <div class="halloween-sea-image">
+    <img src="bkg_img/background_sea.jpg" width="100%" height="100%">
+  </div>
+
+  <!-- 魔法の光効果 -->
+  <div class="magic-glow"></div>
+  <div class="magic-glow"></div>
+  <div class="magic-glow"></div>
+
+  <!-- ハローウィン魔法のバブル -->
+  <script>
+    console.log('🎃 Initializing Halloween Magic Bubbles...');
+    
+    const halloweenBubbles = bubblyOptimized({
+      colorStart: "rgba(255, 107, 53, 0.25)",      // ハローウィンオレンジ
+      colorStop: "rgba(106, 27, 154, 0.35)",       // 魔法のパープル
+      bubbles: 40,                                 // 魔法の泡を増量
+      animate: true,
+      shadowColor: "#ffc107",                      // ゴールドの光
+      blur: 12,                                    // 強い魔法の光
+      compose: "screen"                            // 明るく光る効果
+    });
+    
+    console.log('✨ Halloween Magic Activated!', halloweenBubbles);
+  </script>
+
+  <!-- 植物（ハローウィンフィルター適用） -->
+  <div class="plants_1 halloween-filter">
+    <img src="bkg_img/plants_1.png" width="900px" height="auto">
+  </div>
+
+  <div class="plants_2 halloween-filter">
+    <img src="bkg_img/plants_2.png" width="400px" height="auto">
+  </div>
+
+  <!-- 海藻・イソギンチャク（魔法の色調） -->
+  <div class="stickbox_1 halloween-filter">
+    <div class="stick1"><img src="bkg_img/stick1.png"></div>
+    <div class="stick2"><img src="bkg_img/stick2.png"></div>
+    <div class="stick3"><img src="bkg_img/stick1.png"></div>
+    <div class="stick4"><img src="bkg_img/stick2.png"></div>
+    <div class="stick5"><img src="bkg_img/stick1.png"></div>
+  </div>
+
+  <div class="stickbox_2 halloween-filter">
+    <div class="stick1"><img src="bkg_img/stick3.png"></div>
+    <div class="stick2"><img src="bkg_img/stick4.png"></div>
+    <div class="stick3"><img src="bkg_img/stick3.png"></div>
+    <div class="stick4"><img src="bkg_img/stick4.png"></div>
+    <div class="stick5"><img src="bkg_img/stick3.png"></div>
+  </div>
+
+  <div class="stickbox_3 halloween-filter">
+    <div class="stick1"><img src="bkg_img/stick5.png"></div>
+    <div class="stick2"><img src="bkg_img/stick6.png"></div>
+    <div class="stick3"><img src="bkg_img/stick5.png"></div>
+    <div class="stick4"><img src="bkg_img/stick6.png"></div>
+    <div class="stick5"><img src="bkg_img/stick5.png"></div>
+  </div>
+
+  <div class="leafbox_1 halloween-filter">
+    <div class="leaf1"><img src="bkg_img/leaf01.png"></div>
+    <div class="leaf2"><img src="bkg_img/leaf02.png"></div>
+    <div class="leaf3"><img src="bkg_img/leaf03.png"></div>
+  </div>
+
+  <div class="leafbox_2 halloween-filter">
+    <div class="leaf1"><img src="bkg_img/leaf05.png"></div>
+    <div class="leaf2"><img src="bkg_img/leaf02.png"></div>
+    <div class="leaf3"><img src="bkg_img/leaf04.png"></div>
+  </div>
+
+  <!-- ハローウィン魚たち -->
+  <div class="nemo1 halloween-filter">
+    <img src="preset_img/nemo.png" width="50px" height="auto">
+  </div>
+
+  <div class="dory halloween-filter">
+    <img src="preset_img/dory.png" width="70px" height="auto">
+  </div>
+
+  <div class="chouchou halloween-filter">
+    <img src="preset_img/chouchou.png" width="150px" height="auto">
+  </div>
+
+  <div class="angelfish1 halloween-filter">
+    <img src="preset_img/angelfish.gif" width="100px" height="auto">
+  </div>
+
+  <div class="angelfish2 halloween-filter">
+    <img src="preset_img/angelfish.gif" width="100px" height="auto">
+  </div>
+
+  <div class="crab halloween-filter">
+    <img src="preset_img/crab.gif" width="70px" height="auto">
+  </div>
+
+  <div class="maguro1 halloween-filter">
+    <img src="preset_img/maguro1.png" width="120px" height="auto">
+  </div>
+
+  <div class="jellyfish1 halloween-filter">
+    <img src="preset_img/jellyfish.gif">
+  </div>
+
+  <!-- 砂地（ハローウィン調整） -->
+  <div class="bg_snd halloween-filter">
+    <img src="bkg_img/background_snd.png">
+  </div>
+
+  <!-- 泳ぐ魚たち（ハローウィンカラー） -->
+  <div class="fish1_1 halloween-filter">
+    <img src="img/fish1_1.png">
+  </div>
+  <div class="fish1_2 halloween-filter">
+    <img src="img/fish1_2.png">
+  </div>
+
+  <div class="fish2_1 halloween-filter">
+    <img src="img/fish2_1.png">
+  </div>
+  <div class="fish2_2 halloween-filter">
+    <img src="img/fish2_2.png">
+  </div>
+
+  <div class="fish3_1 halloween-filter">
+    <img src="img/fish3_1.png">
+  </div>
+  <div class="fish3_2 halloween-filter">
+    <img src="img/fish3_2.png">
+  </div>
+
+  <div class="fish4_1 halloween-filter">
+    <img src="img/fish4_1.png">
+  </div>
+  <div class="fish4_2 halloween-filter">
+    <img src="img/fish4_2.png">
+  </div>
+
+  <div class="fish5_1 halloween-filter">
+    <img src="img/fish5_1.png">
+  </div>
+  <div class="fish5_2 halloween-filter">
+    <img src="img/fish5_2.png">
+  </div>
+
+  <div class="fish6_1 halloween-filter">
+    <img src="img/fish6_1.png">
+  </div>
+  <div class="fish6_2 halloween-filter">
+    <img src="img/fish6_2.png">
+  </div>
+
+</body>
+</html>
