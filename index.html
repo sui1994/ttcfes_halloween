@@ -3,12 +3,324 @@
 
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="refresh" content="0; url=main.html">
-  <title>Halloween Digital Aquarium</title>
+  <title>🎃 Halloween Digital Aquarium Collection 🦇</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #1a1a1a, #2e1065, #1a1a1a);
+      color: white;
+      font-family: 'Arial', sans-serif;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .main-title {
+      font-size: 48px;
+      color: #ff6b35;
+      text-shadow:
+        3px 3px 6px rgba(0, 0, 0, 0.8),
+        0 0 30px rgba(255, 107, 53, 0.6);
+      animation: titleGlow 4s ease-in-out infinite alternate;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: #ffc107;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+    }
+
+    @keyframes titleGlow {
+      from {
+        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 107, 53, 0.6);
+      }
+
+      to {
+        text-shadow: 3px 3px 10px rgba(0, 0, 0, 1), 0 0 50px rgba(255, 107, 53, 1);
+      }
+    }
+
+    .version-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .version-card {
+      background: rgba(0, 0, 0, 0.6);
+      border: 2px solid #ff6b35;
+      border-radius: 15px;
+      padding: 25px;
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .version-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+      border-color: #ffc107;
+    }
+
+    .version-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(255, 107, 53, 0.1), transparent);
+      transform: rotate(45deg);
+      transition: all 0.5s ease;
+      opacity: 0;
+    }
+
+    .version-card:hover::before {
+      opacity: 1;
+      animation: shimmer 1.5s ease-in-out;
+    }
+
+    @keyframes shimmer {
+      0% {
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+      }
+
+      100% {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+      }
+    }
+
+    .version-title {
+      font-size: 24px;
+      color: #ff6b35;
+      margin-bottom: 15px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .version-description {
+      font-size: 14px;
+      color: #ccc;
+      margin-bottom: 20px;
+      line-height: 1.6;
+      position: relative;
+      z-index: 1;
+    }
+
+    .version-features {
+      list-style: none;
+      padding: 0;
+      margin: 20px 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .version-features li {
+      font-size: 12px;
+      color: #ffc107;
+      margin: 8px 0;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .version-features li::before {
+      content: '✨';
+      position: absolute;
+      left: 0;
+    }
+
+    .version-link {
+      display: inline-block;
+      background: linear-gradient(45deg, #ff6b35, #ffc107);
+      color: white;
+      text-decoration: none;
+      padding: 12px 25px;
+      border-radius: 25px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .version-link:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
+    }
+
+    .performance-info {
+      background: rgba(106, 27, 154, 0.2);
+      border: 1px solid #6a1b9a;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 40px;
+    }
+
+    .performance-title {
+      color: #6a1b9a;
+      font-size: 20px;
+      margin-bottom: 15px;
+    }
+
+    .performance-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .performance-item {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .performance-label {
+      color: #ffc107;
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    .performance-value {
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 
 <body>
-  <p>Redirecting to <a href="main.html">main page</a>...</p>
+  <div class="container">
+    <div class="header">
+      <h1 class="main-title">🎃 Halloween Digital Aquarium 🦇</h1>
+      <p class="subtitle">魔法にかかった水族館コレクション</p>
+    </div>
+
+    <div class="version-grid">
+      <!-- Original Version -->
+      <div class="version-card">
+        <h2 class="version-title">🐠 Original Aquarium</h2>
+        <p class="version-description">
+          元の爽やかな水族館。青い海と明るいバブルが特徴の昼間の水族館です。
+        </p>
+        <ul class="version-features">
+          <li>青い海の背景</li>
+          <li>爽やかなバブル効果</li>
+          <li>明るい昼間の雰囲気</li>
+          <li>クラシックな水族館体験</li>
+        </ul>
+        <a href="main.html" class="version-link">🌊 Original を見る</a>
+      </div>
+
+      <!-- Canvas Optimized -->
+      <div class="version-card">
+        <h2 class="version-title">⚡ Canvas Optimized</h2>
+        <p class="version-description">
+          パフォーマンスを最適化したバージョン。軽快な動作と美しいバブル効果を両立。
+        </p>
+        <ul class="version-features">
+          <li>30fps制限で安定動作</li>
+          <li>GPU最適化バブル</li>
+          <li>メモリ効率化</li>
+          <li>モバイル対応</li>
+        </ul>
+        <a href="main-canvas-optimized.html" class="version-link">🚀 Optimized を見る</a>
+      </div>
+
+      <!-- CSS Version -->
+      <div class="version-card">
+        <h2 class="version-title">🎨 CSS Bubbles</h2>
+        <p class="version-description">
+          JavaScript不要のCSS版。最軽量でバッテリーに優しいバブル効果。
+        </p>
+        <ul class="version-features">
+          <li>JavaScript不要</li>
+          <li>最軽量・高速</li>
+          <li>バッテリー節約</li>
+          <li>ブラウザネイティブ最適化</li>
+        </ul>
+        <a href="main-optimized.html" class="version-link">💨 CSS版 を見る</a>
+      </div>
+
+      <!-- Halloween Theme -->
+      <div class="version-card">
+        <h2 class="version-title">🎃 Halloween Theme</h2>
+        <p class="version-description">
+          ハローウィン仕様の魔法の水族館。オレンジとパープルの神秘的な世界。
+        </p>
+        <ul class="version-features">
+          <li>ハローウィンカラー</li>
+          <li>魔法のバブル効果</li>
+          <li>神秘的な雰囲気</li>
+          <li>動くグラデーション背景</li>
+        </ul>
+        <a href="halloween-aquarium.html" class="version-link">🎃 Halloween を見る</a>
+      </div>
+
+      <!-- Ultimate Halloween -->
+      <div class="version-card">
+        <h2 class="version-title">🦇 Ultimate Halloween</h2>
+        <p class="version-description">
+          究極のハローウィン体験。魔法の粒子、オーラ効果、究極の魔法バブル。
+        </p>
+        <ul class="version-features">
+          <li>究極の魔法効果</li>
+          <li>魔法の粒子システム</li>
+          <li>オーラ・グロー効果</li>
+          <li>最大60個の魔法バブル</li>
+        </ul>
+        <a href="halloween-ultimate.html" class="version-link">🌟 Ultimate を見る</a>
+      </div>
+
+      <!-- Performance Test -->
+      <div class="version-card">
+        <h2 class="version-title">📊 Performance Test</h2>
+        <p class="version-description">
+          全バージョンのパフォーマンス比較。開発者向けのテスト・デバッグページ。
+        </p>
+        <ul class="version-features">
+          <li>パフォーマンス比較</li>
+          <li>デバッグ情報</li>
+          <li>FPS・CPU使用率測定</li>
+          <li>開発者ツール</li>
+        </ul>
+        <a href="performance-test.html" class="version-link">🔧 Test を見る</a>
+      </div>
+    </div>
+
+    <div class="performance-info">
+      <h3 class="performance-title">📈 パフォーマンス比較</h3>
+      <div class="performance-grid">
+        <div class="performance-item">
+          <div class="performance-label">最軽量</div>
+          <div class="performance-value">CSS Bubbles</div>
+        </div>
+        <div class="performance-item">
+          <div class="performance-label">バランス型</div>
+          <div class="performance-value">Canvas Optimized</div>
+        </div>
+        <div class="performance-item">
+          <div class="performance-label">最高品質</div>
+          <div class="performance-value">Ultimate Halloween</div>
+        </div>
+        <div class="performance-item">
+          <div class="performance-label">モバイル推奨</div>
+          <div class="performance-value">CSS / Optimized</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 
 </html>

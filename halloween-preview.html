@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>🎃 Halloween Preview - どんな感じになる？</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #1a1a1a;
+      font-family: 'Arial', sans-serif;
+      overflow-x: hidden;
+    }
+
+    .preview-container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .before,
+    .after {
+      flex: 1;
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .divider {
+      width: 4px;
+      background: linear-gradient(to bottom, #ff6b35, #6a1b9a, #ff6b35);
+      position: relative;
+      z-index: 1000;
+    }
+
+    .label {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      z-index: 100;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    /* 元の水族館スタイル */
+    .before {
+      background: linear-gradient(to bottom,
+          hsl(180, 100%, 90%),
+          hsl(320, 100%, 50%),
+          hsl(0, 0%, 0%));
+    }
+
+    .before .label {
+      color: #4fc3f7;
+    }
+
+    /* ハローウィンスタイル */
+    .after {
+      background: linear-gradient(135deg,
+          #1a1a1a 0%,
+          #2e1065 20%,
+          #6a1b9a 40%,
+          #ff6b35 60%,
+          #ffc107 80%,
+          #1a1a1a 100%);
+      background-size: 300% 300%;
+      animation: halloweenAnimation 15s ease infinite;
+    }
+
+    .after .label {
+      color: #ff6b35;
+      animation: spookyGlow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes halloweenAnimation {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      25% {
+        background-position: 100% 0%;
+      }
+
+      50% {
+        background-position: 100% 100%;
+      }
+
+      75% {
+        background-position: 0% 100%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    @keyframes spookyGlow {
+      from {
+        text-shadow: 2px 2px 8px rgba(255, 107, 53, 0.5);
+        transform: scale(1);
+      }
+
+      to {
+        text-shadow: 2px 2px 20px rgba(255, 107, 53, 1);
+        transform: scale(1.05);
+      }
+    }
+
+    /* 比較説明 */
+    .comparison {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      text-align: center;
+      z-index: 1000;
+    }
+
+    .comparison h3 {
+      margin: 0 0 10px 0;
+      color: #ff6b35;
+    }
+
+    .features {
+      display: flex;
+      gap: 30px;
+      margin-top: 15px;
+    }
+
+    .feature-list {
+      text-align: left;
+      font-size: 12px;
+    }
+
+    .feature-list h4 {
+      margin: 0 0 8px 0;
+      color: #4fc3f7;
+    }
+
+    .feature-list.halloween h4 {
+      color: #ff6b35;
+    }
+
+    .feature-list li {
+      margin: 3px 0;
+    }
+
+    /* 魚のサンプル */
+    .sample-fish {
+      position: absolute;
+      font-size: 30px;
+      animation: swim 8s linear infinite;
+    }
+
+    .before .sample-fish {
+      top: 40%;
+      filter: hue-rotate(180deg);
+    }
+
+    .after .sample-fish {
+      top: 60%;
+      filter: sepia(0.3) hue-rotate(25deg) saturate(1.2);
+    }
+
+    @keyframes swim {
+      0% {
+        left: -50px;
+      }
+
+      100% {
+        left: calc(100% + 50px);
+      }
+    }
+
+    /* バブルサンプル */
+    .sample-bubble {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .before .sample-bubble {
+      background: rgba(79, 195, 247, 0.3);
+      box-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
+    }
+
+    .after .sample-bubble {
+      background: rgba(255, 107, 53, 0.3);
+      box-shadow: 0 0 15px rgba(255, 193, 7, 0.8);
+    }
+
+    .sample-bubble:nth-child(3) {
+      left: 20%;
+      animation-delay: 0s;
+    }
+
+    .sample-bubble:nth-child(4) {
+      left: 50%;
+      animation-delay: 2s;
+    }
+
+    .sample-bubble:nth-child(5) {
+      left: 80%;
+      animation-delay: 4s;
+    }
+
+    @keyframes float {
+      0% {
+        bottom: -20px;
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 1;
+      }
+
+      90% {
+        opacity: 1;
+      }
+
+      100% {
+        bottom: 100vh;
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="preview-container">
+    <!-- 元のバージョン -->
+    <div class="before">
+      <div class="label">🐠 Original Aquarium</div>
+      <div class="sample-fish">🐟</div>
+      <div class="sample-bubble"></div>
+      <div class="sample-bubble"></div>
+      <div class="sample-bubble"></div>
+    </div>
+
+    <!-- 区切り線 -->
+    <div class="divider"></div>
+
+    <!-- ハローウィンバージョン -->
+    <div class="after">
+      <div class="label">🎃 HALLOWEEN AQUARIUM 🦇</div>
+      <div class="sample-fish">🐠</div>
+      <div class="sample-bubble"></div>
+      <div class="sample-bubble"></div>
+      <div class="sample-bubble"></div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>🎃 ハローウィン専用版の変化</h3>
+    <div class="features">
+      <div class="feature-list">
+        <h4>📘 Original</h4>
+        <ul>
+          <li>🔵 青い海の背景</li>
+          <li>💙 爽やかなバブル</li>
+          <li>🌊 明るい水族館</li>
+          <li>☀️ 昼間の雰囲気</li>
+        </ul>
+      </div>
+      <div class="feature-list halloween">
+        <h4>🎃 Halloween</h4>
+        <ul>
+          <li>🧡 オレンジ・パープルの魔法の海</li>
+          <li>✨ ゴールドに光るバブル</li>
+          <li>🌙 神秘的で不気味な水族館</li>
+          <li>🦇 夜の魔法の雰囲気</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

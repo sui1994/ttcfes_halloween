@@ -1,0 +1,166 @@
+/* 🎃 Halloween Background Styles 🎃 */
+
+body {
+  padding: 0;
+  margin: 0;
+  background: #1a1a1a;
+  /* ダークベース */
+}
+
+/* ハローウィン グラデーション背景 */
+.halloween-bg-grd {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -3;
+
+  /* ハローウィンカラーグラデーション */
+  background: linear-gradient(135deg,
+      #1a1a1a 0%,
+      /* ダークブラック */
+      #2e1065 20%,
+      /* ダークパープル */
+      #6a1b9a 40%,
+      /* パープル */
+      #ff6b35 60%,
+      /* ハローウィンオレンジ */
+      #ffc107 80%,
+      /* ゴールド */
+      #1a1a1a 100%
+      /* ダークブラック */
+    );
+  background-size: 300% 300%;
+  animation: halloweenAnimation 20s ease infinite;
+}
+
+@keyframes halloweenAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  25% {
+    background-position: 100% 0%;
+  }
+
+  50% {
+    background-position: 100% 100%;
+  }
+
+  75% {
+    background-position: 0% 100%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* ハローウィン 海中背景 */
+.halloween-bg-sea {
+  position: absolute;
+  opacity: 0.5;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+
+  /* 神秘的な海の雰囲気 */
+  background: radial-gradient(ellipse at 30% 70%,
+      rgba(255, 107, 53, 0.2) 0%,
+      /* オレンジ */
+      rgba(106, 27, 154, 0.4) 30%,
+      /* パープル */
+      rgba(46, 16, 101, 0.6) 60%,
+      /* ダークパープル */
+      rgba(26, 26, 26, 0.9) 100%
+      /* ダークブラック */
+    );
+}
+
+/* ハローウィン 砂地 */
+.halloween-bg-snd {
+  position: absolute;
+  bottom: -0.8%;
+  left: 0;
+  z-index: 90;
+  width: 100%;
+
+  /* ハローウィンカラーのオーバーレイ */
+  filter: sepia(0.3) hue-rotate(25deg) saturate(1.2);
+}
+
+/* ハローウィン バブル効果用 */
+.halloween-bubble-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+
+  /* 追加の光効果 */
+  background: radial-gradient(circle at 20% 80%,
+      rgba(255, 193, 7, 0.1) 0%,
+      transparent 50%),
+    radial-gradient(circle at 80% 20%,
+      rgba(255, 107, 53, 0.1) 0%,
+      transparent 50%);
+}
+
+/* ハローウィン装飾要素 */
+.halloween-decoration {
+  position: fixed;
+  color: #ff6b35;
+  text-shadow: 2px 2px 8px rgba(255, 107, 53, 0.8);
+  z-index: 1000;
+}
+
+.halloween-title {
+  top: 20px;
+  left: 20px;
+  font-size: 28px;
+  font-weight: bold;
+  animation: spookyGlow 3s ease-in-out infinite alternate;
+}
+
+.halloween-subtitle {
+  top: 60px;
+  left: 25px;
+  font-size: 14px;
+  color: #ffc107;
+  animation: fadeInOut 4s ease-in-out infinite;
+}
+
+@keyframes spookyGlow {
+  from {
+    text-shadow: 2px 2px 8px rgba(255, 107, 53, 0.5);
+    transform: scale(1);
+  }
+
+  to {
+    text-shadow: 2px 2px 20px rgba(255, 107, 53, 1);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes fadeInOut {
+
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ハローウィン用カラーフィルター */
+.halloween-filter {
+  filter:
+    sepia(0.2) hue-rotate(15deg) saturate(1.3) brightness(0.9) contrast(1.1);
+}
