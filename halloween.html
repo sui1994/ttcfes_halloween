@@ -10,7 +10,7 @@
   <script src="js/bubbly-optimized.js"></script>
 
   <!-- ハローウィン専用CSS -->
-  <link rel="stylesheet" type="text/css" href="preset_css/halloween-bkg.css">
+  <!-- <link rel="stylesheet" type="text/css" href="preset_css/halloween-bkg.css"> -->
 
   <style>
     body {
@@ -61,7 +61,7 @@
     /* 町の配置（真ん中） */
     .town {
       position: absolute;
-      bottom: 15%;
+      bottom: 5%;
       left: 50%;
       transform: translateX(-50%);
       z-index: -2;
@@ -70,6 +70,22 @@
       opacity: 0.8;
       filter:
         sepia(0.3) hue-rotate(25deg) saturate(1.2) brightness(0.7) drop-shadow(0 0 15px rgba(255, 107, 53, 0.4));
+      animation-name: bounce;
+      animation-duration: 4s;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateX(-50%) translateY(0px);
+      }
+
+      50% {
+        transform: translateX(-50%) translateY(-8px);
+      }
     }
 
     /* ハローウィン専用レイヤー構造 */
@@ -216,6 +232,127 @@
         sepia(0.2) hue-rotate(15deg) saturate(1.2) brightness(0.9) contrast(1.1);
     }
 
+    /* 光る紙吹雪エフェクト */
+    .confetti {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: linear-gradient(45deg, #ffc107, #ff6b35);
+      border-radius: 2px;
+      box-shadow: 0 0 10px rgba(255, 193, 7, 0.8);
+      animation: confettiFall linear infinite;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .confetti:nth-child(odd) {
+      background: linear-gradient(45deg, #ff6b35, #6a1b9a);
+      box-shadow: 0 0 8px rgba(255, 107, 53, 0.6);
+    }
+
+    .confetti:nth-child(3n) {
+      background: linear-gradient(45deg, #6a1b9a, #ffc107);
+      box-shadow: 0 0 12px rgba(106, 27, 154, 0.7);
+      border-radius: 50%;
+    }
+
+    @keyframes confettiFall {
+      0% {
+        top: -20px;
+        opacity: 0;
+        transform: rotate(0deg) scale(0.5);
+      }
+
+      10% {
+        opacity: 1;
+        transform: rotate(180deg) scale(1);
+      }
+
+      90% {
+        opacity: 1;
+        transform: rotate(720deg) scale(1);
+      }
+
+      100% {
+        top: 100vh;
+        opacity: 0;
+        transform: rotate(900deg) scale(0.3);
+      }
+    }
+
+    /* 紙吹雪の個別設定 */
+    .confetti:nth-child(1) {
+      left: 10%;
+      animation-duration: 8s;
+      animation-delay: 0s;
+    }
+
+    .confetti:nth-child(2) {
+      left: 20%;
+      animation-duration: 12s;
+      animation-delay: 1s;
+    }
+
+    .confetti:nth-child(3) {
+      left: 30%;
+      animation-duration: 10s;
+      animation-delay: 2s;
+    }
+
+    .confetti:nth-child(4) {
+      left: 40%;
+      animation-duration: 14s;
+      animation-delay: 0.5s;
+    }
+
+    .confetti:nth-child(5) {
+      left: 50%;
+      animation-duration: 9s;
+      animation-delay: 3s;
+    }
+
+    .confetti:nth-child(6) {
+      left: 60%;
+      animation-duration: 11s;
+      animation-delay: 1.5s;
+    }
+
+    .confetti:nth-child(7) {
+      left: 70%;
+      animation-duration: 13s;
+      animation-delay: 4s;
+    }
+
+    .confetti:nth-child(8) {
+      left: 80%;
+      animation-duration: 8s;
+      animation-delay: 2.5s;
+    }
+
+    .confetti:nth-child(9) {
+      left: 90%;
+      animation-duration: 15s;
+      animation-delay: 0.8s;
+    }
+
+    .confetti:nth-child(10) {
+      left: 15%;
+      animation-duration: 10s;
+      animation-delay: 3.5s;
+    }
+
+    .confetti:nth-child(11) {
+      left: 25%;
+      animation-duration: 12s;
+      animation-delay: 1.2s;
+    }
+
+    .confetti:nth-child(12) {
+      left: 35%;
+      animation-duration: 9s;
+      animation-delay: 4.2s;
+    }
+
     /* 魔法の光効果 */
     .magic-glow {
       position: absolute;
@@ -262,9 +399,23 @@
 </head>
 
 <body>
+  <!-- 光る紙吹雪エフェクト -->
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+
   <!-- ハローウィンタイトル -->
-  <div class="halloween-title">🎃 HALLOWEEN TOWN AQUARIUM 🌙</div>
-  <div class="halloween-subtitle">~ 魔法の町の水族館 ~</div>
+  <div class="halloween-title">🎃 HALLOWEEN TOWN 🌙</div>
+  <div class="halloween-subtitle">~ 透明バブル版 ~</div>
 
   <!-- 背景レイヤー構造 -->
   <!-- 1. ハローウィン背景画像（最背面） -->
@@ -284,13 +435,13 @@
     console.log('🎃 Initializing Halloween Magic Bubbles...');
 
     const halloweenBubbles = bubblyOptimized({
-      colorStart: "rgba(255, 107, 53, 0.25)",      // ハローウィンオレンジ
-      colorStop: "rgba(106, 27, 154, 0.35)",       // 魔法のパープル
-      bubbles: 40,                                 // 魔法の泡を増量
+      colorStart: "rgba(255, 107, 53, 0.3)",      // ハローウィンオレンジ
+      colorStop: "rgba(106, 27, 154, 0.4)",       // 魔法のパープル
+      bubbles: 25,                                // バブル数調整
       animate: true,
-      shadowColor: "#ffc107",                      // ゴールドの光
-      blur: 12,                                    // 強い魔法の光
-      compose: "screen"                            // 明るく光る効果
+      shadowColor: "#ffc107",                     // ゴールドの光
+      blur: 12,                                   // 強いぼかしでshadow強化
+      compose: "screen"                           // 明るく光る効果
     });
 
     console.log('✨ Halloween Magic Activated!', halloweenBubbles);

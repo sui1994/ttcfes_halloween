@@ -23,7 +23,7 @@ window.bubblyOptimized = function (options) {
   const ctx = canvas.getContext("2d");
 
   // Enhanced shadow and blur effects for aquarium atmosphere
-  ctx.shadowColor = config.shadowColor || "#4fc3f7";
+  // ctx.shadowColor = config.shadowColor || "#4fc3f7";
   ctx.shadowBlur = config.blur || 6;
 
   // 🚀 最適化1: OffscreenCanvas for background gradient (if supported)
@@ -40,12 +40,8 @@ window.bubblyOptimized = function (options) {
     backgroundCtx = backgroundCanvas.getContext("2d");
   }
 
-  // Pre-render background gradient
-  const gradient = backgroundCtx.createLinearGradient(0, 0, width, height);
-  gradient.addColorStop(0, config.colorStart || "#3333ff");
-  gradient.addColorStop(1, config.colorStop || "#000066");
-  backgroundCtx.fillStyle = gradient;
-  backgroundCtx.fillRect(0, 0, width, height);
+  // Transparent background - let HTML background show through
+  backgroundCtx.clearRect(0, 0, width, height); // Completely transparent
 
   // 🚀 最適化2: Enhanced bubble count and properties for aquarium effect
   const bubbleCount = config.bubbles || Math.min(30, Math.floor(0.015 * (width + height)));
@@ -92,6 +88,10 @@ window.bubblyOptimized = function (options) {
   const targetFPS = 30; // Reduced from 60fps
   const frameInterval = 1000 / targetFPS;
 
+  // Anti-darkening: Force full redraw more frequently
+  let frameCount = 0;
+  const RESET_INTERVAL = 500; // Reset every 3 seconds (90 frames at 30fps)
+
   // 🚀 最適化5: Dirty rectangle tracking
   let needsFullRedraw = true;
 
@@ -108,18 +108,19 @@ window.bubblyOptimized = function (options) {
       return;
     }
     lastFrameTime = currentTime;
+    frameCount++;
 
-    // 🚀 最適化6: Clear only when necessary
-    if (needsFullRedraw) {
+    // 🚀 最適化6: No-darkening trail system
+    if (needsFullRedraw || frameCount % RESET_INTERVAL === 0) {
       ctx.clearRect(0, 0, width, height);
-      // Draw pre-rendered background
-      ctx.drawImage(backgroundCanvas, 0, 0);
       needsFullRedraw = false;
     } else {
-      // Partial clear with fade effect
-      ctx.globalCompositeOperation = "source-over";
-      ctx.fillStyle = "rgba(51, 51, 255, 0.02)"; // Very subtle fade
-      ctx.fillRect(0, 0, width, height);
+      // Alternative: Use globalAlpha for fade instead of overlay
+      ctx.save();
+      ctx.globalAlpha = 0.92; // More fade for better shadow visibility
+      ctx.globalCompositeOperation = "copy";
+      ctx.drawImage(canvas, 0, 0);
+      ctx.restore();
     }
 
     // 🚀 最適化7: Batch bubble rendering
@@ -188,8 +189,8 @@ window.bubblyOptimized = function (options) {
       backgroundCanvas.width = width;
       backgroundCanvas.height = height;
       const newGradient = backgroundCtx.createLinearGradient(0, 0, width, height);
-      newGradient.addColorStop(0, config.colorStart || "#3333ff");
-      newGradient.addColorStop(1, config.colorStop || "#000066");
+      // newGradient.addColorStop(0, config.colorStart || "#3333ff");
+      // newGradient.addColorStop(1, config.colorStop || "#000066");
       backgroundCtx.fillStyle = newGradient;
       backgroundCtx.fillRect(0, 0, width, height);
 
