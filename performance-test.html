@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Performance Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    .test-link {
+      display: block;
+      margin: 10px 0;
+      padding: 15px;
+      background: #f0f0f0;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+
+    .test-link:hover {
+      background: #e0e0e0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Halloween Aquarium - Performance Test</h1>
+
+  <a href="main.html" class="test-link">
+    🐌 Original Version (with bubbly-bg.js)
+  </a>
+
+  <a href="main-optimized.html" class="test-link">
+    🚀 Optimized Version (CSS bubbles only)
+  </a>
+
+  <h2>Test Instructions:</h2>
+  <ol>
+    <li>Open browser developer tools (F12)</li>
+    <li>Go to Performance tab</li>
+    <li>Start recording</li>
+    <li>Click each version link</li>
+    <li>Compare CPU usage and FPS</li>
+  </ol>
+
+  <h2>Expected Results:</h2>
+  <ul>
+    <li>CSS version: Lower CPU usage, higher FPS</li>
+    <li>Original version: Higher CPU usage, potential frame drops</li>
+  </ul>
+</body>
+
+</html>
