@@ -37,13 +37,13 @@
   <script>
     // Halloween水族館用の最適化されたバブル設定
     const bubbleEffect = bubblyOptimized({
-      colorStart: "#1a1a2e",     // 深い海の色
-      colorStop: "#16213e",      // より深い青
-      bubbles: 25,               // バブル数を増加
+      colorStart: "rgba(26, 26, 46, 0.3)",     // 半透明の深い海色
+      colorStop: "rgba(22, 33, 62, 0.5)",      // 半透明の深い青
+      bubbles: 30,                             // バブル数を増加
       animate: true,
-      shadowColor: "#4fc3f7",    // 青い光の影
-      blur: 6,                   // ぼかし効果
-      compose: "screen"          // より明るい合成モード
+      shadowColor: "#4fc3f7",                  // 青い光の影
+      blur: 8,                                 // ぼかし効果を強化
+      compose: "lighter"                       // より明るい合成モード
     });
 
     // デバッグ用：バブル効果の制御

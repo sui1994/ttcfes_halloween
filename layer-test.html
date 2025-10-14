@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Layer Test - Z-Index Fix</title>
+  <script src="js/bubbly-optimized.js"></script>
+  <link rel="stylesheet" type="text/css" href="preset_css/bkg.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #000;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .layer-info {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      z-index: 1000;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+    }
+
+    .layer {
+      margin: 5px 0;
+      padding: 5px;
+      border-left: 3px solid;
+    }
+
+    .layer-bg-grd {
+      border-color: #ff6b6b;
+    }
+
+    .layer-bg-sea {
+      border-color: #4ecdc4;
+    }
+
+    .layer-canvas {
+      border-color: #45b7d1;
+    }
+
+    .layer-content {
+      border-color: #96ceb4;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="layer-info">
+    <h3>🎭 Layer Structure</h3>
+    <div class="layer layer-bg-grd">-3: Background Gradient</div>
+    <div class="layer layer-bg-sea">-2: Sea Image</div>
+    <div class="layer layer-canvas">-1: Canvas Bubbles</div>
+    <div class="layer layer-content">0: Content (Fish, etc.)</div>
+  </div>
+
+  <!-- Background layers -->
+  <div class="bg_grd"></div>
+  <div class="bg_sea">
+    <img src="bkg_img/background_sea.jpg" width="100%" height="100%">
+  </div>
+
+  <!-- Canvas bubbles -->
+  <script>
+    console.log('Initializing layer test...');
+
+    const bubbleEffect = bubblyOptimized({
+      colorStart: "rgba(51, 51, 255, 0.3)",
+      colorStop: "rgba(0, 0, 102, 0.5)",
+      bubbles: 20,
+      animate: true,
+      shadowColor: "#4fc3f7",
+      blur: 6,
+      compose: "lighter"
+    });
+
+    console.log('Bubbles initialized:', bubbleEffect);
+
+    // Check canvas z-index
+    setTimeout(() => {
+      const canvas = document.querySelector('canvas');
+      if (canvas) {
+        console.log('Canvas found:', {
+          zIndex: canvas.style.zIndex,
+          position: canvas.style.position,
+          width: canvas.width,
+          height: canvas.height
+        });
+      } else {
+        console.error('Canvas not found!');
+      }
+    }, 1000);
+  </script>
+
+  <!-- Test content -->
+  <div style="position: absolute; bottom: 50px; left: 50px; color: white; z-index: 10;">
+    <h2>🐠 Test Fish (z-index: 10)</h2>
+    <p>If you can see bubbles behind this text, the layers are working correctly!</p>
+  </div>
+</body>
+
+</html>

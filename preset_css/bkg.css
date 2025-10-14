@@ -1,5 +1,5 @@
 body {
- padding: 0;
+   padding: 0;
 }
 
 
@@ -10,55 +10,58 @@ body {
    left: 0;
    width: 100%;
    height: 100%;
+   z-index: -3;
+   /* 最背面に配置 */
 
-/* グラデーションの作成 */
+   /* グラデーションの作成 */
    background: linear-gradient(to bottom,
-   hsl(180, 100%, 90%),
-   hsl(320, 100%, 50%),
-   hsl(0, 0%, 0%));
+         hsl(180, 100%, 90%),
+         hsl(320, 100%, 50%),
+         hsl(0, 0%, 0%));
    background-size: 400% 400%;
    animation: AnimationName 20s ease infinite;
-    }
+}
 
-   @keyframes AnimationName {
-      0% {
-        background-position: 50% 0%
-      }
-      50% {
-        background-position: 50% 100%
-      }
-      100% {
-        background-position: 50% 0%
-      }
-    }   
+@keyframes AnimationName {
+   0% {
+      background-position: 50% 0%
+   }
+
+   50% {
+      background-position: 50% 100%
+   }
+
+   100% {
+      background-position: 50% 0%
+   }
+}
 
 /* 背景 海中 */
 .bg_sea {
    position: absolute;
-   opacity:0.6;
+   opacity: 0.6;
    top: 0;
    left: 0;
    width: 100%;
-   }
+   z-index: -2;
+   /* Canvas bubbles (-1) より背面に配置 */
+}
 
 
 .bg_snd {
    position: absolute;
    bottom: -0.8%;
-   left: 0; 
+   left: 0;
    z-index: 90;
-   
-   }
 
-/* 泡 最前面　*/  
+}
+
+/* 泡 最前面　*/
 .buble {
    position: absolute;
-   opacity:0.4;  
+   opacity: 0.4;
    bottom: 0;
    left: 0;
    width: 100%;
    height: 100%;
-   }
-
-
-
+}
