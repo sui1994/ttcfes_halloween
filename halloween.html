@@ -12,6 +12,9 @@
   <!-- ハローウィン専用CSS -->
   <!-- <link rel="stylesheet" type="text/css" href="preset_css/halloween-bkg.css"> -->
 
+  <!-- <link rel="stylesheet" type="text/css" href="css/halloween.css"> -->
+  <link rel="stylesheet" type="text/css" href="preset_css/preset_halloween.css">
+
   <style>
     body {
       background: #1a1a1a;
@@ -25,8 +28,8 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
+      width: 100vw;
+      height: 100vh;
       z-index: -5;
       background-image: url('bkg_img/background_halloween.jpg');
       background-size: cover;
@@ -34,11 +37,11 @@
       background-repeat: no-repeat;
     }
 
-    /* 月の配置（右上） */
+    /* 月の配置（） */
     .moon {
       position: absolute;
-      top: 5%;
-      right: 8%;
+      top: 30%;
+      left: 30%;
       z-index: -1;
       width: 350px;
       height: auto;
@@ -58,6 +61,116 @@
       }
     }
 
+    /* スポットライト1の配置 */
+    .spotlight1 {
+      position: absolute;
+      top: 10%;
+      left: -300px;
+      /* 画面外から開始 */
+      z-index: -1;
+      opacity: 0;
+      animation: spotlightMove1 12s ease-in-out infinite;
+      filter: drop-shadow(0 0 30px rgba(255, 193, 7, 0.5));
+    }
+
+    /* スポットライト2の配置 */
+    .spotlight2 {
+      position: absolute;
+      top: 15%;
+      right: -300px;
+      /* 画面外から開始 */
+      z-index: -1;
+      opacity: 0;
+      animation: spotlightMove2 12s ease-in-out infinite;
+      filter: drop-shadow(0 0 30px rgba(255, 107, 53, 0.5)) brightness(1.2);
+    }
+
+    @keyframes spotlightMove1 {
+      0% {
+        left: -200px;
+        opacity: 0;
+        transform: scale(0.8) rotate(-10deg);
+      }
+
+      10% {
+        left: 10%;
+        opacity: 0.8;
+        transform: scale(1) rotate(0deg);
+      }
+
+      25% {
+        left: 15%;
+        opacity: 1;
+        transform: scale(1.1) rotate(2deg);
+      }
+
+      40% {
+        left: 50%;
+        opacity: 0.9;
+        transform: scale(1) rotate(-2deg);
+      }
+
+      50% {
+        left: 100%;
+        opacity: 0.3;
+        transform: scale(0.9) rotate(5deg);
+      }
+
+      60% {
+        left: 120%;
+        opacity: 0;
+        transform: scale(0.8) rotate(10deg);
+      }
+
+      100% {
+        left: -300px;
+        opacity: 0;
+        transform: scale(0.8) rotate(-10deg);
+      }
+    }
+
+    @keyframes spotlightMove2 {
+      0% {
+        right: -300px;
+        opacity: 0;
+        transform: scale(0.9) rotate(10deg);
+      }
+
+      50% {
+        right: -300px;
+        opacity: 0;
+        transform: scale(0.9) rotate(10deg);
+      }
+
+      60% {
+        right: 10%;
+        opacity: 0.7;
+        transform: scale(1) rotate(-2deg);
+      }
+
+      75% {
+        right: 15%;
+        opacity: 1;
+        transform: scale(1.1) rotate(0deg);
+      }
+
+      90% {
+        right: 50%;
+        opacity: 0.8;
+        transform: scale(1) rotate(3deg);
+      }
+
+      100% {
+        right: 100%;
+        opacity: 0;
+        transform: scale(0.8) rotate(-5deg);
+      }
+    }
+
+
+
+
+
     /* 町の配置（真ん中） */
     .town {
       position: absolute;
@@ -65,8 +178,8 @@
       left: 50%;
       transform: translateX(-50%);
       z-index: -1;
-      width: 1325px;
-      height: 540px;
+      width: auto;
+      height: 430px;
       /* width: 2650px;
       height: 1080px; */
       opacity: 0.8;
@@ -485,8 +598,12 @@
   <!-- 3. 月（右上） -->
   <img src="img/moon.png" alt="Halloween Moon" class="moon">
 
-  <!-- 4. 町（真ん中） -->
-  <img src="img/town.png" alt="Halloween Town" class="town">
+  <!-- 4. スポットライト（交互出現） -->
+  <img src="img/spotlight_1.png" alt="Spotlight 1" class="spotlight1">
+  <img src="img/spotlight_2.png" alt="Spotlight 2" class="spotlight2">
+
+  <!-- 5. 町（真ん中） -->
+  <img src="img/town_5.png" alt="Halloween Town" class="town">
 
   <!-- ハローウィン魔法のバブル -->
   <script>
@@ -542,24 +659,24 @@
     <div class="leaf3"><img src="bkg_img/leaf04.png"></div>
   </div> -->
 
-  <!-- ハローウィン魚たち -->
+  <!-- ハローウィンのキャラクターたち -->
   <!-- <div class="nemo1 halloween-filter">
-    <img src="preset_img/nemo.png" width="50px" height="auto">
+    <img src="preset_img/obake.png" width="250px" height="auto">
   </div>
 
   <div class="dory halloween-filter">
     <img src="preset_img/dory.png" width="70px" height="auto">
+  </div> -->
+
+  <div class="obake halloween-filter">
+    <img src="preset_img/obake.png" width="150px" height="auto">
   </div>
 
-  <div class="chouchou halloween-filter">
-    <img src="preset_img/chouchou.png" width="150px" height="auto">
+  <div class="neko halloween-filter">
+    <img src="preset_img/neko.gif" width="100px" height="auto">
   </div>
 
-  <div class="angelfish1 halloween-filter">
-    <img src="preset_img/angelfish.gif" width="100px" height="auto">
-  </div>
-
-  <div class="angelfish2 halloween-filter">
+  <!-- <div class="angelfish2 halloween-filter">
     <img src="preset_img/angelfish.gif" width="100px" height="auto">
   </div>
 
@@ -573,7 +690,7 @@
 
   <div class="jellyfish1 halloween-filter">
     <img src="preset_img/jellyfish.gif">
-  </div> -->
+  </div>  -->
 
   <!-- 砂地（ハローウィン調整） -->
   <!-- <div class="bg_snd halloween-filter">
