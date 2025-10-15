@@ -14,7 +14,7 @@ window.bubblyOptimized = function (options) {
 
   // Canvas setup (only if not already in DOM)
   if (canvas.parentNode === null) {
-    canvas.setAttribute("style", "position:fixed;z-index:-1;left:0;top:0;min-width:100vw;min-height:100vh;");
+    canvas.setAttribute("style", "position:fixed;z-index:-2;left:0;top:0;min-width:100vw;min-height:100vh;");
     width = canvas.width = window.innerWidth;
     height = canvas.height = window.innerHeight;
     document.body.appendChild(canvas);

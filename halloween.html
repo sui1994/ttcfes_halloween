@@ -39,8 +39,8 @@
       position: absolute;
       top: 5%;
       right: 8%;
-      z-index: -3;
-      width: 150px;
+      z-index: -1;
+      width: 350px;
       height: auto;
       opacity: 0.9;
       animation: moonGlow 6s ease-in-out infinite alternate;
@@ -61,12 +61,14 @@
     /* 町の配置（真ん中） */
     .town {
       position: absolute;
-      bottom: 5%;
+      bottom: 0%;
       left: 50%;
       transform: translateX(-50%);
-      z-index: -2;
-      width: 600px;
-      height: auto;
+      z-index: -1;
+      width: 1325px;
+      height: 540px;
+      /* width: 2650px;
+      height: 1080px; */
       opacity: 0.8;
       filter:
         sepia(0.3) hue-rotate(25deg) saturate(1.2) brightness(0.7) drop-shadow(0 0 15px rgba(255, 107, 53, 0.4));
@@ -235,8 +237,8 @@
     /* 光る紙吹雪エフェクト */
     .confetti {
       position: absolute;
-      width: 8px;
-      height: 8px;
+      width: 18px;
+      height: 18px;
       background: linear-gradient(45deg, #ffc107, #ff6b35);
       border-radius: 2px;
       box-shadow: 0 0 10px rgba(255, 193, 7, 0.8);
@@ -353,6 +355,54 @@
       animation-delay: 4.2s;
     }
 
+    .confetti:nth-child(13) {
+      left: 45%;
+      animation-duration: 11s;
+      animation-delay: 2.8s;
+    }
+
+    .confetti:nth-child(14) {
+      left: 55%;
+      animation-duration: 14s;
+      animation-delay: 0.3s;
+    }
+
+    .confetti:nth-child(15) {
+      left: 65%;
+      animation-duration: 8s;
+      animation-delay: 3.7s;
+    }
+
+    .confetti:nth-child(16) {
+      left: 75%;
+      animation-duration: 12s;
+      animation-delay: 1.9s;
+    }
+
+    .confetti:nth-child(17) {
+      left: 85%;
+      animation-duration: 10s;
+      animation-delay: 4.5s;
+    }
+
+    .confetti:nth-child(18) {
+      left: 95%;
+      animation-duration: 13s;
+      animation-delay: 0.7s;
+    }
+
+    .confetti:nth-child(19) {
+      left: 5%;
+      animation-duration: 9s;
+      animation-delay: 2.3s;
+    }
+
+    .confetti:nth-child(20) {
+      left: 12%;
+      animation-duration: 15s;
+      animation-delay: 3.1s;
+    }
+
     /* 魔法の光効果 */
     .magic-glow {
       position: absolute;
@@ -400,6 +450,14 @@
 
 <body>
   <!-- 光る紙吹雪エフェクト -->
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
   <div class="confetti"></div>
   <div class="confetti"></div>
   <div class="confetti"></div>
