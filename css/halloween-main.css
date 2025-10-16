@@ -23,7 +23,7 @@ body {
 /* 月の配置 */
 .moon {
   position: absolute;
-  top: 35%;
+  top: 37%;
   left: 45%;
   z-index: -1;
   width: 350px;
