@@ -24,7 +24,7 @@ body {
 .moon {
   position: absolute;
   top: 35%;
-  left: 25%;
+  left: 45%;
   z-index: -1;
   width: 350px;
   height: auto;
