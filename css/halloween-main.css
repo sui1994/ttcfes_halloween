@@ -1,0 +1,45 @@
+/* ハローウィンメインスタイル */
+body {
+  background: #1a1a1a;
+  overflow: hidden;
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+}
+
+/* ハローウィン背景画像 */
+.halloween-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -5;
+  background-image: url('../bkg_img/background_halloween.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* 月の配置 */
+.moon {
+  position: absolute;
+  top: 30%;
+  left: 30%;
+  z-index: -1;
+  width: 350px;
+  height: auto;
+  opacity: 0.9;
+  animation: moonGlow 6s ease-in-out infinite alternate;
+}
+
+@keyframes moonGlow {
+  from {
+    opacity: 0.8;
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
+  }
+
+  to {
+    opacity: 1;
+    filter: drop-shadow(0 0 40px rgba(255, 255, 255, 0.6));
+  }
+}

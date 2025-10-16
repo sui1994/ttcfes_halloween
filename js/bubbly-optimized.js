@@ -216,3 +216,123 @@ window.bubblyOptimized = function (options) {
     },
   };
 };
+
+// DOMが読み込まれてから実行
+document.addEventListener("DOMContentLoaded", function () {
+  // BGM自動再生の設定
+  const bgmAudio = document.getElementById("halloween-bgm");
+
+  if (bgmAudio) {
+    // 音量を調整（0.0-1.0）
+    bgmAudio.volume = 0.3;
+
+    // 自動再生を試行
+    const playBGM = () => {
+      bgmAudio.play().catch((error) => {
+        console.log("BGM自動再生がブロックされました:", error);
+        // ユーザーの最初のクリックで再生開始
+        document.addEventListener(
+          "click",
+          function startBGM() {
+            bgmAudio.play();
+            document.removeEventListener("click", startBGM);
+          },
+          { once: true }
+        );
+      });
+    };
+
+    // ページ読み込み後すぐに再生試行
+    playBGM();
+  }
+  // アニメーション有りのbat1
+  const bat1 = document.querySelector(".bat1");
+  // アニメーション無しのbat1-static
+  const bat1Static = document.querySelector(".bat1-static");
+
+  // アニメーション有りのbat1のクリックイベント
+  if (bat1) {
+    bat1.addEventListener("click", function () {
+      // 視覚エフェクト
+      this.classList.add("clicked");
+      setTimeout(() => {
+        this.classList.remove("clicked");
+      }, 3000);
+
+      // 音楽再生
+      try {
+        const audio = new Audio("preset_music/happyhalloween.mp3");
+        audio.play().catch((error) => {
+          console.log("音楽再生エラー:", error);
+        });
+      } catch (error) {
+        console.log("音楽ファイル読み込みエラー:", error);
+      }
+    });
+  } else {
+    console.log(".bat1要素が見つかりません");
+  }
+
+  // アニメーション無しのbat1-staticのクリックイベント
+  if (bat1Static) {
+    bat1Static.addEventListener("click", function () {
+      // 視覚エフェクト
+      this.classList.add("clicked");
+      setTimeout(() => {
+        this.classList.remove("clicked");
+      }, 3000);
+
+      // 音楽再生
+      try {
+        const audio = new Audio("preset_music/happyhalloween.mp3");
+        audio.play().catch((error) => {
+          console.log("音楽再生エラー:", error);
+        });
+      } catch (error) {
+        console.log("音楽ファイル読み込みエラー:", error);
+      }
+    });
+  } else {
+    console.log(".bat1-static要素が見つかりません");
+  }
+
+  // スパイダーのランダム出現制御
+  const spider = document.querySelector(".spider");
+
+  if (spider) {
+    // ランダムな間隔でスパイダーの位置を変更
+    setInterval(() => {
+      const randomTop = 5 + Math.random() * 20; // 5%-25%の範囲
+      const randomRight = 8 + Math.random() * 17; // 8%-25%の範囲
+      const randomRotation = -15 + Math.random() * 30; // -15deg ~ 15deg
+      const randomScale = 0.8 + Math.random() * 0.6; // 0.8 ~ 1.4倍
+
+      spider.style.setProperty("--random-top", randomTop + "%");
+      spider.style.setProperty("--random-right", randomRight + "%");
+      spider.style.setProperty("--random-rotation", randomRotation + "deg");
+      spider.style.setProperty("--random-scale", randomScale);
+    }, 3000 + Math.random() * 4000); // 3-7秒間隔でランダム変更
+
+    // スパイダークリック時のエフェクト
+    spider.addEventListener("click", function () {
+      this.style.animation = "none";
+      this.style.transform = "scale(2) rotate(720deg)";
+      this.style.filter = "brightness(2) drop-shadow(0 0 20px #ff6b35)";
+
+      setTimeout(() => {
+        this.style.animation = "spiderRandomAppear 12s infinite";
+        this.style.transform = "";
+        this.style.filter = "";
+      }, 1000);
+
+      // スパイダー専用音効果（オプション）
+      try {
+        const spiderSound = new Audio("preset_music/happyhalloween.mp3");
+        spiderSound.volume = 0.2;
+        spiderSound.play().catch((error) => console.log("スパイダー音エラー:", error));
+      } catch (error) {
+        console.log("スパイダー音ファイルエラー:", error);
+      }
+    });
+  }
+});
