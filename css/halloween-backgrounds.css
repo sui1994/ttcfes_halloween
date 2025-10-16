@@ -9,7 +9,6 @@
   z-index: -1;
   width: auto;
   height: 400px;
-  opacity: 0.8;
   filter: sepia(0.3) hue-rotate(25deg) saturate(1.2) brightness(0.7) drop-shadow(0 0 15px rgba(255, 107, 53, 0.4));
   animation-name: bounce;
   animation-duration: 4s;

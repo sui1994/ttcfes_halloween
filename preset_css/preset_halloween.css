@@ -5,8 +5,8 @@
   width: 600px;
   /* 2倍サイズに変更 */
   height: auto;
-  top: 48%;
-  left: 62%;
+  top: 59%;
+  left: 51.5%;
   /* 中央配置の基準点 */
   transform: translateX(-50%);
   /* 中央揃え */
@@ -21,11 +21,11 @@
 
   0%,
   100% {
-    transform: scale(1.8) translateX(-50%) translateY(0px);
+    transform: scale(0.9) translateX(-50%) translateY(0px);
   }
 
   50% {
-    transform: scale(1.8) translateX(-50%) translateY(-8px);
+    transform: scale(0.9) translateX(-50%) translateY(-8px);
   }
 }
 
