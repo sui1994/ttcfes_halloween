@@ -9,3 +9,17 @@
 
 [build.environment]
   NODE_VERSION = "18"
+
+# ブランチデプロイ設定
+[context.production]
+  publish = "projects/Halloween_pre"
+
+[context.deploy-preview]
+  publish = "projects/Halloween_pre"
+
+[context.branch-deploy]
+  publish = "projects/Halloween_pre"
+
+# 特定ブランチの設定
+[context."fish-animation-version"]
+  publish = "projects/Halloween_pre"
