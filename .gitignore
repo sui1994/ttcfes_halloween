@@ -1,0 +1,93 @@
+# IDE設定ファイル
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS生成ファイル
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# ビルド出力
+dist/
+build/
+.next/
+out/
+*.tsbuildinfo
+
+# 環境変数
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ログファイル
+*.log
+logs/
+
+# 一時ファイル
+*.tmp
+*.temp
+.cache/
+
+# Kiro設定（プロジェクト固有でない場合）
+.kiro/settings/
+.kiro/cache/
+
+# バックアップファイル
+backups/
+project-backup/
+*.backup
+*.bak
+
+# 大きなメディアファイル（必要に応じて）
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.zip
+*.tar.gz
+*.rar
+
+# プロジェクト整理用スクリプト
+cleanup-projects.sh
+organize-projects.sh
+PROJECT_REORGANIZATION_PLAN.md
+
+# 開発用ファイル
+*.draft
+*.test
+*-temp.*
+
+# 大きなプロジェクトフォルダ（個別管理）
+projects/book-commerce-new/
+projects/mind-ar/
+projects/next-udemy-book-commerce-app-with-shincodecamp/
+projects/ttc-mind-ar/
+projects/Upload/
+projects/ttc_webserver/
+
+# 学習・開発用フォルダ
+learning/
+components/
+tools/
+types/
+assets/
+geminicli/
+my_wordpress_b/
+
+# Kiro設定全体
+.kiro/

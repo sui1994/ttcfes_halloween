@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>🎃 HALLOWEEN TOWN AQUARIUM 🌙</title>
+
+  <!-- ハローウィン専用JavaScript -->
+  <script src="js/bubbly-optimized.js"></script>
+
+  <!-- ハローウィン専用CSS -->
+  <link rel="stylesheet" type="text/css" href="preset_css/preset_halloween.css">
+  <link rel="stylesheet" type="text/css" href="css/halloween-main.css">
+  <link rel="stylesheet" type="text/css" href="css/halloween-backgrounds.css">
+  <link rel="stylesheet" type="text/css" href="css/halloween-spotlights.css">
+  <link rel="stylesheet" type="text/css" href="css/halloween-effects.css">
+</head>
+
+<body>
+  <!-- ハローウィンBGM -->
+  <audio id="halloween-bgm" loop preload="auto">
+    <source src="preset_music/helloween_fes.mp3" type="audio/mpeg">
+    お使いのブラウザはオーディオをサポートしていません。
+  </audio>
+
+  <!-- 光る紙吹雪エフェクト -->
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+  <div class="confetti"></div>
+
+  <!-- ハローウィンタイトル -->
+  <div class="halloween-title">🎃 HALLOWEEN TOWN 🌙</div>
+  <div class="halloween-subtitle">~ 透明バブル版 ~</div>
+
+  <!-- 背景レイヤー構造 -->
+  <!-- 1. ハローウィン背景画像（最背面） -->
+  <div class="halloween-background"></div>
+
+  <!-- 2. グラデーションオーバーレイ -->
+  <div class="halloween-bg-grd"></div>
+
+  <!-- 3. 月（右上） -->
+  <img src="img/moon.png" alt="Halloween Moon" class="moon">
+
+  <!-- 4. スポットライト（交互出現） -->
+  <img src="img/spotlight_1.png" alt="Spotlight 1" class="spotlight1">
+  <img src="img/spotlight_2.png" alt="Spotlight 2" class="spotlight2">
+
+  <!-- 5. 町（真ん中） -->
+  <img src="img/town_001.gif" alt="Halloween Town" class="town">
+
+  <!-- 6. スパイダーワイヤー（右上） -->
+  <img src="preset_img/spider-wire.png" alt="Spider Wire" class="spider-wire">
+
+  <!-- 7. スパイダー（ランダム出現） -->
+  <div class="spider halloween-filter">
+    <img src="preset_img/spider.gif" width="60px" height="auto">
+  </div>
+
+  <!-- ハローウィンのキャラクターたち -->
+  <div class="obake halloween-filter">
+    <img src="preset_img/obake.png" width="150px" height="auto">
+  </div>
+
+  <!-- <div class="neko halloween-filter">
+    <img src="preset_img/neko.gif" width="200px" height="auto">
+  </div> -->
+
+  <!-- ハローウィンのコウモリたち -->
+  <!-- アニメーション有りのコウモリ -->
+  <div class="bat1 halloween-filter">
+    <img src="preset_img/test_1.png" width="40px" height="auto">
+  </div>
+
+  <div class="bat2 halloween-filter">
+    <img src="preset_img/test_2.png" width="40px" height="auto">
+  </div>
+
+  <!-- アニメーション無しのコウモリ（静止） -->
+  <div class="bat1-static halloween-filter">
+    <img src="preset_img/bat_1.gif" width="80px" height="auto">
+  </div>
+
+  <div class="bat2-static halloween-filter">
+    <img src="preset_img/bat_2.gif" width="80px" height="auto">
+  </div>
+
+  <!-- ハローウィンのゴーストたち（5体） -->
+  <!-- <div class="ghost ghost1 halloween-filter">
+    <img src="preset_img/ghost.gif" width="70px" height="auto">
+  </div>
+
+  <div class="ghost ghost2 halloween-filter">
+    <img src="preset_img/ghost.gif" width="70px" height="auto">
+  </div>
+
+  <div class="ghost ghost3 halloween-filter">
+    <img src="preset_img/ghost.gif" width="70px" height="auto">
+  </div>
+
+  <div class="ghost ghost4 halloween-filter">
+    <img src="preset_img/ghost.gif" width="70px" height="auto">
+  </div>
+
+  <div class="ghost ghost5 halloween-filter">
+    <img src="preset_img/ghost.gif" width="70px" height="auto">
+  </div> -->
+
+  <!-- ハローウィンの効果音 -->
+  <audio id="halloween-sound" preload="auto">
+    <source src="preset_music/happyhalloween.mp3" type="audio/mpeg">
+  </audio>
+
+
+
+
+  <!-- ハローウィン魔法のバブル初期化 -->
+  <script src="js/halloween-init.js"></script>
+
+</body>
+
+</html>
