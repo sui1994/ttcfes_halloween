@@ -8,7 +8,7 @@
   width: 100vw;
   height: 100vh;
   pointer-events: none;
-  z-index: 50;
+  z-index: 800;
 }
 
 .character {
@@ -22,7 +22,7 @@
 
 .character img {
   display: block;
-  width: 40px;
+  width: 150px;
   height: auto;
   animation: float 3s ease-in-out infinite;
 }
