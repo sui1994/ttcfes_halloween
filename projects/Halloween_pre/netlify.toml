@@ -1,5 +1,6 @@
 [build]
   publish = "projects/Halloween_pre"
+  command = "echo 'No build command needed'"
 
 [[redirects]]
   from = "/*"
@@ -10,16 +11,19 @@
 [build.environment]
   NODE_VERSION = "18"
 
-# ブランチデプロイ設定
+# プロダクション（mainブランチ）設定
 [context.production]
   publish = "projects/Halloween_pre"
 
+# プルリクエストプレビュー設定
 [context.deploy-preview]
   publish = "projects/Halloween_pre"
 
+# ブランチデプロイ設定
 [context.branch-deploy]
   publish = "projects/Halloween_pre"
 
-# 特定ブランチの設定
+# fish-animation-versionブランチ専用設定
 [context."fish-animation-version"]
   publish = "projects/Halloween_pre"
+  command = "echo 'Fish animation version deployment'"
