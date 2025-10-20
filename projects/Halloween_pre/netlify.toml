@@ -1,0 +1,11 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/*"
+  to = "/main.html"
+  status = 200
+  force = false
+
+[build.environment]
+  NODE_VERSION = "18"
