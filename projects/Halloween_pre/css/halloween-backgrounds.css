@@ -8,8 +8,8 @@
   transform: translateX(-50%);
   z-index: -1;
   width: auto;
-  height: 425px;
-  filter: sepia(0.3) hue-rotate(25deg) saturate(1.2) brightness(0.7) drop-shadow(0 0 15px rgba(255, 107, 53, 0.4));
+  height:550px;
+
   animation-name: bounce;
   animation-duration: 4s;
   animation-timing-function: ease-in-out;
