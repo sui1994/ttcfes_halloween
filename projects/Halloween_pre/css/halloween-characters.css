@@ -1,4 +1,4 @@
-/* ハローウィンキャラクター横アニメーション CSS */
+/* ハローウィンキャラクター横アニメーション CSS - シンプルバージョン */
 
 /* 基本設定 */
 .character-container {
@@ -22,7 +22,7 @@
 
 .character img {
   display: block;
-  width: 150px;
+  width: 40px;
   height: auto;
   animation: float 3s ease-in-out infinite;
 }
@@ -40,7 +40,7 @@
   }
 }
 
-/* 左から右へのアニメーション（魚の動きを応用） */
+/* 左から右へのシンプルアニメーション */
 @keyframes slideFromLeft {
   0% {
     left: -100px;
@@ -54,18 +54,15 @@
   }
 
   25% {
-    left: 20vw;
-    transform: scale(1.1) rotate(5deg) skew(10deg, 5deg);
+    transform: scale(1.1) rotate(5deg);
   }
 
   50% {
-    left: 50vw;
-    transform: scale(0.9) rotate(-15deg) rotateY(180deg);
+    transform: scale(0.9) rotate(-15deg);
   }
 
   75% {
-    left: 80vw;
-    transform: scale(1.05) rotate(10deg) skew(-5deg, -3deg);
+    transform: scale(1.05) rotate(10deg);
   }
 
   90% {
@@ -75,11 +72,11 @@
   100% {
     left: 100vw;
     opacity: 1;
-    transform: scale(1) rotate(0deg) rotateY(0deg);
+    transform: scale(1) rotate(0deg);
   }
 }
 
-/* 右から左へのアニメーション（魚の動きを応用） */
+/* 右から左へのシンプルアニメーション */
 @keyframes slideFromRight {
   0% {
     right: -100px;
@@ -93,18 +90,15 @@
   }
 
   25% {
-    right: 20vw;
-    transform: scale(1.1) rotate(-5deg) skew(-10deg, -5deg);
+    transform: scale(1.1) rotate(-5deg);
   }
 
   50% {
-    right: 50vw;
-    transform: scale(0.9) rotate(15deg) rotateY(180deg);
+    transform: scale(0.9) rotate(15deg);
   }
 
   75% {
-    right: 80vw;
-    transform: scale(1.05) rotate(-10deg) skew(8deg, 4deg);
+    transform: scale(1.05) rotate(-10deg);
   }
 
   90% {
@@ -114,7 +108,7 @@
   100% {
     right: 100vw;
     opacity: 1;
-    transform: scale(1) rotate(0deg) rotateY(0deg);
+    transform: scale(1) rotate(0deg);
   }
 }
 
@@ -178,7 +172,7 @@
 .character5 {
   top: 28%;
   left: -100px;
-  animation: swimLikeLeft 18s ease-in-out infinite;
+  animation: slideFromLeft 15.5s linear infinite;
   animation-delay: 3s;
 }
 
@@ -192,7 +186,7 @@
 .character6 {
   top: 33%;
   right: -100px;
-  animation: swimLikeRight 20s ease-in-out infinite;
+  animation: slideFromRight 19s linear infinite;
   animation-delay: 1.5s;
 }
 
@@ -234,7 +228,7 @@
 .character9 {
   top: 48%;
   left: -100px;
-  animation: waveMotion 22s ease-in-out infinite;
+  animation: slideFromLeft 18.5s linear infinite;
   animation-delay: 5s;
 }
 
@@ -262,7 +256,7 @@
 .character11 {
   top: 58%;
   left: -100px;
-  animation: swimLikeLeft 19s ease-in-out infinite;
+  animation: slideFromLeft 16.8s linear infinite;
   animation-delay: 6s;
 }
 
@@ -290,7 +284,7 @@
 .character13 {
   top: 65%;
   left: -100px;
-  animation: waveMotion 21s ease-in-out infinite;
+  animation: slideFromLeft 18.8s linear infinite;
   animation-delay: 1.8s;
 }
 
@@ -333,29 +327,7 @@
   filter: hue-rotate(15deg) saturate(1.2) brightness(1.1);
 }
 
-/* レスポンシブ対応 */
-@media (max-width: 768px) {
-  .character img {
-    width: 30px;
-  }
-
-  .character:active {
-    transform: scale(1.8) rotate(180deg) !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .character img {
-    width: 25px;
-  }
-
-  .character:active {
-    transform: scale(1.5) rotate(180deg) !important;
-  }
-}
-
-/* 個別の浮遊効
-果バリエーション */
+/* 個別の浮遊効果バリエーション */
 .character1 img,
 .character7 img,
 .character13 img {
@@ -435,98 +407,23 @@
   animation: floatFast 2.2s ease-in-out infinite;
 }
 
-/* 魚
-のような曲線的な動きのアニメーション */
-@keyframes swimLikeLeft {
-  0% {
-    left: -100px;
-    top: 20%;
-    opacity: 0.7;
-    transform: scale(0.8) rotate(0deg);
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .character img {
+    width: 30px;
   }
 
-  30% {
-    left: 30vw;
-    top: 40%;
-    opacity: 1;
-    transform: scale(1.1) rotate(-15deg) skew(15deg, 8deg);
-  }
-
-  50% {
-    left: 60vw;
-    top: 25%;
-    transform: scale(0.9) rotate(10deg) rotateY(180deg);
-  }
-
-  100% {
-    left: 100vw;
-    top: 35%;
-    opacity: 1;
-    transform: scale(1) rotate(0deg) rotateY(0deg);
+  .character:active {
+    transform: scale(1.8) rotate(180deg) !important;
   }
 }
 
-@keyframes swimLikeRight {
-  0% {
-    right: -100px;
-    top: 15%;
-    opacity: 0.7;
-    transform: scale(0.8) rotate(0deg);
+@media (max-width: 480px) {
+  .character img {
+    width: 25px;
   }
 
-  30% {
-    right: 30vw;
-    top: 35%;
-    opacity: 1;
-    transform: scale(1.1) rotate(15deg) skew(-15deg, -8deg);
-  }
-
-  50% {
-    right: 60vw;
-    top: 50%;
-    transform: scale(0.9) rotate(-10deg) rotateY(180deg);
-  }
-
-  100% {
-    right: 100vw;
-    top: 20%;
-    opacity: 1;
-    transform: scale(1) rotate(0deg) rotateY(0deg);
-  }
-}
-
-/* 波のような上下動きのアニメーション */
-@keyframes waveMotion {
-  0% {
-    left: -100px;
-    opacity: 0.7;
-    transform: scale(0.8) rotate(0deg) translateY(0px);
-  }
-
-  20% {
-    left: 20vw;
-    opacity: 1;
-    transform: scale(1) rotate(-8deg) translateY(-15px) skew(5deg, 3deg);
-  }
-
-  40% {
-    left: 40vw;
-    transform: scale(1.1) rotate(12deg) translateY(10px) skew(-8deg, -4deg);
-  }
-
-  60% {
-    left: 60vw;
-    transform: scale(0.9) rotate(-5deg) translateY(-20px) rotateY(180deg);
-  }
-
-  80% {
-    left: 80vw;
-    transform: scale(1.05) rotate(15deg) translateY(5px) skew(10deg, 5deg);
-  }
-
-  100% {
-    left: 100vw;
-    opacity: 1;
-    transform: scale(1) rotate(0deg) translateY(0px) rotateY(0deg);
+  .character:active {
+    transform: scale(1.5) rotate(180deg) !important;
   }
 }
