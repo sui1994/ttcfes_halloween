@@ -1,9 +1,9 @@
 [build]
-  publish = "."
+  publish = "projects/Halloween_pre"
 
 [[redirects]]
   from = "/*"
-  to = "/main.html"
+  to = "/halloween.html"
   status = 200
   force = false
 
