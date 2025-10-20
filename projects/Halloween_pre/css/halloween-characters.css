@@ -391,8 +391,7 @@
   }
 }
 
-/* 個別の浮遊効
-果バリエーション */
+/* 個別の浮遊効果バリエーション */
 .character1 img,
 .character7 img,
 .character13 img {
@@ -472,8 +471,7 @@
   animation: floatFast 2.2s ease-in-out infinite;
 }
 
-/* 魚
-のような曲線的な動きのアニメーション */
+/* 魚のような曲線的な動きのアニメーション */
 @keyframes swimLikeLeft {
   0% {
     left: -100px;
