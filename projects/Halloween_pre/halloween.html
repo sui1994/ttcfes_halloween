@@ -21,7 +21,7 @@
 <body>
   <!-- ハローウィンBGM -->
   <audio id="halloween-bgm" loop preload="auto">
-    <source src="preset_music/helloween_fes.mp3" type="audio/mpeg">
+    <source src="preset_music/test_2.mp3" type="audio/mpeg">
     お使いのブラウザはオーディオをサポートしていません。
   </audio>
 
@@ -220,6 +220,85 @@
 
   <!-- ハローウィン魔法のバブル初期化 -->
   <script src="js/halloween-init.js"></script>
+
+  <!-- 音楽制御スクリプト -->
+  <script>
+    // 音楽制御の初期化
+    document.addEventListener('DOMContentLoaded', function () {
+      const bgm = document.getElementById('halloween-bgm');
+      const sound = document.getElementById('halloween-sound');
+      let musicStarted = false;
+
+      // 音楽開始ボタンを作成
+      const musicButton = document.createElement('button');
+      musicButton.innerHTML = '🎵 音楽を開始';
+      musicButton.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        padding: 10px 20px;
+        background: rgba(255, 107, 53, 0.9);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 16px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        transition: all 0.3s ease;
+      `;
+
+      musicButton.addEventListener('mouseenter', function () {
+        this.style.background = 'rgba(255, 107, 53, 1)';
+        this.style.transform = 'scale(1.05)';
+      });
+
+      musicButton.addEventListener('mouseleave', function () {
+        this.style.background = 'rgba(255, 107, 53, 0.9)';
+        this.style.transform = 'scale(1)';
+      });
+
+      // 音楽開始/停止の制御
+      musicButton.addEventListener('click', function () {
+        if (!musicStarted) {
+          // BGM開始
+          bgm.play().then(() => {
+            console.log('🎃 Halloween BGM started!');
+            musicButton.innerHTML = '🔇 音楽を停止';
+            musicStarted = true;
+          }).catch(error => {
+            console.error('BGM再生エラー:', error);
+            musicButton.innerHTML = '❌ 音楽エラー';
+          });
+        } else {
+          // BGM停止
+          bgm.pause();
+          bgm.currentTime = 0;
+          musicButton.innerHTML = '🎵 音楽を開始';
+          musicStarted = false;
+          console.log('🎃 Halloween BGM stopped!');
+        }
+      });
+
+      // ボタンをページに追加
+      document.body.appendChild(musicButton);
+
+      // キャラクタークリック時の効果音
+      const characters = document.querySelectorAll('.character');
+      characters.forEach(character => {
+        character.addEventListener('click', function () {
+          if (sound && musicStarted) {
+            sound.currentTime = 0;
+            sound.play().catch(error => {
+              console.error('効果音再生エラー:', error);
+            });
+          }
+        });
+      });
+
+      console.log('🎃 Halloween音楽システム初期化完了!');
+    });
+  </script>
 
 </body>
 
