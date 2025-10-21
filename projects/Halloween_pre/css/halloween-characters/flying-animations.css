@@ -298,6 +298,89 @@
   z-index: 120;
 }
 
+/* 🎃 キャラクター16 - 新キャラ1 */
+.character16 {
+  top: 8%;
+  right: -100px;
+  animation: swimLikeRight 20.5s ease-in-out infinite;
+  animation-delay: 6.2s;
+}
+
+.character16:active {
+  transform: scale(2.4) rotate(450deg);
+  filter: brightness(2) drop-shadow(0 0 30px #ff1493);
+  z-index: 120;
+}
+
+/* 🌟 キャラクター17 - 新キャラ2 */
+.character17 {
+  top: 15%;
+  left: -100px;
+  animation: waveMotion 23s ease-in-out infinite;
+  animation-delay: 7.5s;
+}
+
+.character17:active {
+  transform: scale(2.7) rotate(-450deg);
+  filter: brightness(2) drop-shadow(0 0 30px #00ff7f);
+  z-index: 120;
+}
+
+/* 🦋 キャラクター18 - 新キャラ3 */
+.character18 {
+  top: 25%;
+  right: -100px;
+  animation: swimLikeRight 21.8s linear infinite;
+  animation-delay: 3.8s;
+}
+
+.character18:active {
+  transform: scale(2.9) rotate(540deg);
+  filter: brightness(2) drop-shadow(0 0 30px #ff4500);
+  z-index: 120;
+}
+
+/* 🌙 キャラクター19 - 新キャラ4 */
+.character19 {
+  top: 35%;
+  left: -100px;
+  animation: waveMotion 24s ease-in-out infinite;
+  animation-delay: 8.7s;
+}
+
+.character19:active {
+  transform: scale(2.5) rotate(-540deg);
+  filter: brightness(2) drop-shadow(0 0 30px #9370db);
+  z-index: 120;
+}
+
+/* ⭐ キャラクター20 - 新キャラ5 */
+.character20 {
+  top: 45%;
+  right: -100px;
+  animation: swimLikeRight 22.3s linear infinite;
+  animation-delay: 4.9s;
+}
+
+.character20:active {
+  transform: scale(3.0) rotate(630deg);
+  filter: brightness(2) drop-shadow(0 0 30px #ffd700);
+  z-index: 120;
+}
+
+/* 基本の浮遊効果 */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
 /* 個別の浮遊効
 果バリエーション */
 .character1 img,
@@ -319,6 +402,31 @@
 .character15 img {
   animation: float 2.5s ease-in-out infinite;
   animation-delay: 0.8s;
+}
+
+.character16 img {
+  animation: float 3.3s ease-in-out infinite;
+  animation-delay: 0.6s;
+}
+
+.character17 img {
+  animation: floatSlow 3.8s ease-in-out infinite;
+  animation-delay: 0.9s;
+}
+
+.character18 img {
+  animation: floatFast 2.7s ease-in-out infinite;
+  animation-delay: 0.1s;
+}
+
+.character19 img {
+  animation: float 3.6s ease-in-out infinite;
+  animation-delay: 1.2s;
+}
+
+.character20 img {
+  animation: floatSlow 4.2s ease-in-out infinite;
+  animation-delay: 0.4s;
 }
 
 .character4 img,
@@ -368,6 +476,72 @@
   }
 }
 
+/* 🐠 新しい魚のような動きパターン */
+@keyframes fishDive {
+  0% {
+    left: -100px;
+    opacity: 0.7;
+    transform: scale(0.8) rotate(0deg) translateY(0px);
+  }
+
+  25% {
+    left: 25vw;
+    opacity: 1;
+    transform: scale(1.2) rotate(-20deg) translateY(-40px) skew(12deg, 6deg);
+  }
+
+  50% {
+    left: 50vw;
+    transform: scale(0.8) rotate(25deg) translateY(30px) rotateY(180deg);
+  }
+
+  75% {
+    left: 75vw;
+    transform: scale(1.1) rotate(-15deg) translateY(-25px) skew(-10deg, -5deg);
+  }
+
+  100% {
+    left: 100vw;
+    opacity: 1;
+    transform: scale(1) rotate(0deg) translateY(0px) rotateY(0deg);
+  }
+}
+
+@keyframes fishSpiral {
+  0% {
+    right: -100px;
+    opacity: 0.7;
+    transform: scale(0.8) rotate(0deg) translateY(0px);
+  }
+
+  20% {
+    right: 20vw;
+    opacity: 1;
+    transform: scale(1.1) rotate(30deg) translateY(-35px) skew(-15deg, -8deg);
+  }
+
+  40% {
+    right: 40vw;
+    transform: scale(0.9) rotate(-25deg) translateY(40px) rotateX(180deg);
+  }
+
+  60% {
+    right: 60vw;
+    transform: scale(1.2) rotate(20deg) translateY(-30px) skew(18deg, 9deg);
+  }
+
+  80% {
+    right: 80vw;
+    transform: scale(0.85) rotate(-35deg) translateY(20px) rotateY(180deg);
+  }
+
+  100% {
+    right: 100vw;
+    opacity: 1;
+    transform: scale(1) rotate(0deg) translateY(0px) rotateX(0deg) rotateY(0deg);
+  }
+}
+
 /* 特別なキャラクターに異なる浮遊効果を適用 */
 .character4 img,
 .character10 img {
@@ -377,4 +551,36 @@
 .character5 img,
 .character11 img {
   animation: floatFast 2.2s ease-in-out infinite;
+}
+
+/* 新キャラクターに特別な魚のような動きを適用 */
+.character17 {
+  animation: fishDive 23s ease-in-out infinite;
+  animation-delay: 7.5s;
+}
+
+.character19 {
+  animation: fishSpiral 24s ease-in-out infinite;
+  animation-delay: 8.7s;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .character img {
+    width: 30px;
+  }
+
+  .character:active {
+    transform: scale(1.8) rotate(180deg) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .character img {
+    width: 25px;
+  }
+
+  .character:active {
+    transform: scale(1.5) rotate(180deg) !important;
+  }
 }
