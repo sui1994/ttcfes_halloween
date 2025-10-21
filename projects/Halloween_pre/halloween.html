@@ -10,18 +10,21 @@
   <script src="js/bubbly-optimized.js"></script>
 
   <!-- ハローウィン専用CSS -->
-  <link rel="stylesheet" type="text/css" href="preset_css/preset_halloween.css">
   <link rel="stylesheet" type="text/css" href="css/halloween-main.css">
   <link rel="stylesheet" type="text/css" href="css/halloween-backgrounds.css">
   <link rel="stylesheet" type="text/css" href="css/halloween-spotlights.css">
   <link rel="stylesheet" type="text/css" href="css/halloween-effects.css">
-  <link rel="stylesheet" type="text/css" href="css/halloween-characters.css">
+  <!-- 分割されたキャラクターCSS -->
+  <link rel="stylesheet" type="text/css" href="css/halloween-characters/shared-base.css">
+  <link rel="stylesheet" type="text/css" href="css/halloween-characters/fixed-characters.css">
+  <link rel="stylesheet" type="text/css" href="css/halloween-characters/flying-animations.css">
+  <link rel="stylesheet" type="text/css" href="css/halloween-characters/walking-animations.css">
 </head>
 
 <body>
   <!-- ハローウィンBGM -->
   <audio id="halloween-bgm" loop preload="auto">
-    <source src="preset_music/test_2.mp3" type="audio/mpeg">
+    <source src="preset_music/halloween_bgm.mp3" type="audio/mpeg">
     お使いのブラウザはオーディオをサポートしていません。
   </audio>
 
@@ -69,31 +72,29 @@
   <div class="halloween-bg-grd"></div>
 
   <!-- 3. 月（右上） -->
-  <img src="img/moon.png" alt="Halloween Moon" class="moon">
+  <img src="images/fixed/backgrounds/moon.png" alt="Halloween Moon" class="moon">
 
   <!-- 4. スポットライト（交互出現） -->
-  <img src="img/spotlight_1.png" alt="Spotlight 1" class="spotlight1">
-  <img src="img/spotlight_2.png" alt="Spotlight 2" class="spotlight2">
+  <img src="images/fixed/backgrounds/spotlight_1.png" alt="Spotlight 1" class="spotlight1">
+  <img src="images/fixed/backgrounds/spotlight_2.png" alt="Spotlight 2" class="spotlight2">
 
   <!-- 5. 町（真ん中） -->
-  <img src="img/town_001.gif" alt="Halloween Town" class="town">
+  <img src="images/fixed/backgrounds/town_001.gif" alt="Halloween Town" class="town">
 
-  <!-- 6. スパイダーワイヤー（右上） -->
-  <img src="preset_img/spider-wire.png" alt="Spider Wire" class="spider-wire">
+  <!-- 🔒 6. スパイダーワイヤー（右上）【固定画像】 -->
+  <img src="images/fixed/decorations/spider-wire.png" alt="Spider Wire" class="spider-wire">
 
-  <!-- 7. スパイダー（ランダム出現） -->
+  <!-- 🔒 7. スパイダー（ランダム出現）【固定画像】 -->
   <div class="spider halloween-filter">
-    <img src="preset_img/spider.gif" width="60px" height="auto">
+    <img src="images/fixed/decorations/spider.gif" width="60px" height="auto">
   </div>
 
-  <!-- ハローウィンのキャラクターたち -->
+  <!-- 🔒 ハローウィンのキャラクターたち【固定画像】 -->
   <div class="obake halloween-filter">
-    <img src="preset_img/obake.png" width="150px" height="auto">
+    <img src="images/fixed/effects/obake.png" width="150px" height="auto">
   </div>
 
-  <!-- <div class="neko halloween-filter">
-    <img src="preset_img/neko.gif" width="200px" height="auto">
-  </div> -->
+
 
   <!-- ハローウィンのコウモリたち -->
   <!-- アニメーション有りのコウモリ -->
@@ -105,116 +106,121 @@
     <img src="preset_img/test_2.png" width="40px" height="auto">
   </div> -->
 
-  <!-- アニメーション無しのコウモリ（静止） -->
+  <!-- 🔒 アニメーション無しのコウモリ（静止）【固定画像】 -->
   <div class="bat1-static halloween-filter">
-    <img src="preset_img/bat_1.gif" width="80px" height="auto">
+    <img src="images/fixed/effects/bat_1.gif" width="80px" height="auto">
   </div>
 
   <div class="bat2-static halloween-filter">
-    <img src="preset_img/bat_2.gif" width="80px" height="auto">
+    <img src="images/fixed/effects/bat_2.gif" width="80px" height="auto">
   </div>
-
-  <!-- ハローウィンのゴーストたち（5体） -->
-  <!-- <div class="ghost ghost1 halloween-filter">
-    <img src="preset_img/ghost.gif" width="70px" height="auto">
-  </div>
-
-  <div class="ghost ghost2 halloween-filter">
-    <img src="preset_img/ghost.gif" width="70px" height="auto">
-  </div>
-
-  <div class="ghost ghost3 halloween-filter">
-    <img src="preset_img/ghost.gif" width="70px" height="auto">
-  </div>
-
-  <div class="ghost ghost4 halloween-filter">
-    <img src="preset_img/ghost.gif" width="70px" height="auto">
-  </div>
-
-  <div class="ghost ghost5 halloween-filter">
-    <img src="preset_img/ghost.gif" width="70px" height="auto">
-  </div> -->
 
   <!-- ハローウィンの効果音 -->
   <audio id="halloween-sound" preload="auto">
-    <source src="preset_music/test_2.mp3" type="audio/mpeg">
+    <source src="preset_music/halloween_bgm.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- 横からアニメーションするキャラクター15体 -->
+  <!-- 🔄 横からアニメーションするキャラクター15体 【画像入れ替え可能】 -->
   <div class="character-container">
-    <!-- キャラクター1 - テストキャラ -->
+    <!-- キャラクター1 -->
     <div class="character character1 halloween-filter">
-      <img src="preset_img/test_1.png" width="40px" height="auto">
+      <img src="images/changeable/flying-characters/character1.png" width="40px" height="auto">
     </div>
 
-    <!-- キャラクター2 - テストキャラ -->
+    <!-- キャラクター2 -->
     <div class="character character2 halloween-filter">
-      <img src="preset_img/test_2.png" width="40px" height="auto">
+      <img src="images/changeable/flying-characters/character2.png" width="40px" height="auto">
     </div>
 
-    <!-- キャラクター3 - テストキャラ -->
+    <!-- キャラクター3 -->
     <div class="character character3 halloween-filter">
-      <img src="preset_img/test_1.png" width="40px" height="auto">
+      <img src="images/changeable/flying-characters/character3.png" width="40px" height="auto">
     </div>
 
-    <!-- キャラクター4 - テストキャラ -->
+    <!-- キャラクター4 -->
     <div class="character character4 halloween-filter">
-      <img src="preset_img/test_2.png" width="40px" height="auto">
+      <img src="images/changeable/flying-characters/character4.png" width="40px" height="auto">
     </div>
 
-    <!-- キャラクター5 - テストキャラ -->
+    <!-- キャラクター5 -->
     <div class="character character5 halloween-filter">
-      <img src="preset_img/test_5.png" width="40px" height="auto">
+      <img src="images/changeable/flying-characters/character5.png" width="40px" height="auto">
     </div>
 
-    <!-- キャラクター6 - テストキャラ -->
+    <!-- キャラクター6 -->
     <div class="character character6 halloween-filter">
-      <img src="preset_img/test_2.png" width="40px" height="auto">
+      <img src="images/changeable/flying-characters/character6.png" width="40px" height="auto">
     </div>
 
-    <!-- キャラクター7 - テストキャラ -->
+    <!-- キャラクター7 -->
     <div class="character character7 halloween-filter">
-      <img src="preset_img/test_1.png" width="40px" height="auto">
+      <img src="images/changeable/flying-characters/character7.png" width="40px" height="auto">
     </div>
 
-    <!-- キャラクター8 - テストキャラ -->
+    <!-- キャラクター8 -->
     <div class="character character8 halloween-filter">
-      <img src="preset_img/test_2.png" width="40px" height="auto">
+      <img src="images/changeable/flying-characters/character8.png" width="40px" height="auto">
     </div>
 
-    <!-- キャラクター9 - テストキャラ -->
+    <!-- キャラクター9 -->
     <div class="character character9 halloween-filter">
-      <img src="preset_img/test_1.png" width="40px" height="auto">
+      <img src="images/changeable/flying-characters/character9.png" width="40px" height="auto">
     </div>
 
-    <!-- キャラクター10 - テストキャラ -->
+    <!-- キャラクター10 -->
     <div class="character character10 halloween-filter">
-      <img src="preset_img/test_2.png" width="40px" height="auto">
+      <img src="images/changeable/flying-characters/character10.png" width="40px" height="auto">
     </div>
 
-    <!-- キャラクター11 - テストキャラ -->
+    <!-- キャラクター11 -->
     <div class="character character11 halloween-filter">
-      <img src="preset_img/test_1.png" width="40px" height="auto">
+      <img src="images/changeable/flying-characters/character11.png" width="40px" height="auto">
     </div>
 
-    <!-- キャラクター12 - テストキャラ -->
+    <!-- キャラクター12 -->
     <div class="character character12 halloween-filter">
-      <img src="preset_img/test_2.png" width="40px" height="auto">
+      <img src="images/changeable/flying-characters/character12.png" width="40px" height="auto">
     </div>
 
-    <!-- キャラクター13 - テストキャラ -->
+    <!-- キャラクター13 -->
     <div class="character character13 halloween-filter">
-      <img src="preset_img/test_1.png" width="40px" height="auto">
+      <img src="images/changeable/flying-characters/character13.png" width="40px" height="auto">
     </div>
 
-    <!-- キャラクター14 - テストキャラ -->
+    <!-- キャラクター14 -->
     <div class="character character14 halloween-filter">
-      <img src="preset_img/test_2.png" width="40px" height="auto">
+      <img src="images/changeable/flying-characters/character14.png" width="40px" height="auto">
     </div>
 
-    <!-- キャラクター15 - テストキャラ -->
+    <!-- キャラクター15 -->
     <div class="character character15 halloween-filter">
-      <img src="preset_img/test_1.png" width="40px" height="auto">
+      <img src="images/changeable/flying-characters/character15.png" width="40px" height="auto">
+    </div>
+
+    <!-- 🔄 歩行キャラクター - 画面下部3%に配置 【画像入れ替え可能】 -->
+    <!-- 左から歩いてくるキャラ1 -->
+    <div class="walking-character walking-left halloween-filter">
+      <img src="images/changeable/walking-characters/walking-left-1.png" width="60px" height="auto">
+    </div>
+
+    <!-- 右から歩いてくるキャラ1 -->
+    <div class="walking-character walking-right halloween-filter">
+      <img src="images/changeable/walking-characters/walking-right-1.png" width="60px" height="auto">
+    </div>
+
+    <!-- 左から歩いてくるキャラ2 -->
+    <div class="walking-character walking-left-2 halloween-filter">
+      <img src="images/changeable/walking-characters/walking-left-2.png" width="60px" height="auto">
+    </div>
+
+    <!-- 右から歩いてくるキャラ2 -->
+    <div class="walking-character walking-right-2 halloween-filter">
+      <img src="images/changeable/walking-characters/walking-right-2.png" width="60px" height="auto">
+    </div>
+
+    <!-- 左から歩いてくるキャラ3 -->
+    <div class="walking-character walking-left-3 halloween-filter">
+      <img src="images/changeable/walking-characters/walking-left-3.png" width="60px" height="auto">
     </div>
   </div>
 

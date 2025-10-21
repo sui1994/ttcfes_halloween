@@ -1,74 +1,90 @@
-/* ハローウィンキャラクター - 横移動アニメーション（mainブランチ版） */
+/* ハローウィンキャラクター - 横移動アニメーション（fish-animation-version版） */
 
-/* 左から右へのシンプルアニメーション */
-@keyframes slideFromLeft {
+/* 🐟 魚のような曲線的な動きのアニメーション - 左から右 */
+@keyframes swimLikeLeft {
   0% {
     left: -100px;
     opacity: 0.7;
-    transform: scale(0.8) rotate(0deg);
+    transform: scale(0.8) rotate(0deg) translateY(0px);
   }
 
-  10% {
+  30% {
+    left: 30vw;
     opacity: 1;
-    transform: scale(1) rotate(-10deg);
-  }
-
-  25% {
-    transform: scale(1.1) rotate(5deg);
+    transform: scale(1.1) rotate(-15deg) skew(15deg, 8deg) translateY(-20px);
   }
 
   50% {
-    transform: scale(0.9) rotate(-15deg);
-  }
-
-  75% {
-    transform: scale(1.05) rotate(10deg);
-  }
-
-  90% {
-    transform: scale(0.95) rotate(-5deg);
+    left: 60vw;
+    transform: scale(0.9) rotate(10deg) rotateY(180deg) translateY(15px);
   }
 
   100% {
     left: 100vw;
     opacity: 1;
-    transform: scale(1) rotate(0deg);
+    transform: scale(1) rotate(0deg) rotateY(0deg) translateY(0px);
   }
 }
 
-/* 右から左へのシンプルアニメーション */
-@keyframes slideFromRight {
+/* 🐟 魚のような曲線的な動きのアニメーション - 右から左 */
+@keyframes swimLikeRight {
   0% {
     right: -100px;
     opacity: 0.7;
-    transform: scale(0.8) rotate(0deg);
+    transform: scale(0.8) rotate(0deg) translateY(0px);
   }
 
-  10% {
+  30% {
+    right: 30vw;
     opacity: 1;
-    transform: scale(1) rotate(10deg);
-  }
-
-  25% {
-    transform: scale(1.1) rotate(-5deg);
+    transform: scale(1.1) rotate(15deg) skew(-15deg, -8deg) translateY(-25px);
   }
 
   50% {
-    transform: scale(0.9) rotate(15deg);
-  }
-
-  75% {
-    transform: scale(1.05) rotate(-10deg);
-  }
-
-  90% {
-    transform: scale(0.95) rotate(5deg);
+    right: 60vw;
+    transform: scale(0.9) rotate(-10deg) rotateY(180deg) translateY(20px);
   }
 
   100% {
     right: 100vw;
     opacity: 1;
-    transform: scale(1) rotate(0deg);
+    transform: scale(1) rotate(0deg) rotateY(0deg) translateY(0px);
+  }
+}
+
+/* 🌊 波のような上下動きのアニメーション */
+@keyframes waveMotion {
+  0% {
+    left: -100px;
+    opacity: 0.7;
+    transform: scale(0.8) rotate(0deg) translateY(0px);
+  }
+
+  20% {
+    left: 20vw;
+    opacity: 1;
+    transform: scale(1) rotate(-8deg) translateY(-30px) skew(5deg, 3deg);
+  }
+
+  40% {
+    left: 40vw;
+    transform: scale(1.1) rotate(12deg) translateY(25px) skew(-8deg, -4deg);
+  }
+
+  60% {
+    left: 60vw;
+    transform: scale(0.9) rotate(-5deg) translateY(-35px) rotateY(180deg);
+  }
+
+  80% {
+    left: 80vw;
+    transform: scale(1.05) rotate(15deg) translateY(15px) skew(10deg, 5deg);
+  }
+
+  100% {
+    left: 100vw;
+    opacity: 1;
+    transform: scale(1) rotate(0deg) translateY(0px) rotateY(0deg);
   }
 }
 
@@ -76,7 +92,7 @@
 .character1 {
   top: 3%;
   left: -100px;
-  animation: slideFromLeft 15s linear infinite;
+  animation: swimLikeLeft 15s linear infinite;
   animation-delay: 0s;
 }
 
@@ -90,7 +106,7 @@
 .character2 {
   top: 10%;
   right: -100px;
-  animation: slideFromRight 16s linear infinite;
+  animation: swimLikeRight 16s linear infinite;
   animation-delay: 1s;
 }
 
@@ -104,7 +120,7 @@
 .character3 {
   top: 18%;
   left: -100px;
-  animation: slideFromLeft 17s linear infinite;
+  animation: swimLikeLeft 17s linear infinite;
   animation-delay: 2s;
 }
 
@@ -118,7 +134,7 @@
 .character4 {
   top: 22%;
   right: -100px;
-  animation: slideFromRight 18s linear infinite;
+  animation: swimLikeRight 18s linear infinite;
   animation-delay: 0.5s;
 }
 
@@ -132,7 +148,7 @@
 .character5 {
   top: 28%;
   left: -100px;
-  animation: slideFromLeft 15.5s linear infinite;
+  animation: swimLikeLeft 18s ease-in-out infinite;
   animation-delay: 3s;
 }
 
@@ -146,7 +162,7 @@
 .character6 {
   top: 33%;
   right: -100px;
-  animation: slideFromRight 19s linear infinite;
+  animation: swimLikeRight 20s ease-in-out infinite;
   animation-delay: 1.5s;
 }
 
@@ -160,7 +176,7 @@
 .character7 {
   top: 38%;
   left: -100px;
-  animation: slideFromLeft 16.5s linear infinite;
+  animation: waveMotion 16.5s linear infinite;
   animation-delay: 4s;
 }
 
@@ -174,7 +190,7 @@
 .character8 {
   top: 43%;
   right: -100px;
-  animation: slideFromRight 17.5s linear infinite;
+  animation: swimLikeRight 17.5s linear infinite;
   animation-delay: 2.5s;
 }
 
@@ -188,7 +204,7 @@
 .character9 {
   top: 48%;
   left: -100px;
-  animation: slideFromLeft 18.5s linear infinite;
+  animation: waveMotion 22s ease-in-out infinite;
   animation-delay: 5s;
 }
 
@@ -202,7 +218,7 @@
 .character10 {
   top: 54%;
   right: -100px;
-  animation: slideFromRight 15.8s linear infinite;
+  animation: swimLikeRight 15.8s linear infinite;
   animation-delay: 3.5s;
 }
 
@@ -216,7 +232,7 @@
 .character11 {
   top: 58%;
   left: -100px;
-  animation: slideFromLeft 16.8s linear infinite;
+  animation: swimLikeLeft 19s ease-in-out infinite;
   animation-delay: 6s;
 }
 
@@ -230,7 +246,7 @@
 .character12 {
   top: 62%;
   right: -100px;
-  animation: slideFromRight 17.8s linear infinite;
+  animation: swimLikeRight 17.8s linear infinite;
   animation-delay: 4.5s;
 }
 
@@ -244,7 +260,7 @@
 .character13 {
   top: 65%;
   left: -100px;
-  animation: slideFromLeft 18.8s linear infinite;
+  animation: waveMotion 21s ease-in-out infinite;
   animation-delay: 1.8s;
 }
 
@@ -258,7 +274,7 @@
 .character14 {
   top: 66%;
   right: -100px;
-  animation: slideFromRight 16.2s linear infinite;
+  animation: swimLikeRight 16.2s linear infinite;
   animation-delay: 5.5s;
 }
 
@@ -272,7 +288,7 @@
 .character15 {
   top: 70%;
   left: -100px;
-  animation: slideFromLeft 19.2s linear infinite;
+  animation: swimLikeLeft 19.2s linear infinite;
   animation-delay: 2.8s;
 }
 
@@ -282,7 +298,8 @@
   z-index: 120;
 }
 
-/* 個別の浮遊効果バリエーション */
+/* 個別の浮遊効
+果バリエーション */
 .character1 img,
 .character7 img,
 .character13 img {
