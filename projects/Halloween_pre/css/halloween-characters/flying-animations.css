@@ -1,98 +1,122 @@
-/* ハローウィンキャラクター - 横移動アニメーション（fish-animation-version版） */
+/* ハローウィンキャラクター横アニメーション CSS - シンプルバージョン */
 
-/* 🐟 魚のような曲線的な動きのアニメーション - 左から右 */
-@keyframes swimLikeLeft {
-  0% {
-    left: -100px;
-    opacity: 0.7;
-    transform: scale(0.8) rotate(0deg) translateY(0px);
-  }
+/* 基本設定 */
+.character-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 800;
+}
 
-  30% {
-    left: 30vw;
-    opacity: 1;
-    transform: scale(1.1) rotate(-15deg) skew(15deg, 8deg) translateY(-20px);
+.character {
+  position: absolute;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(.17, .67, .83, .67);
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+}
+
+.character img {
+  display: block;
+  width: 150px;
+  height: auto;
+  animation: float 3s ease-in-out infinite;
+}
+
+/* 浮遊効果 */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
   }
 
   50% {
-    left: 60vw;
-    transform: scale(0.9) rotate(10deg) rotateY(180deg) translateY(15px);
+    transform: translateY(-8px);
+  }
+}
+
+/* 左から右へのシンプルアニメーション */
+@keyframes slideFromLeft {
+  0% {
+    left: -100px;
+    opacity: 0.7;
+    transform: scale(0.8) rotate(0deg);
+  }
+
+  10% {
+    opacity: 1;
+    transform: scale(1) rotate(-10deg);
+  }
+
+  25% {
+    transform: scale(1.1) rotate(5deg);
+  }
+
+  50% {
+    transform: scale(0.9) rotate(-15deg);
+  }
+
+  75% {
+    transform: scale(1.05) rotate(10deg);
+  }
+
+  90% {
+    transform: scale(0.95) rotate(-5deg);
   }
 
   100% {
     left: 100vw;
     opacity: 1;
-    transform: scale(1) rotate(0deg) rotateY(0deg) translateY(0px);
+    transform: scale(1) rotate(0deg);
   }
 }
 
-/* 🐟 魚のような曲線的な動きのアニメーション - 右から左 */
-@keyframes swimLikeRight {
+/* 右から左へのシンプルアニメーション */
+@keyframes slideFromRight {
   0% {
     right: -100px;
     opacity: 0.7;
-    transform: scale(0.8) rotate(0deg) translateY(0px);
+    transform: scale(0.8) rotate(0deg);
   }
 
-  30% {
-    right: 30vw;
+  10% {
     opacity: 1;
-    transform: scale(1.1) rotate(15deg) skew(-15deg, -8deg) translateY(-25px);
+    transform: scale(1) rotate(10deg);
+  }
+
+  25% {
+    transform: scale(1.1) rotate(-5deg);
   }
 
   50% {
-    right: 60vw;
-    transform: scale(0.9) rotate(-10deg) rotateY(180deg) translateY(20px);
+    transform: scale(0.9) rotate(15deg);
+  }
+
+  75% {
+    transform: scale(1.05) rotate(-10deg);
+  }
+
+  90% {
+    transform: scale(0.95) rotate(5deg);
   }
 
   100% {
     right: 100vw;
     opacity: 1;
-    transform: scale(1) rotate(0deg) rotateY(0deg) translateY(0px);
+    transform: scale(1) rotate(0deg);
   }
 }
 
-/* 🌊 波のような上下動きのアニメーション */
-@keyframes waveMotion {
-  0% {
-    left: -100px;
-    opacity: 0.7;
-    transform: scale(0.8) rotate(0deg) translateY(0px);
-  }
-
-  20% {
-    left: 20vw;
-    opacity: 1;
-    transform: scale(1) rotate(-8deg) translateY(-30px) skew(5deg, 3deg);
-  }
-
-  40% {
-    left: 40vw;
-    transform: scale(1.1) rotate(12deg) translateY(25px) skew(-8deg, -4deg);
-  }
-
-  60% {
-    left: 60vw;
-    transform: scale(0.9) rotate(-5deg) translateY(-35px) rotateY(180deg);
-  }
-
-  80% {
-    left: 80vw;
-    transform: scale(1.05) rotate(15deg) translateY(15px) skew(10deg, 5deg);
-  }
-
-  100% {
-    left: 100vw;
-    opacity: 1;
-    transform: scale(1) rotate(0deg) translateY(0px) rotateY(0deg);
-  }
-}
-
-/* 🎃 キャラクター1 - おばけ */
+/* キャラクター1 - おばけ */
 .character1 {
-  top: 3%;
+  top: 8%;
   left: -100px;
-  animation: swimLikeLeft 15s linear infinite;
+  animation: slideFromLeft 15s linear infinite;
   animation-delay: 0s;
 }
 
@@ -102,12 +126,12 @@
   z-index: 120;
 }
 
-/* 🦇 キャラクター2 - コウモリ1 */
+/* キャラクター2 - コウモリ1 */
 .character2 {
-  top: 10%;
+  top: 15%;
   right: -100px;
-  animation: swimLikeRight 16s linear infinite;
-  animation-delay: 1s;
+  animation: slideFromRight 16s linear infinite;
+  animation-delay: 1.2s;
 }
 
 .character2:active {
@@ -116,12 +140,12 @@
   z-index: 120;
 }
 
-/* 🦇 キャラクター3 - コウモリ2 */
+/* キャラクター3 - コウモリ2 */
 .character3 {
-  top: 18%;
+  top: 25%;
   left: -100px;
-  animation: swimLikeLeft 17s linear infinite;
-  animation-delay: 2s;
+  animation: slideFromLeft 17s linear infinite;
+  animation-delay: 2.8s;
 }
 
 .character3:active {
@@ -130,12 +154,12 @@
   z-index: 120;
 }
 
-/* 👻 キャラクター4 - ゴースト */
+/* キャラクター4 - ゴースト */
 .character4 {
-  top: 22%;
+  top: 32%;
   right: -100px;
-  animation: swimLikeRight 18s linear infinite;
-  animation-delay: 0.5s;
+  animation: slideFromRight 18s linear infinite;
+  animation-delay: 0.7s;
 }
 
 .character4:active {
@@ -144,12 +168,12 @@
   z-index: 120;
 }
 
-/* 🕷️ キャラクター5 - スパイダー */
+/* キャラクター5 - スパイダー */
 .character5 {
-  top: 28%;
+  top: 42%;
   left: -100px;
-  animation: swimLikeLeft 18s ease-in-out infinite;
-  animation-delay: 3s;
+  animation: slideFromLeft 15.5s linear infinite;
+  animation-delay: 3.5s;
 }
 
 .character5:active {
@@ -158,12 +182,12 @@
   z-index: 120;
 }
 
-/* 🐱 キャラクター6 - 猫 */
+/* キャラクター6 - 猫 */
 .character6 {
-  top: 33%;
+  top: 48%;
   right: -100px;
-  animation: swimLikeRight 20s ease-in-out infinite;
-  animation-delay: 1.5s;
+  animation: slideFromRight 19s linear infinite;
+  animation-delay: 1.9s;
 }
 
 .character6:active {
@@ -172,12 +196,12 @@
   z-index: 120;
 }
 
-/* 🎃 キャラクター7 - おばけ（2回目） */
+/* キャラクター7 - おばけ（2回目） */
 .character7 {
-  top: 38%;
+  top: 12%;
   left: -100px;
-  animation: waveMotion 16.5s linear infinite;
-  animation-delay: 4s;
+  animation: slideFromLeft 16.5s linear infinite;
+  animation-delay: 6.2s;
 }
 
 .character7:active {
@@ -186,12 +210,12 @@
   z-index: 120;
 }
 
-/* 🦇 キャラクター8 - コウモリ1（2回目） */
+/* キャラクター8 - コウモリ1（2回目） */
 .character8 {
-  top: 43%;
+  top: 58%;
   right: -100px;
-  animation: swimLikeRight 17.5s linear infinite;
-  animation-delay: 2.5s;
+  animation: slideFromRight 17.5s linear infinite;
+  animation-delay: 4.1s;
 }
 
 .character8:active {
@@ -200,12 +224,12 @@
   z-index: 120;
 }
 
-/* 🦇 キャラクター9 - コウモリ2（2回目） */
+/* キャラクター9 - コウモリ2（2回目） */
 .character9 {
-  top: 48%;
+  top: 38%;
   left: -100px;
-  animation: waveMotion 22s ease-in-out infinite;
-  animation-delay: 5s;
+  animation: slideFromLeft 18.5s linear infinite;
+  animation-delay: 7.3s;
 }
 
 .character9:active {
@@ -214,12 +238,12 @@
   z-index: 120;
 }
 
-/* 👻 キャラクター10 - ゴースト（2回目） */
+/* キャラクター10 - ゴースト（2回目） */
 .character10 {
-  top: 54%;
+  top: 68%;
   right: -100px;
-  animation: swimLikeRight 15.8s linear infinite;
-  animation-delay: 3.5s;
+  animation: slideFromRight 15.8s linear infinite;
+  animation-delay: 2.4s;
 }
 
 .character10:active {
@@ -228,12 +252,12 @@
   z-index: 120;
 }
 
-/* 🕷️ キャラクター11 - スパイダー（2回目） */
+/* キャラクター11 - スパイダー（2回目） */
 .character11 {
-  top: 58%;
+  top: 22%;
   left: -100px;
-  animation: swimLikeLeft 19s ease-in-out infinite;
-  animation-delay: 6s;
+  animation: slideFromLeft 16.8s linear infinite;
+  animation-delay: 8.7s;
 }
 
 .character11:active {
@@ -242,12 +266,12 @@
   z-index: 120;
 }
 
-/* 🐱 キャラクター12 - 猫（2回目） */
+/* キャラクター12 - 猫（2回目） */
 .character12 {
-  top: 62%;
+  top: 75%;
   right: -100px;
-  animation: swimLikeRight 17.8s linear infinite;
-  animation-delay: 4.5s;
+  animation: slideFromRight 17.8s linear infinite;
+  animation-delay: 5.6s;
 }
 
 .character12:active {
@@ -256,12 +280,12 @@
   z-index: 120;
 }
 
-/* 🎃 キャラクター13 - おばけ（3回目） */
+/* キャラクター13 - おばけ（3回目） */
 .character13 {
-  top: 65%;
+  top: 52%;
   left: -100px;
-  animation: waveMotion 21s ease-in-out infinite;
-  animation-delay: 1.8s;
+  animation: slideFromLeft 18.8s linear infinite;
+  animation-delay: 3.1s;
 }
 
 .character13:active {
@@ -270,12 +294,12 @@
   z-index: 120;
 }
 
-/* 🦇 キャラクター14 - コウモリ1（3回目） */
+/* キャラクター14 - コウモリ1（3回目） */
 .character14 {
-  top: 66%;
+  top: 35%;
   right: -100px;
-  animation: swimLikeRight 16.2s linear infinite;
-  animation-delay: 5.5s;
+  animation: slideFromRight 16.2s linear infinite;
+  animation-delay: 9.1s;
 }
 
 .character14:active {
@@ -284,12 +308,12 @@
   z-index: 120;
 }
 
-/* 🦇 キャラクター15 - コウモリ2（3回目） */
+/* キャラクター15 - コウモリ2（3回目） */
 .character15 {
-  top: 70%;
+  top: 62%;
   left: -100px;
-  animation: swimLikeLeft 19.2s linear infinite;
-  animation-delay: 2.8s;
+  animation: slideFromLeft 19.2s linear infinite;
+  animation-delay: 4.8s;
 }
 
 .character15:active {
@@ -298,8 +322,12 @@
   z-index: 120;
 }
 
-/* 個別の浮遊効
-果バリエーション */
+/* ハローウィンフィルター効果 */
+.halloween-filter {
+  filter: hue-rotate(15deg) saturate(1.2) brightness(1.1);
+}
+
+/* 個別の浮遊効果バリエーション */
 .character1 img,
 .character7 img,
 .character13 img {
@@ -377,4 +405,25 @@
 .character5 img,
 .character11 img {
   animation: floatFast 2.2s ease-in-out infinite;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .character img {
+    width: 30px;
+  }
+
+  .character:active {
+    transform: scale(1.8) rotate(180deg) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .character img {
+    width: 25px;
+  }
+
+  .character:active {
+    transform: scale(1.5) rotate(180deg) !important;
+  }
 }
