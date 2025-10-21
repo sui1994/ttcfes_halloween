@@ -344,7 +344,7 @@
 .character19 {
   top: 35%;
   left: -100px;
-  animation: waveMotion 24s ease-in-out infinite;
+  animation: swimLikeLeft 24s ease-in-out infinite;
   animation-delay: 8.7s;
 }
 
@@ -557,11 +557,6 @@
 .character17 {
   animation: fishDive 23s ease-in-out infinite;
   animation-delay: 7.5s;
-}
-
-.character19 {
-  animation: fishSpiral 24s ease-in-out infinite;
-  animation-delay: 8.7s;
 }
 
 /* レスポンシブ対応 */
