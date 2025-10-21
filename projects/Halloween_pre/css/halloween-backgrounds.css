@@ -8,7 +8,7 @@
   transform: translateX(-50%);
   z-index: -1;
   width: auto;
-  height:550px;
+  height: 550px;
 
   animation-name: bounce;
   animation-duration: 4s;
@@ -75,7 +75,7 @@
   }
 }
 
-.halloween-sea-overlay {
+.halloween-atmosphere-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -88,7 +88,7 @@
     radial-gradient(ellipse at 50% 50%, rgba(255, 193, 7, 0.1) 0%, transparent 70%);
 }
 
-.halloween-sea-image {
+.halloween-night-sky {
   position: absolute;
   opacity: 0.3;
   top: 0;

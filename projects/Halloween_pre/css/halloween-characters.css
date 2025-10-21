@@ -327,6 +327,11 @@
   filter: hue-rotate(15deg) saturate(1.2) brightness(1.1);
 }
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> fish-animation-version
 /* 個別の浮遊効果バリエーション */
 .character1 img,
 .character7 img,
@@ -407,10 +412,20 @@
   animation: floatFast 2.2s ease-in-out infinite;
 }
 
+<<<<<<< HEAD
 /* レスポンシブ対応 */
 @media (max-width: 768px) {
   .character img {
     width: 30px;
+=======
+/* 魚のような曲線的な動きのアニメーション */
+@keyframes swimLikeLeft {
+  0% {
+    left: -100px;
+    top: 20%;
+    opacity: 0.7;
+    transform: scale(0.8) rotate(0deg);
+>>>>>>> fish-animation-version
   }
 
   .character:active {
@@ -425,5 +440,251 @@
 
   .character:active {
     transform: scale(1.5) rotate(180deg) !important;
+  }
+}
+
+/* 歩行キャラクター用のスタイル */
+.walking-character {
+  position: absolute;
+  bottom: -2.5%;
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 850;
+}
+
+.walking-character img {
+  display: block;
+  width: 250px;
+  height: auto;
+  animation: walkBounce 1.5s ease-in-out infinite;
+}
+
+/* 歩行時の上下の弾み効果 */
+@keyframes walkBounce {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  25% {
+    transform: translateY(-1px);
+  }
+
+  50% {
+    transform: translateY(0px);
+  }
+
+  75% {
+    transform: translateY(-2px);
+  }
+}
+
+/* 左から歩いてくるアニメーション */
+@keyframes walkFromLeft {
+  0% {
+    left: -80px;
+    opacity: 0.8;
+    transform: scaleX(1);
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    left: calc(100vw + 80px);
+    opacity: 0.8;
+    transform: scaleX(1);
+  }
+}
+
+/* 右から歩いてくるアニメーション */
+@keyframes walkFromRight {
+  0% {
+    right: -80px;
+    opacity: 0.8;
+    transform: scaleX(-1);
+    /* 左右反転 */
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    right: calc(100vw + 80px);
+    opacity: 0.8;
+    transform: scaleX(-1);
+  }
+}
+
+/* 左から歩いてくるキャラクター */
+.walking-left {
+  left: -80px;
+  animation: walkFromLeft 20s linear infinite;
+  animation-delay: 0s;
+}
+
+.walking-left:hover {
+  animation-play-state: paused;
+  transform: scale(1.2) translateY(-5px);
+  filter: brightness(1.3) drop-shadow(0 0 20px #ff6b35);
+}
+
+.walking-left:active {
+  transform: scale(1.5) rotate(10deg);
+  filter: brightness(1.5) drop-shadow(0 0 30px #ff6b35);
+  z-index: 900;
+}
+
+/* 右から歩いてくるキャラクター */
+.walking-right {
+  right: -80px;
+  animation: walkFromRight 25s linear infinite;
+  animation-delay: 5s;
+}
+
+.walking-right:hover {
+  animation-play-state: paused;
+  transform: scaleX(-1) scale(1.2) translateY(-5px);
+  filter: brightness(1.3) drop-shadow(0 0 20px #8b5cf6);
+}
+
+.walking-right:active {
+  transform: scaleX(-1) scale(1.5) rotate(-10deg);
+  filter: brightness(1.5) drop-shadow(0 0 30px #8b5cf6);
+  z-index: 900;
+}
+
+/* 追加の歩行キャラクター3体のスタイル */
+
+/* 2体目 - 左から歩いてくる（test_1.png） */
+.walking-left-2 {
+  left: -80px;
+  animation: walkFromLeft 18s linear infinite;
+  animation-delay: 8s;
+  /* 8秒遅れで開始 */
+}
+
+.walking-left-2:hover {
+  animation-play-state: paused;
+  transform: scale(1.2) translateY(-5px);
+  filter: brightness(1.3) drop-shadow(0 0 20px #f59e0b);
+}
+
+.walking-left-2:active {
+  transform: scale(1.5) rotate(15deg);
+  filter: brightness(1.5) drop-shadow(0 0 30px #f59e0b);
+  z-index: 900;
+}
+
+/* 2体目 - 右から歩いてくる（test_2.png） */
+.walking-right-2 {
+  right: -80px;
+  animation: walkFromRight 22s linear infinite;
+  animation-delay: 12s;
+  /* 12秒遅れで開始 */
+}
+
+.walking-right-2:hover {
+  animation-play-state: paused;
+  transform: scaleX(-1) scale(1.2) translateY(-5px);
+  filter: brightness(1.3) drop-shadow(0 0 20px #ef4444);
+}
+
+.walking-right-2:active {
+  transform: scaleX(-1) scale(1.5) rotate(-15deg);
+  filter: brightness(1.5) drop-shadow(0 0 30px #ef4444);
+  z-index: 900;
+}
+
+/* 3体目 - 左から歩いてくる（test_4.png） */
+.walking-left-3 {
+  left: -80px;
+  animation: walkFromLeft 16s linear infinite;
+  animation-delay: 15s;
+  /* 15秒遅れで開始 */
+}
+
+.walking-left-3:hover {
+  animation-play-state: paused;
+  transform: scale(1.2) translateY(-5px);
+  filter: brightness(1.3) drop-shadow(0 0 20px #10b981);
+}
+
+.walking-left-3:active {
+  transform: scale(1.5) rotate(-12deg);
+  filter: brightness(1.5) drop-shadow(0 0 30px #10b981);
+  z-index: 900;
+}
+
+/* 追加キャラクターの歩行弾み効果のバリエーション */
+.walking-left-2 img {
+  animation: walkBounce2 1.8s ease-in-out infinite;
+}
+
+.walking-right-2 img {
+  animation: walkBounce3 1.3s ease-in-out infinite;
+}
+
+.walking-left-3 img {
+  animation: walkBounce4 2.1s ease-in-out infinite;
+}
+
+/* 異なる弾み効果パターン */
+@keyframes walkBounce2 {
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate(1deg);
+  }
+
+  30% {
+    transform: translateY(-4px) rotate(-1deg);
+  }
+
+  60% {
+    transform: translateY(-1px) rotate(2deg);
+  }
+}
+
+@keyframes walkBounce3 {
+
+  0%,
+  100% {
+    transform: translateY(0px) scale(1);
+  }
+
+  20% {
+    transform: translateY(-2px) scale(1.02);
+  }
+
+  80% {
+    transform: translateY(-3px) scale(0.98);
+  }
+}
+
+@keyframes walkBounce4 {
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate(-1deg);
+  }
+
+  40% {
+    transform: translateY(-5px) rotate(1deg);
+  }
+
+  70% {
+    transform: translateY(-2px) rotate(-2deg);
   }
 }
