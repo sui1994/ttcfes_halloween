@@ -63,7 +63,7 @@ projects/Halloween_pre/
 ├── preset_css/            # プリセットCSS
 │   └── preset_halloween.css      # ハローウィン基本スタイル
 └── preset_music/          # 音楽ファイル
-    └── test_2.mp3
+    └── halloween_bgm.mp3
 ```
 
 ## CSS 命名規約

@@ -264,7 +264,7 @@ const AUDIO_POOL_SIZE = 3;
 
 function initAudioPool() {
   for (let i = 0; i < AUDIO_POOL_SIZE; i++) {
-    const audio = new Audio("preset_music/test_2.mp3");
+    const audio = new Audio("preset_music/halloween_bgm.mp3");
     audio.preload = "auto";
     audio.volume = 0.5;
     audioPool.push(audio);
@@ -359,5 +359,4 @@ document.addEventListener("DOMContentLoaded", function () {
   } else {
     console.log(".bat1-static要素が見つかりません");
   }
-
 });
