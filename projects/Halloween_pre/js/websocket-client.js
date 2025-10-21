@@ -131,6 +131,7 @@ class HalloweenWebSocketClient {
       // 3秒後にエフェクト削除
       setTimeout(() => {
         characterElement.classList.remove("remote-click");
+        this.removeClickEffect(characterElement);
       }, 3000);
     }
   }
@@ -209,11 +210,18 @@ class HalloweenWebSocketClient {
   // クリックエフェクト追加
   addClickEffect(element) {
     element.style.filter = "drop-shadow(0 0 30px #ff6b35) brightness(1.5)";
-    element.style.transform = "scale(1.2) rotate(10deg)";
+    // transformは使わずCSSクラスで制御
     element.style.transition = "all 0.5s ease";
 
     // 振動エフェクト
     element.style.animation = "shake 0.5s ease-in-out";
+  }
+
+  // クリックエフェクト削除
+  removeClickEffect(element) {
+    element.style.filter = "";
+    element.style.animation = "";
+    element.style.transition = "";
   }
 
   // クリック音再生
@@ -429,6 +437,7 @@ style.textContent = `
   
   .remote-click {
     animation: bounce 0.5s ease-in-out;
+    transform: scale(1.2) rotate(10deg) !important;
   }
   
   @keyframes pulse {
