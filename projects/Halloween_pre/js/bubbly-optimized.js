@@ -43,21 +43,8 @@ window.bubblyOptimized = function (options) {
   // Transparent background - let HTML background show through
   backgroundCtx.clearRect(0, 0, width, height); // Completely transparent
 
-  // 🚀 最適化2: Dynamic bubble count based on device performance
-  const getOptimalBubbleCount = () => {
-    const baseCount = Math.floor(0.015 * (width + height));
-    const devicePixelRatio = window.devicePixelRatio || 1;
-    const screenArea = width * height;
-
-    // Reduce bubbles on high-DPI displays and large screens
-    let adjustedCount = baseCount;
-    if (devicePixelRatio > 1.5) adjustedCount *= 0.7;
-    if (screenArea > 2000000) adjustedCount *= 0.8; // Large screens
-
-    return Math.min(30, Math.max(10, Math.floor(adjustedCount)));
-  };
-
-  const bubbleCount = config.bubbles || getOptimalBubbleCount();
+  // 🚀 最適化2: Enhanced bubble count and properties for aquarium effect
+  const bubbleCount = config.bubbles || Math.min(30, Math.floor(0.015 * (width + height)));
   const bubbles = [];
 
   // 🚀 最適化3: Object pooling - pre-create bubble objects with variety
@@ -96,15 +83,14 @@ window.bubblyOptimized = function (options) {
     });
   }
 
-  // 🚀 最適化4: Adaptive frame rate with performance monitoring
+  // 🚀 最適化4: Batch rendering with reduced frequency
   let lastFrameTime = 0;
-  let targetFPS = 30;
-  let frameInterval = 1000 / targetFPS;
-  let performanceBuffer = [];
+  const targetFPS = 30; // Reduced from 60fps
+  const frameInterval = 1000 / targetFPS;
 
   // Anti-darkening: Force full redraw more frequently
   let frameCount = 0;
-  const RESET_INTERVAL = 500;
+  const RESET_INTERVAL = 500; // Reset every 3 seconds (90 frames at 30fps)
 
   // 🚀 最適化5: Dirty rectangle tracking
   let needsFullRedraw = true;
@@ -113,9 +99,6 @@ window.bubblyOptimized = function (options) {
     if (canvas.parentNode === null) {
       return; // Stop if canvas removed
     }
-
-    // 🚀 新最適化: Performance monitoring and adaptive FPS
-    const frameStartTime = performance.now();
 
     // Frame rate limiting
     if (currentTime - lastFrameTime < frameInterval) {
@@ -140,12 +123,11 @@ window.bubblyOptimized = function (options) {
       ctx.restore();
     }
 
-    // 🚀 最適化7: Batch bubble rendering with culling
+    // 🚀 最適化7: Batch bubble rendering
     ctx.globalCompositeOperation = config.compose || "lighter";
 
-    // Group bubbles by opacity for batch rendering (with viewport culling)
+    // Group bubbles by opacity for batch rendering
     const opacityGroups = {};
-    const margin = 50; // Render margin for smooth transitions
 
     bubbles.forEach((bubble) => {
       if (!bubble.active) return;
@@ -169,15 +151,12 @@ window.bubblyOptimized = function (options) {
       if (bubble.x - bubble.radius > width) bubble.x = -bubble.radius;
       if (bubble.x + bubble.radius < 0) bubble.x = width + bubble.radius;
 
-      // 🚀 新最適化: Viewport culling - only render visible bubbles
-      if (bubble.x + bubble.radius >= -margin && bubble.x - bubble.radius <= width + margin && bubble.y + bubble.radius >= -margin && bubble.y - bubble.radius <= height + margin) {
-        // Group by opacity for batch rendering
-        const opacityKey = Math.round(bubble.opacity * 100);
-        if (!opacityGroups[opacityKey]) {
-          opacityGroups[opacityKey] = [];
-        }
-        opacityGroups[opacityKey].push(bubble);
+      // Group by opacity for batch rendering
+      const opacityKey = Math.round(bubble.opacity * 100);
+      if (!opacityGroups[opacityKey]) {
+        opacityGroups[opacityKey] = [];
       }
+      opacityGroups[opacityKey].push(bubble);
     });
 
     // 🚀 最適化8: Render bubbles in batches by opacity
@@ -191,26 +170,6 @@ window.bubblyOptimized = function (options) {
         ctx.fill();
       });
     });
-
-    // 🚀 新最適化: Performance monitoring and adaptive adjustment
-    const frameEndTime = performance.now();
-    const frameTime = frameEndTime - frameStartTime;
-
-    // Track performance over last 60 frames
-    performanceBuffer.push(frameTime);
-    if (performanceBuffer.length > 60) {
-      performanceBuffer.shift();
-
-      // Adaptive FPS based on performance
-      const avgFrameTime = performanceBuffer.reduce((a, b) => a + b) / performanceBuffer.length;
-      if (avgFrameTime > 20) {
-        // If frame takes more than 20ms
-        targetFPS = Math.max(15, targetFPS - 1); // Reduce FPS
-      } else if (avgFrameTime < 10 && targetFPS < 30) {
-        targetFPS = Math.min(30, targetFPS + 1); // Increase FPS if performance allows
-      }
-      frameInterval = 1000 / targetFPS;
-    }
 
     // Continue animation
     if (config.animate !== false) {
@@ -258,54 +217,17 @@ window.bubblyOptimized = function (options) {
   };
 };
 
-// 🚀 新最適化: Audio pooling system
-let audioPool = [];
-const AUDIO_POOL_SIZE = 3;
-
-function initAudioPool() {
-  for (let i = 0; i < AUDIO_POOL_SIZE; i++) {
-    const audio = new Audio("preset_music/halloween_bgm.mp3");
-    audio.preload = "auto";
-    audio.volume = 0.5;
-    audioPool.push(audio);
-  }
-}
-
-function playClickSound() {
-  const availableAudio = audioPool.find((audio) => audio.paused || audio.ended);
-  if (availableAudio) {
-    availableAudio.currentTime = 0;
-    availableAudio.play().catch((error) => console.log("音楽再生エラー:", error));
-  }
-}
-
 // DOMが読み込まれてから実行
 document.addEventListener("DOMContentLoaded", function () {
-  // Initialize audio pool
-  initAudioPool();
-  // 🚀 新最適化: Audio management with preloading and error handling
+  // BGM自動再生の設定
   const bgmAudio = document.getElementById("halloween-bgm");
 
   if (bgmAudio) {
     // 音量を調整（0.0-1.0）
     bgmAudio.volume = 0.3;
 
-    // Preload audio for better performance
-    bgmAudio.preload = "auto";
-
-    // Add loading state management
-    let audioReady = false;
-    bgmAudio.addEventListener("canplaythrough", () => {
-      audioReady = true;
-    });
-
     // 自動再生を試行
     const playBGM = () => {
-      if (!audioReady) {
-        setTimeout(playBGM, 100); // Retry if not ready
-        return;
-      }
-
       bgmAudio.play().catch((error) => {
         console.log("BGM自動再生がブロックされました:", error);
         // ユーザーの最初のクリックで再生開始
@@ -337,8 +259,15 @@ document.addEventListener("DOMContentLoaded", function () {
         this.classList.remove("clicked");
       }, 3000);
 
-      // 🚀 最適化された音楽再生
-      playClickSound();
+      // 音楽再生
+      try {
+        const audio = new Audio("preset_music/happyhalloween.mp3");
+        audio.play().catch((error) => {
+          console.log("音楽再生エラー:", error);
+        });
+      } catch (error) {
+        console.log("音楽ファイル読み込みエラー:", error);
+      }
     });
   } else {
     console.log(".bat1要素が見つかりません");
@@ -353,10 +282,57 @@ document.addEventListener("DOMContentLoaded", function () {
         this.classList.remove("clicked");
       }, 3000);
 
-      // 🚀 最適化された音楽再生
-      playClickSound();
+      // 音楽再生
+      try {
+        const audio = new Audio("preset_music/happyhalloween.mp3");
+        audio.play().catch((error) => {
+          console.log("音楽再生エラー:", error);
+        });
+      } catch (error) {
+        console.log("音楽ファイル読み込みエラー:", error);
+      }
     });
   } else {
     console.log(".bat1-static要素が見つかりません");
+  }
+
+  // スパイダーのランダム出現制御
+  const spider = document.querySelector(".spider");
+
+  if (spider) {
+    // ランダムな間隔でスパイダーの位置を変更
+    setInterval(() => {
+      const randomTop = 5 + Math.random() * 20; // 5%-25%の範囲
+      const randomRight = 8 + Math.random() * 17; // 8%-25%の範囲
+      const randomRotation = -15 + Math.random() * 30; // -15deg ~ 15deg
+      const randomScale = 0.8 + Math.random() * 0.6; // 0.8 ~ 1.4倍
+
+      spider.style.setProperty("--random-top", randomTop + "%");
+      spider.style.setProperty("--random-right", randomRight + "%");
+      spider.style.setProperty("--random-rotation", randomRotation + "deg");
+      spider.style.setProperty("--random-scale", randomScale);
+    }, 3000 + Math.random() * 4000); // 3-7秒間隔でランダム変更
+
+    // スパイダークリック時のエフェクト
+    spider.addEventListener("click", function () {
+      this.style.animation = "none";
+      this.style.transform = "scale(2) rotate(720deg)";
+      this.style.filter = "brightness(2) drop-shadow(0 0 20px #ff6b35)";
+
+      setTimeout(() => {
+        this.style.animation = "spiderRandomAppear 12s infinite";
+        this.style.transform = "";
+        this.style.filter = "";
+      }, 1000);
+
+      // スパイダー専用音効果（オプション）
+      try {
+        const spiderSound = new Audio("preset_music/happyhalloween.mp3");
+        spiderSound.volume = 0.2;
+        spiderSound.play().catch((error) => console.log("スパイダー音エラー:", error));
+      } catch (error) {
+        console.log("スパイダー音ファイルエラー:", error);
+      }
+    });
   }
 });
