@@ -8,6 +8,12 @@
 
   <!-- ハローウィン専用JavaScript -->
   <script src="js/bubbly-optimized.js"></script>
+  <script src="js/magic-hand-control.js"></script>
+  <script src="js/festival-config.js"></script>
+
+  <!-- WebSocket クライアント -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/websocket-client.js"></script>
 
   <!-- ハローウィン専用CSS -->
   <link rel="stylesheet" type="text/css" href="css/halloween-main.css">
@@ -226,6 +232,15 @@
 
   <!-- ハローウィン魔法のバブル初期化 -->
   <script src="js/halloween-init.js"></script>
+
+  <!-- WebSocket クライアント初期化 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // WebSocketクライアント初期化
+      window.halloweenWebSocket = new HalloweenWebSocketClient();
+      console.log('🎃 Halloween WebSocket Client initialized!');
+    });
+  </script>
 
   <!-- 音楽制御スクリプト -->
   <!-- <script>

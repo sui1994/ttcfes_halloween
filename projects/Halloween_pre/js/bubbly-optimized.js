@@ -328,7 +328,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // アニメーション無しのbat1-static
   const bat1Static = document.querySelector(".bat1-static");
 
-
   // アニメーション無しのbat1-staticのクリックイベント
   if (bat1Static) {
     bat1Static.addEventListener("click", function () {
