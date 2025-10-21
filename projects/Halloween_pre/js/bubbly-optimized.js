@@ -328,22 +328,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // アニメーション無しのbat1-static
   const bat1Static = document.querySelector(".bat1-static");
 
-  // アニメーション有りのbat1のクリックイベント
-  if (bat1) {
-    bat1.addEventListener("click", function () {
-      // 視覚エフェクト
-      this.classList.add("clicked");
-      setTimeout(() => {
-        this.classList.remove("clicked");
-      }, 3000);
-
-      // 🚀 最適化された音楽再生
-      playClickSound();
-    });
-  } else {
-    console.log(".bat1要素が見つかりません");
-  }
-
   // アニメーション無しのbat1-staticのクリックイベント
   if (bat1Static) {
     bat1Static.addEventListener("click", function () {
