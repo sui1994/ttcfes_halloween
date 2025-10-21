@@ -1,4 +1,4 @@
-/* ハローウィンキャラクター横アニメーション CSS - シンプルバージョン */
+/* ハローウィンキャラクター横アニメーション CSS */
 
 /* 基本設定 */
 .character-container {
@@ -40,7 +40,7 @@
   }
 }
 
-/* 左から右へのシンプルアニメーション */
+/* 左から右へのアニメーション（魚の動きを応用） */
 @keyframes slideFromLeft {
   0% {
     left: -100px;
@@ -54,15 +54,18 @@
   }
 
   25% {
-    transform: scale(1.1) rotate(5deg);
+    left: 20vw;
+    transform: scale(1.1) rotate(5deg) skew(10deg, 5deg);
   }
 
   50% {
-    transform: scale(0.9) rotate(-15deg);
+    left: 50vw;
+    transform: scale(0.9) rotate(-15deg) rotateY(180deg);
   }
 
   75% {
-    transform: scale(1.05) rotate(10deg);
+    left: 80vw;
+    transform: scale(1.05) rotate(10deg) skew(-5deg, -3deg);
   }
 
   90% {
@@ -72,11 +75,11 @@
   100% {
     left: 100vw;
     opacity: 1;
-    transform: scale(1) rotate(0deg);
+    transform: scale(1) rotate(0deg) rotateY(0deg);
   }
 }
 
-/* 右から左へのシンプルアニメーション */
+/* 右から左へのアニメーション（魚の動きを応用） */
 @keyframes slideFromRight {
   0% {
     right: -100px;
@@ -90,15 +93,18 @@
   }
 
   25% {
-    transform: scale(1.1) rotate(-5deg);
+    right: 20vw;
+    transform: scale(1.1) rotate(-5deg) skew(-10deg, -5deg);
   }
 
   50% {
-    transform: scale(0.9) rotate(15deg);
+    right: 50vw;
+    transform: scale(0.9) rotate(15deg) rotateY(180deg);
   }
 
   75% {
-    transform: scale(1.05) rotate(-10deg);
+    right: 80vw;
+    transform: scale(1.05) rotate(-10deg) skew(8deg, 4deg);
   }
 
   90% {
@@ -108,7 +114,7 @@
   100% {
     right: 100vw;
     opacity: 1;
-    transform: scale(1) rotate(0deg);
+    transform: scale(1) rotate(0deg) rotateY(0deg);
   }
 }
 
@@ -172,7 +178,7 @@
 .character5 {
   top: 28%;
   left: -100px;
-  animation: slideFromLeft 15.5s linear infinite;
+  animation: swimLikeLeft 18s ease-in-out infinite;
   animation-delay: 3s;
 }
 
@@ -186,7 +192,7 @@
 .character6 {
   top: 33%;
   right: -100px;
-  animation: slideFromRight 19s linear infinite;
+  animation: swimLikeRight 20s ease-in-out infinite;
   animation-delay: 1.5s;
 }
 
@@ -228,7 +234,7 @@
 .character9 {
   top: 48%;
   left: -100px;
-  animation: slideFromLeft 18.5s linear infinite;
+  animation: waveMotion 22s ease-in-out infinite;
   animation-delay: 5s;
 }
 
@@ -256,7 +262,7 @@
 .character11 {
   top: 58%;
   left: -100px;
-  animation: slideFromLeft 16.8s linear infinite;
+  animation: swimLikeLeft 19s ease-in-out infinite;
   animation-delay: 6s;
 }
 
@@ -284,7 +290,7 @@
 .character13 {
   top: 65%;
   left: -100px;
-  animation: slideFromLeft 18.8s linear infinite;
+  animation: waveMotion 21s ease-in-out infinite;
   animation-delay: 1.8s;
 }
 
@@ -326,6 +332,8 @@
 .halloween-filter {
   filter: hue-rotate(15deg) saturate(1.2) brightness(1.1);
 }
+
+
 
 /* 個別の浮遊効果バリエーション */
 .character1 img,
@@ -499,27 +507,6 @@
     left: 100vw;
     opacity: 1;
     transform: scale(1) rotate(0deg) translateY(0px) rotateY(0deg);
-  }
-}
-
-/* レスポンシブ対応 */
-@media (max-width: 768px) {
-  .character img {
-    width: 30px;
-  }
-
-  .character:active {
-    transform: scale(1.8) rotate(180deg) !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .character img {
-    width: 25px;
-  }
-
-  .character:active {
-    transform: scale(1.5) rotate(180deg) !important;
   }
 }
 

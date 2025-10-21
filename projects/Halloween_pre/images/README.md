@@ -13,8 +13,8 @@
 
 背景や装飾など、変更しない画像フォルダです。
 
-- `fixed/backgrounds/` - 背景画像
-- `fixed/decorations/` - 装飾画像（月、町、スポットライトなど）
+- `fixed/backgrounds/` - 背景画像（月、町、スポットライトなど）
+- `fixed/decorations/` - 装飾画像（スパイダーワイヤー、スパイダーなど）
 - `fixed/effects/` - エフェクト画像（お化け、コウモリなど）
 
 ## 🎯 使い方

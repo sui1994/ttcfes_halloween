@@ -1,32 +1,5 @@
 /* ハローウィンキャラクター - 固定キャラクター */
 
-/* 🐱 ネコキャラクター（コメントアウト - 必要時に有効化） */
-/*
-.neko {
-  position: absolute;
-  z-index: 55;
-  opacity: 1;
-  width: 600px;
-  height: auto;
-  top: 59%;
-  left: 51.5%;
-  transform: translateX(-50%);
-  animation-name: nekoBounce;
-  animation-duration: 4s;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-}
-
-@keyframes nekoBounce {
-  0%, 100% {
-    transform: scale(0.9) translateX(-50%) translateY(0px);
-  }
-  50% {
-    transform: scale(0.9) translateX(-50%) translateY(-8px);
-  }
-}
-*/
-
 /* 👻 お化けキャラクター */
 .obake {
   position: absolute;

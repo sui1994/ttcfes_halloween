@@ -148,7 +148,7 @@
 .character5 {
   top: 28%;
   left: -100px;
-  animation: swimLikeLeft 15.5s linear infinite;
+  animation: swimLikeLeft 18s ease-in-out infinite;
   animation-delay: 3s;
 }
 
@@ -162,7 +162,7 @@
 .character6 {
   top: 33%;
   right: -100px;
-  animation: swimLikeRight 19s linear infinite;
+  animation: swimLikeRight 20s ease-in-out infinite;
   animation-delay: 1.5s;
 }
 
@@ -204,7 +204,7 @@
 .character9 {
   top: 48%;
   left: -100px;
-  animation: waveMotion 18.5s linear infinite;
+  animation: waveMotion 22s ease-in-out infinite;
   animation-delay: 5s;
 }
 
@@ -232,7 +232,7 @@
 .character11 {
   top: 58%;
   left: -100px;
-  animation: swimLikeLeft 16.8s linear infinite;
+  animation: swimLikeLeft 19s ease-in-out infinite;
   animation-delay: 6s;
 }
 
@@ -260,7 +260,7 @@
 .character13 {
   top: 65%;
   left: -100px;
-  animation: waveMotion 18.8s linear infinite;
+  animation: waveMotion 21s ease-in-out infinite;
   animation-delay: 1.8s;
 }
 
