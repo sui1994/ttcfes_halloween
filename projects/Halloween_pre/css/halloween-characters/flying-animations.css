@@ -322,6 +322,76 @@
   z-index: 120;
 }
 
+/* キャラクター16 - 新キャラ1 */
+.character16 {
+  top: 18%;
+  right: -100px;
+  animation: slideFromRight 20s linear infinite;
+  animation-delay: 6.5s;
+}
+
+.character16:active {
+  transform: scale(2.4) rotate(450deg);
+  filter: brightness(2) drop-shadow(0 0 30px #ff1493);
+  z-index: 120;
+}
+
+/* キャラクター17 - 新キャラ2 */
+.character17 {
+  top: 45%;
+  left: -100px;
+  animation: slideFromLeft 21s linear infinite;
+  animation-delay: 10.2s;
+}
+
+.character17:active {
+  transform: scale(2.7) rotate(-450deg);
+  filter: brightness(2) drop-shadow(0 0 30px #00ff7f);
+  z-index: 120;
+}
+
+/* キャラクター18 - 新キャラ3 */
+.character18 {
+  top: 72%;
+  right: -100px;
+  animation: slideFromRight 22s linear infinite;
+  animation-delay: 7.8s;
+}
+
+.character18:active {
+  transform: scale(2.9) rotate(540deg);
+  filter: brightness(2) drop-shadow(0 0 30px #ff4500);
+  z-index: 120;
+}
+
+/* キャラクター19 - 新キャラ4 */
+.character19 {
+  top: 28%;
+  left: -100px;
+  animation: slideFromLeft 23s linear infinite;
+  animation-delay: 11.7s;
+}
+
+.character19:active {
+  transform: scale(2.5) rotate(-540deg);
+  filter: brightness(2) drop-shadow(0 0 30px #9370db);
+  z-index: 120;
+}
+
+/* キャラクター20 - 新キャラ5 */
+.character20 {
+  top: 55%;
+  right: -100px;
+  animation: slideFromRight 24s linear infinite;
+  animation-delay: 8.9s;
+}
+
+.character20:active {
+  transform: scale(3.0) rotate(630deg);
+  filter: brightness(2) drop-shadow(0 0 30px #ffd700);
+  z-index: 120;
+}
+
 /* ハローウィンフィルター効果 */
 .halloween-filter {
   filter: hue-rotate(15deg) saturate(1.2) brightness(1.1);
@@ -347,6 +417,31 @@
 .character15 img {
   animation: float 2.5s ease-in-out infinite;
   animation-delay: 0.8s;
+}
+
+.character16 img {
+  animation: float 3.3s ease-in-out infinite;
+  animation-delay: 0.6s;
+}
+
+.character17 img {
+  animation: floatSlow 3.8s ease-in-out infinite;
+  animation-delay: 0.9s;
+}
+
+.character18 img {
+  animation: floatFast 2.7s ease-in-out infinite;
+  animation-delay: 0.1s;
+}
+
+.character19 img {
+  animation: float 3.6s ease-in-out infinite;
+  animation-delay: 1.2s;
+}
+
+.character20 img {
+  animation: floatSlow 4.2s ease-in-out infinite;
+  animation-delay: 0.4s;
 }
 
 .character4 img,
