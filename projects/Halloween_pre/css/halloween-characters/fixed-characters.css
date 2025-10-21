@@ -1,0 +1,192 @@
+/* ハローウィンキャラクター - 固定キャラクター */
+
+/* 👻 お化けキャラクター */
+.obake {
+  position: absolute;
+  z-index: 1;
+  animation-name: obake_work;
+  animation-duration: 30s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes obake_work {
+  from {
+    left: 100%;
+    top: 70%;
+  }
+
+  30% {
+    top: 60%;
+    left: 45%;
+    transform: skew(0deg, 0deg);
+  }
+
+  35% {
+    transform: skew(20deg, 10deg);
+  }
+
+  45% {
+    top: 60%;
+    transform: skew(0deg, 0deg);
+  }
+
+  50% {
+    top: 65%;
+  }
+
+  60% {
+    top: 60%;
+    left: 40%;
+    transform: skew(0deg, 0deg);
+  }
+
+  65% {
+    left: 43%;
+    transform: skew(20deg, 10deg);
+  }
+
+  70% {
+    transform: skew(0deg, 0deg);
+  }
+
+  to {
+    left: -30%;
+    top: 80%;
+    transform: scale(4, 4);
+  }
+}
+
+/* 🦇 静止版コウモリ1（アニメーション無し） */
+.bat1-static {
+  position: absolute;
+  top: 15%;
+  left: 10%;
+  z-index: 80;
+  transform: scale(4);
+}
+
+.bat1-static.clicked::after {
+  content: "🎃 ハッピーハロウィン！ 🎃";
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 107, 53, 0.9);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  animation: popUp 0.3s ease-out;
+  z-index: 1000;
+  white-space: nowrap;
+}
+
+/* 🦇 静止版コウモリ2（アニメーション無し） */
+.bat2-static {
+  position: absolute;
+  top: 40%;
+  right: 14%;
+  z-index: 80;
+  transform: scale(2.5);
+}
+
+.bat2-static.clicked::after {
+  content: "🎃 ハッピーハロウィン！ 🎃";
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(106, 27, 154, 0.9);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  animation: popUp 0.3s ease-out;
+  z-index: 1000;
+  white-space: nowrap;
+}
+
+/* 🕷️ スパイダーワイヤー（右上固定） */
+.spider-wire {
+  position: absolute;
+  top: 5%;
+  right: 5%;
+  width: 200px;
+  height: auto;
+  z-index: 80;
+  opacity: 0.4;
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+  transform: scale(4);
+}
+
+/* 🕷️ スパイダー（ランダム出現） */
+.spider {
+  position: absolute;
+  top: -5%;
+  right: 15%;
+  z-index: 1000;
+  opacity: 0;
+  transform: scale(4);
+  animation: spiderRandomAppear 15s infinite;
+}
+
+@keyframes spiderRandomAppear {
+  0% {
+    opacity: 1;
+    transform: scale(4) rotate(0deg);
+    top: -10%;
+  }
+
+  5% {
+    opacity: 1;
+    transform: scale(4) rotate(0deg);
+    top: 10%;
+  }
+
+  10% {
+    opacity: 1;
+    transform: scale(4) rotate(0deg);
+    top: 10%;
+  }
+
+  15% {
+    opacity: 1;
+    transform: scale(4) rotate(0deg);
+    top: 8%;
+  }
+
+  20% {
+    opacity: 1;
+    transform: scale(4) rotate(0deg);
+    top: 10%;
+  }
+
+  25% {
+    opacity: 1;
+    transform: scale(4) rotate(0deg);
+    top: 10%;
+  }
+
+  30% {
+    opacity: 1;
+    transform: scale(4) rotate(0deg);
+    top: 10%;
+  }
+
+  65% {
+    opacity: 1;
+    transform: scale(4) rotate(0deg);
+    top: -25%;
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(4) rotate(0deg);
+    top: -60%;
+  }
+}

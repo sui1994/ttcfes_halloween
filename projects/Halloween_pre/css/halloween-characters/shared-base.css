@@ -1,0 +1,80 @@
+/* ハローウィンキャラクター - 共通基本設定 */
+
+/* 基本設定 */
+.character-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 800;
+}
+
+.character {
+  position: absolute;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(.17, .67, .83, .67);
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+}
+
+.character img {
+  display: block;
+  width: 150px;
+  height: auto;
+  animation: float 3s ease-in-out infinite;
+}
+
+/* 基本浮遊効果 */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* ハローウィンフィルター効果 */
+.halloween-filter {
+  filter: hue-rotate(15deg) saturate(1.2) brightness(1.1);
+}
+
+/* 共通クリックエフェクト */
+@keyframes popUp {
+  0% {
+    transform: translateX(-50%) scale(0);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+  }
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .character img {
+    width: 30px;
+  }
+
+  .character:active {
+    transform: scale(1.8) rotate(180deg) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .character img {
+    width: 25px;
+  }
+
+  .character:active {
+    transform: scale(1.5) rotate(180deg) !important;
+  }
+}
