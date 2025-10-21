@@ -5,225 +5,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>🎮 Halloween Control Panel</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
 
-    body {
-      background: linear-gradient(135deg, #1a1a1a, #2e1065, #1a1a1a);
-      color: white;
-      font-family: 'Arial', sans-serif;
-      min-height: 100vh;
-      padding: 20px;
-    }
-
-    .control-container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    .main-title {
-      font-size: 36px;
-      color: #ff6b35;
-      text-shadow: 0 0 20px rgba(255, 107, 53, 0.6);
-      margin-bottom: 10px;
-    }
-
-    .connection-status {
-      background: rgba(0, 0, 0, 0.6);
-      border: 2px solid #6a1b9a;
-      border-radius: 10px;
-      padding: 15px;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
-    .status-indicator {
-      display: inline-block;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      margin-right: 8px;
-    }
-
-    .status-connected {
-      background: #4caf50;
-      box-shadow: 0 0 10px #4caf50;
-    }
-
-    .status-disconnected {
-      background: #f44336;
-      box-shadow: 0 0 10px #f44336;
-    }
-
-    .control-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-bottom: 20px;
-    }
-
-    .control-section {
-      background: rgba(0, 0, 0, 0.6);
-      border: 2px solid #ff6b35;
-      border-radius: 15px;
-      padding: 20px;
-    }
-
-    .section-title {
-      color: #ffc107;
-      font-size: 20px;
-      margin-bottom: 15px;
-      text-align: center;
-    }
-
-    .character-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .character-card {
-      background: rgba(106, 27, 154, 0.3);
-      border: 1px solid #6a1b9a;
-      border-radius: 10px;
-      padding: 10px;
-      text-align: center;
-      transition: all 0.3s ease;
-    }
-
-    .character-card:hover {
-      border-color: #ffc107;
-      transform: translateY(-2px);
-    }
-
-    .character-name {
-      font-size: 12px;
-      color: #ffc107;
-      margin-bottom: 8px;
-    }
-
-    .character-buttons {
-      display: flex;
-      gap: 5px;
-    }
-
-    .control-btn {
-      flex: 1;
-      padding: 8px 4px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 12px;
-      transition: all 0.3s ease;
-    }
-
-    .hover-btn {
-      background: linear-gradient(45deg, #2196f3, #03a9f4);
-      color: white;
-    }
-
-    .hover-btn:hover {
-      background: linear-gradient(45deg, #1976d2, #0288d1);
-      transform: scale(1.05);
-    }
-
-    .click-btn {
-      background: linear-gradient(45deg, #ff6b35, #ffc107);
-      color: white;
-    }
-
-    .click-btn:hover {
-      background: linear-gradient(45deg, #e65100, #ff8f00);
-      transform: scale(1.05);
-    }
-
-    .special-controls {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 10px;
-    }
-
-    .special-btn {
-      padding: 15px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: bold;
-      transition: all 0.3s ease;
-    }
-
-    .effect-btn {
-      background: linear-gradient(45deg, #9c27b0, #e91e63);
-      color: white;
-    }
-
-    .effect-btn:hover {
-      background: linear-gradient(45deg, #7b1fa2, #c2185b);
-      transform: scale(1.05);
-    }
-
-    .music-btn {
-      background: linear-gradient(45deg, #4caf50, #8bc34a);
-      color: white;
-    }
-
-    .music-btn:hover {
-      background: linear-gradient(45deg, #388e3c, #689f38);
-      transform: scale(1.05);
-    }
-
-    .log-section {
-      background: rgba(0, 0, 0, 0.8);
-      border: 1px solid #333;
-      border-radius: 10px;
-      padding: 15px;
-      height: 200px;
-      overflow-y: auto;
-    }
-
-    .log-title {
-      color: #ffc107;
-      margin-bottom: 10px;
-    }
-
-    .log-entry {
-      font-size: 12px;
-      color: #ccc;
-      margin-bottom: 5px;
-      padding: 5px;
-      border-left: 3px solid #ff6b35;
-      padding-left: 10px;
-    }
-
-    .log-entry.success {
-      border-left-color: #4caf50;
-    }
-
-    .log-entry.error {
-      border-left-color: #f44336;
-    }
-
-    @media (max-width: 768px) {
-      .control-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .character-grid {
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-      }
-    }
-  </style>
+  <!-- Control Panel専用CSS -->
+  <link rel="stylesheet" type="text/css" href="css/control-panel.css">
 </head>
 
 <body>
@@ -246,7 +30,7 @@
     <div class="control-grid">
       <!-- キャラクター操作セクション -->
       <div class="control-section">
-        <h2 class="section-title">🎃 飛行キャラクター (15体)</h2>
+        <h2 class="section-title">🎃 飛行キャラクター (20体)</h2>
         <div class="character-grid" id="flying-characters">
           <!-- JavaScriptで動的生成 -->
         </div>
@@ -254,7 +38,7 @@
 
       <!-- 歩行キャラクター操作セクション -->
       <div class="control-section">
-        <h2 class="section-title">🚶 歩行キャラクター (5体)</h2>
+        <h2 class="section-title">🚶 歩行キャラクター (10体)</h2>
         <div class="character-grid" id="walking-characters">
           <!-- JavaScriptで動的生成 -->
         </div>
@@ -286,6 +70,22 @@
       </div>
     </div>
 
+    <!-- 操作状況セクション -->
+    <div class="control-section">
+      <h2 class="section-title">👥 現在の操作状況</h2>
+      <div class="status-overview" id="status-overview">
+        <div class="status-summary">
+          <span>アクティブなキャラクター: <span id="active-count">0</span>体</span>
+          <button class="special-btn effect-btn" onclick="refreshStatus()" style="margin-left: 20px; padding: 5px 10px;">
+            🔄 状況更新
+          </button>
+        </div>
+        <div class="active-characters" id="active-characters">
+          <!-- アクティブなキャラクターがここに表示される -->
+        </div>
+      </div>
+    </div>
+
     <!-- ログセクション -->
     <div class="control-section">
       <h2 class="section-title">📋 操作ログ</h2>
@@ -298,158 +98,9 @@
 
   <!-- Socket.io クライアント -->
   <script src="/socket.io/socket.io.js"></script>
-  <script>
-    // WebSocket接続
-    const socket = io();
-    let isConnected = false;
 
-    // DOM要素
-    const connectionIndicator = document.getElementById('connection-indicator');
-    const connectionText = document.getElementById('connection-text');
-    const displayCount = document.getElementById('display-count');
-    const controllerCount = document.getElementById('controller-count');
-    const operationLog = document.getElementById('operation-log');
-
-    // 接続状況の更新
-    function updateConnectionStatus(connected) {
-      isConnected = connected;
-      if (connected) {
-        connectionIndicator.className = 'status-indicator status-connected';
-        connectionText.textContent = '✅ サーバーに接続済み';
-      } else {
-        connectionIndicator.className = 'status-indicator status-disconnected';
-        connectionText.textContent = '❌ サーバーとの接続が切断されました';
-      }
-    }
-
-    // ログ追加
-    function addLog(message, type = 'info') {
-      const logEntry = document.createElement('div');
-      logEntry.className = `log-entry ${type}`;
-      logEntry.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
-      operationLog.appendChild(logEntry);
-      operationLog.scrollTop = operationLog.scrollHeight;
-    }
-
-    // キャラクター操作
-    function controlCharacter(characterId, action) {
-      if (!isConnected) {
-        addLog('サーバーに接続されていません', 'error');
-        return;
-      }
-
-      const data = {
-        character: characterId,
-        action: action,
-        timestamp: Date.now(),
-        x: Math.random() * 100, // ランダム位置
-        y: Math.random() * 100
-      };
-
-      if (action === 'hover') {
-        socket.emit('character-hover', data);
-        addLog(`${characterId} をホバー`, 'success');
-      } else if (action === 'click') {
-        socket.emit('character-click', data);
-        addLog(`${characterId} をクリック`, 'success');
-      }
-    }
-
-    // 特殊エフェクト
-    function triggerSpecialEffect(effectType) {
-      if (!isConnected) {
-        addLog('サーバーに接続されていません', 'error');
-        return;
-      }
-
-      socket.emit('special-effect', {
-        type: effectType,
-        timestamp: Date.now()
-      });
-      addLog(`特殊エフェクト: ${effectType}`, 'success');
-    }
-
-    // 音楽制御
-    function controlMusic(action) {
-      if (!isConnected) {
-        addLog('サーバーに接続されていません', 'error');
-        return;
-      }
-
-      socket.emit('music-control', {
-        action: action,
-        timestamp: Date.now()
-      });
-      addLog(`音楽制御: ${action}`, 'success');
-    }
-
-    // キャラクターUI生成
-    function generateCharacterControls() {
-      // 飛行キャラクター (15体)
-      const flyingContainer = document.getElementById('flying-characters');
-      for (let i = 1; i <= 15; i++) {
-        const card = document.createElement('div');
-        card.className = 'character-card';
-        card.innerHTML = `
-          <div class="character-name">キャラ${i}</div>
-          <div class="character-buttons">
-            <button class="control-btn hover-btn" onclick="controlCharacter('character${i}', 'hover')">
-              ホバー
-            </button>
-            <button class="control-btn click-btn" onclick="controlCharacter('character${i}', 'click')">
-              クリック
-            </button>
-          </div>
-        `;
-        flyingContainer.appendChild(card);
-      }
-
-      // 歩行キャラクター (5体)
-      const walkingContainer = document.getElementById('walking-characters');
-      const walkingNames = ['左歩行1', '右歩行1', '左歩行2', '右歩行2', '左歩行3'];
-      walkingNames.forEach((name, index) => {
-        const card = document.createElement('div');
-        card.className = 'character-card';
-        card.innerHTML = `
-          <div class="character-name">${name}</div>
-          <div class="character-buttons">
-            <button class="control-btn hover-btn" onclick="controlCharacter('walking-${index + 1}', 'hover')">
-              ホバー
-            </button>
-            <button class="control-btn click-btn" onclick="controlCharacter('walking-${index + 1}', 'click')">
-              クリック
-            </button>
-          </div>
-        `;
-        walkingContainer.appendChild(card);
-      });
-    }
-
-    // Socket.io イベントリスナー
-    socket.on('connect', () => {
-      updateConnectionStatus(true);
-      addLog('コントロールパネルがサーバーに接続しました', 'success');
-
-      // コントローラーとして登録
-      socket.emit('register', 'controller');
-    });
-
-    socket.on('disconnect', () => {
-      updateConnectionStatus(false);
-      addLog('サーバーとの接続が切断されました', 'error');
-    });
-
-    socket.on('client-count', (data) => {
-      displayCount.textContent = data.displays;
-      controllerCount.textContent = data.controllers;
-    });
-
-    // 初期化
-    document.addEventListener('DOMContentLoaded', () => {
-      generateCharacterControls();
-      addLog('コントロールパネル初期化完了', 'success');
-    });
-  </script>
+  <!-- Control Panel専用JavaScript -->
+  <script src="js/control-panel.js"></script>
 </body>
 
 </html>
