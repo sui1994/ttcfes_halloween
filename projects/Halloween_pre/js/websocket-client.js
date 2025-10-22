@@ -11,6 +11,9 @@ class HalloweenWebSocketClient {
     this.maxReconnectAttempts = 5;
     this.reconnectDelay = 2000;
 
+    // 画像置換システム初期化
+    this.imageReplacer = new HalloweenImageReplacer();
+
     this.init();
   }
 
@@ -73,6 +76,39 @@ class HalloweenWebSocketClient {
       this.socket.on("client-count", (data) => {
         console.log("📊 Client count updated:", data);
         this.updateClientCount(data);
+      });
+
+      // 画像置換受信（Base64対応）
+      this.socket.on("image-replace", (imageMessage) => {
+        console.log("🖼️ Received image replace:", imageMessage.filename);
+        console.log("📊 Image data size:", imageMessage.data ? imageMessage.data.length : "No data");
+        this.imageReplacer.handleImageMessage(imageMessage);
+      });
+
+      // シンプル画像受信
+      this.socket.on("image-simple", (message) => {
+        console.log("📥 Received simple image:", message.filename);
+        if (window.SimpleImageReceiver) {
+          if (!this.simpleReceiver) {
+            this.simpleReceiver = new SimpleImageReceiver();
+          }
+          this.simpleReceiver.handleSimpleImage(message);
+        }
+      });
+
+      // 分割画像受信対応
+      this.socket.on("image-start", (metadata) => {
+        console.log("📦 Receiving large image:", metadata.filename);
+        this.imageReplacer.startLargeImageReceive(metadata);
+      });
+
+      this.socket.on("image-chunk", (chunkData) => {
+        this.imageReplacer.receiveLargeImageChunk(chunkData);
+      });
+
+      this.socket.on("image-complete", (completeData) => {
+        console.log("✅ Large image complete:", completeData.filename);
+        this.imageReplacer.completeLargeImageReceive(completeData);
       });
     } catch (error) {
       console.error("❌ WebSocket connection error:", error);
