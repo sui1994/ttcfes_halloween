@@ -13,6 +13,9 @@
 
   <!-- WebSocket クライアント -->
   <script src="/socket.io/socket.io.js"></script>
+  <!-- Image Replacement System -->
+  <script src="js/image-replacer.js"></script>
+  <script src="js/simple-image-sender.js"></script>
   <script src="js/websocket-client.js"></script>
 
   <!-- ハローウィン専用CSS -->
@@ -121,7 +124,10 @@
     <img src="images/fixed/effects/bat_2.gif" width="80px" height="auto">
   </div>
 
-  <!-- ハローウィンの効果音（削除：重複を防ぐため） -->
+  <!-- ハローウィンの効果音 -->
+  <audio id="halloween-sound" preload="auto">
+    <source src="preset_music/halloween_bgm.mp3" type="audio/mpeg">
+  </audio>
 
   <!-- 🔄 横からアニメーションするキャラクター15体 【画像入れ替え可能】 -->
   <div class="character-container">
