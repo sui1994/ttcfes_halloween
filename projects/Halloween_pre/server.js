@@ -29,6 +29,10 @@ app.get("/control", (req, res) => {
   res.sendFile(path.join(__dirname, "control.html"));
 });
 
+app.get("/test-chunked", (req, res) => {
+  res.sendFile(path.join(__dirname, "test-chunked-upload.html"));
+});
+
 // 接続中のクライアント管理
 let connectedClients = {
   displays: new Set(),
@@ -90,6 +94,154 @@ io.on("connection", (socket) => {
     });
   });
 
+  // 画像置換メッセージ受信（Base64対応）
+  socket.on("image-replace", (imageMessage) => {
+    console.log(`📥 Image replace received: ${imageMessage.filename} (${imageMessage.mimeType})`);
+    console.log(`📤 Broadcasting to displays: ${(imageMessage.data.length / 1024).toFixed(1)}KB`);
+
+    // 表示画面に画像メッセージを転送
+    connectedClients.displays.forEach((displayId) => {
+      io.to(displayId).emit("image-replace", imageMessage);
+    });
+  });
+
+  // 分割画像送信対応
+  socket.on("image-start", (metadata) => {
+    console.log(`📦 Large image start: ${metadata.filename} (${metadata.totalChunks} chunks)`);
+    connectedClients.displays.forEach((displayId) => {
+      io.to(displayId).emit("image-start", metadata);
+    });
+  });
+
+  socket.on("image-chunk", (chunkData) => {
+    console.log(`📥 Chunk ${chunkData.chunkIndex + 1}/${chunkData.totalChunks}: ${chunkData.filename} (${chunkData.data.length} chars)`);
+    connectedClients.displays.forEach((displayId) => {
+      io.to(displayId).emit("image-chunk", chunkData);
+    });
+  });
+
+  socket.on("image-complete", (completeData) => {
+    console.log(`✅ Large image complete: ${completeData.filename}`);
+    connectedClients.displays.forEach((displayId) => {
+      io.to(displayId).emit("image-complete", completeData);
+    });
+  });
+
+  // テスト用イベント
+  socket.on("ping", (data, callback) => {
+    console.log("🏓 Ping received:", data);
+    if (callback) callback("pong");
+    socket.emit("pong", data);
+  });
+
+  socket.on("test-event", (data) => {
+    console.log("🧪 Test event received:", data);
+    socket.emit("test-response", { received: true, timestamp: Date.now() });
+  });
+
+  // シンプル画像受信
+  socket.on("image-simple", (message) => {
+    console.log(`📥 Simple image received: ${message.filename} (${(message.size / 1024).toFixed(1)}KB)`);
+
+    // 表示画面に転送
+    connectedClients.displays.forEach((displayId) => {
+      io.to(displayId).emit("image-simple", message);
+    });
+  });
+
+  // バイナリチャンクアップロード対応
+  socket.on("file-upload-metadata", (metadata) => {
+    console.log(`📋 File upload metadata: ${metadata.filename} (${metadata.totalChunks} chunks)`);
+
+    // セッション管理
+    if (!socket.uploadSessions) {
+      socket.uploadSessions = new Map();
+    }
+
+    socket.uploadSessions.set(metadata.sessionId, {
+      filename: metadata.filename,
+      filesize: metadata.filesize,
+      totalChunks: metadata.totalChunks,
+      mimeType: metadata.mimeType,
+      chunks: new Array(metadata.totalChunks),
+      receivedChunks: 0,
+      timestamp: Date.now(),
+    });
+
+    // メタデータ受信確認
+    socket.emit("file-upload-ack", {
+      sessionId: metadata.sessionId,
+      chunkIndex: -1,
+    });
+  });
+
+  socket.on("file-upload-chunk", (data) => {
+    try {
+      const uint8Array = new Uint8Array(data);
+
+      // メタデータ区切り文字を探す
+      const delimiter = new TextEncoder().encode("|||");
+      let delimiterIndex = -1;
+
+      for (let i = 0; i < uint8Array.length - 2; i++) {
+        if (uint8Array[i] === delimiter[0] && uint8Array[i + 1] === delimiter[1] && uint8Array[i + 2] === delimiter[2]) {
+          delimiterIndex = i;
+          break;
+        }
+      }
+
+      if (delimiterIndex === -1) {
+        socket.emit("file-upload-error", {
+          message: "Invalid chunk format",
+        });
+        return;
+      }
+
+      // メタデータとチャンクデータを分離
+      const metadataBytes = uint8Array.slice(0, delimiterIndex);
+      const chunkData = uint8Array.slice(delimiterIndex + 3);
+
+      const metadata = JSON.parse(new TextDecoder().decode(metadataBytes));
+
+      if (!socket.uploadSessions) {
+        socket.uploadSessions = new Map();
+      }
+
+      const session = socket.uploadSessions.get(metadata.sessionId);
+
+      if (!session) {
+        socket.emit("file-upload-error", {
+          message: "Session not found",
+        });
+        return;
+      }
+
+      // チャンクを保存
+      session.chunks[metadata.chunkIndex] = chunkData;
+      session.receivedChunks++;
+
+      console.log(`📦 Chunk received: ${metadata.chunkIndex + 1}/${metadata.totalChunks} for ${metadata.filename}`);
+
+      // ACK送信
+      socket.emit("file-upload-ack", {
+        sessionId: metadata.sessionId,
+        chunkIndex: metadata.chunkIndex,
+      });
+
+      // すべてのチャンクが揃ったか確認
+      console.log(`📊 Progress: ${session.receivedChunks}/${session.totalChunks} chunks received`);
+      if (session.receivedChunks === session.totalChunks) {
+        console.log(`🎯 All chunks received! Calling handleCompleteFileUpload for ${metadata.filename}`);
+        handleCompleteFileUpload(socket, metadata.sessionId, session);
+      }
+    } catch (error) {
+      console.error("❌ Chunk processing error:", error);
+      socket.emit("file-upload-error", {
+        message: "Chunk processing failed",
+      });
+    }
+  });
+
   // 切断処理
   socket.on("disconnect", () => {
     console.log(`❌ Client disconnected: ${socket.id}`);
@@ -103,6 +255,79 @@ io.on("connection", (socket) => {
     });
   });
 });
+
+// ファイルアップロード完了処理
+function handleCompleteFileUpload(socket, sessionId, session) {
+  console.log(`✅ File upload complete: ${session.filename}`);
+
+  // すべてのチャンクが揃っているか確認
+  const missingChunks = [];
+  for (let i = 0; i < session.chunks.length; i++) {
+    if (!session.chunks[i]) {
+      missingChunks.push(i);
+    }
+  }
+
+  if (missingChunks.length > 0) {
+    console.log(`❌ Missing chunks: ${missingChunks.join(", ")}`);
+    socket.emit("file-upload-error", {
+      message: `Missing chunks: ${missingChunks.join(", ")}`,
+    });
+    return;
+  }
+
+  console.log(`✅ All ${session.chunks.length} chunks are present`);
+
+  // チャンクを結合
+  const totalLength = session.chunks.reduce((acc, chunk) => acc + chunk.length, 0);
+  const completeFile = new Uint8Array(totalLength);
+
+  let offset = 0;
+  for (const chunk of session.chunks) {
+    completeFile.set(chunk, offset);
+    offset += chunk.length;
+  }
+
+  // Base64に変換して既存の画像置換システムに送信
+  const base64Data = arrayBufferToBase64(completeFile.buffer);
+
+  const imageMessage = {
+    type: "image_replace",
+    filename: session.filename,
+    mimeType: session.mimeType,
+    size: session.filesize,
+    data: base64Data,
+    timestamp: Date.now(),
+    uploadMethod: "chunked",
+  };
+
+  console.log(`📤 Broadcasting chunked image to displays: ${session.filename} (${(session.filesize / 1024).toFixed(1)}KB)`);
+
+  // 表示画面に画像メッセージを転送
+  connectedClients.displays.forEach((displayId) => {
+    io.to(displayId).emit("image-replace", imageMessage);
+  });
+
+  // 完了通知
+  socket.emit("file-upload-complete", {
+    sessionId: sessionId,
+    filename: session.filename,
+    filesize: session.filesize,
+  });
+
+  // セッション削除
+  socket.uploadSessions.delete(sessionId);
+}
+
+// ArrayBufferをBase64に変換
+function arrayBufferToBase64(buffer) {
+  const bytes = new Uint8Array(buffer);
+  let binary = "";
+  for (let i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {

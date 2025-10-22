@@ -50,17 +50,39 @@ class HalloweenControlPanel {
 
       // コントローラーとして登録
       this.socket.emit("register", "controller");
+
+      // 画像アップローダー初期化
+      this.initImageUploader();
     });
 
-    this.socket.on("disconnect", () => {
+    this.socket.on("disconnect", (reason) => {
       this.updateConnectionStatus(false);
-      this.addLog("サーバーとの接続が切断されました", "error");
+      this.addLog(`サーバーとの接続が切断されました: ${reason}`, "error");
+      console.log("❌ Socket disconnected:", reason);
+    });
+
+    this.socket.on("connect_error", (error) => {
+      this.addLog(`接続エラー: ${error.message}`, "error");
+      console.error("❌ Connection error:", error);
     });
 
     this.socket.on("client-count", (data) => {
       this.displayCount.textContent = data.displays;
       this.controllerCount.textContent = data.controllers;
     });
+  }
+
+  initImageUploader() {
+    if (window.HalloweenImageUploader && this.socket) {
+      this.imageUploader = new HalloweenImageUploader(this.socket);
+      this.addLog("画像アップロードシステムが初期化されました", "success");
+    }
+
+    // シンプル画像送信システムも初期化
+    if (window.SimpleImageSender && this.socket) {
+      this.simpleImageSender = new SimpleImageSender(this.socket);
+      this.addLog("シンプル画像送信システムが初期化されました", "success");
+    }
   }
 
   updateConnectionStatus(connected) {
