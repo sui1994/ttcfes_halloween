@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>🧪 チャンク分割アップロードテスト</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #1a1a1a;
+      color: white;
+    }
+
+    .test-container {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+
+    .upload-area {
+      border: 2px dashed #ff6b35;
+      border-radius: 10px;
+      padding: 40px 20px;
+      text-align: center;
+      background: rgba(255, 107, 53, 0.1);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .upload-area:hover {
+      border-color: #ffd700;
+      background: rgba(255, 215, 0, 0.1);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 20px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4caf50, #8bc34a);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .status {
+      padding: 10px;
+      border-radius: 5px;
+      margin: 10px 0;
+    }
+
+    .status.success {
+      background: rgba(76, 175, 80, 0.2);
+      color: #4caf50;
+    }
+
+    .status.error {
+      background: rgba(244, 67, 54, 0.2);
+      color: #f44336;
+    }
+
+    .status.info {
+      background: rgba(33, 150, 243, 0.2);
+      color: #2196f3;
+    }
+
+    .btn {
+      background: #ff6b35;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+    }
+
+    .btn:hover {
+      background: #e55a2b;
+    }
+
+    .log {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 5px;
+      padding: 15px;
+      font-family: monospace;
+      font-size: 12px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>🧪 WebSocketチャンク分割アップロードテスト</h1>
+
+  <div class="test-container">
+    <h2>📡 接続状況</h2>
+    <div id="connection-status" class="status info">サーバーに接続中...</div>
+  </div>
+
+  <div class="test-container">
+    <h2>📤 ファイルアップロード</h2>
+    <div class="upload-area" id="upload-area">
+      <div>📁 ファイルをドラッグ&ドロップ または クリックして選択</div>
+      <div style="margin-top: 10px; font-size: 12px; color: #ccc;">
+        対応形式: PNG, GIF, JPEG, WebP (最大10MB)
+      </div>
+      <input type="file" id="file-input" accept="image/*" style="display: none;">
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    <div id="progress-text">0%</div>
+
+    <div id="upload-status" class="status" style="display: none;"></div>
+  </div>
+
+  <div class="test-container">
+    <h2>🎛️ テスト操作</h2>
+    <button class="btn" onclick="testConnection()">接続テスト</button>
+    <button class="btn" onclick="generateTestFile()">テストファイル生成</button>
+    <button class="btn" onclick="clearLog()">ログクリア</button>
+  </div>
+
+  <div class="test-container">
+    <h2>📋 ログ</h2>
+    <div class="log" id="log"></div>
+  </div>
+
+  <!-- Socket.io クライアント -->
+  <script src="/socket.io/socket.io.js"></script>
+
+  <!-- WebSocket File Uploader -->
+  <script src="js/websocket-file-uploader.js"></script>
+
+  <script>
+    let socket;
+    let fileUploader;
+
+    // 初期化
+    document.addEventListener('DOMContentLoaded', () => {
+      initializeSocket();
+      setupFileUpload();
+      log('🚀 テストページ初期化完了');
+    });
+
+    // Socket.io初期化
+    function initializeSocket() {
+      socket = io();
+
+      socket.on('connect', () => {
+        log('✅ WebSocket接続成功');
+        updateConnectionStatus('接続済み', 'success');
+
+        // ファイルアップローダー初期化
+        fileUploader = new WebSocketFileUploader(socket);
+
+        // 進捗コールバック設定
+        fileUploader.setProgressCallback((progress) => {
+          updateProgress(progress);
+          log(`📊 アップロード進捗: ${progress}%`);
+        });
+
+        // 完了コールバック設定
+        fileUploader.setCompleteCallback((response) => {
+          log(`✅ アップロード完了: ${response.filename}`);
+          showStatus('アップロード完了!', 'success');
+          updateProgress(100);
+        });
+
+        // エラーコールバック設定
+        fileUploader.setErrorCallback((error) => {
+          log(`❌ アップロードエラー: ${error}`);
+          showStatus(`エラー: ${error}`, 'error');
+        });
+      });
+
+      socket.on('disconnect', () => {
+        log('❌ WebSocket切断');
+        updateConnectionStatus('切断', 'error');
+      });
+
+      socket.on('connect_error', (error) => {
+        log(`❌ 接続エラー: ${error.message}`);
+        updateConnectionStatus('接続エラー', 'error');
+      });
+    }
+
+    // ファイルアップロード設定
+    function setupFileUpload() {
+      const uploadArea = document.getElementById('upload-area');
+      const fileInput = document.getElementById('file-input');
+
+      // クリックでファイル選択
+      uploadArea.addEventListener('click', () => {
+        fileInput.click();
+      });
+
+      // ファイル選択
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          uploadFile(file);
+        }
+      });
+
+      // ドラッグ&ドロップ
+      uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#ffd700';
+      });
+
+      uploadArea.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#ff6b35';
+      });
+
+      uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#ff6b35';
+
+        const file = e.dataTransfer.files[0];
+        if (file) {
+          uploadFile(file);
+        }
+      });
+    }
+
+    // ファイルアップロード実行
+    async function uploadFile(file) {
+      if (!fileUploader) {
+        showStatus('WebSocketが接続されていません', 'error');
+        return;
+      }
+
+      log(`📤 アップロード開始: ${file.name} (${(file.size / 1024).toFixed(1)}KB)`);
+      showStatus(`アップロード中: ${file.name}`, 'info');
+      updateProgress(0);
+
+      try {
+        await fileUploader.uploadFile(file);
+      } catch (error) {
+        log(`❌ アップロード失敗: ${error.message}`);
+        showStatus(`アップロード失敗: ${error.message}`, 'error');
+      }
+    }
+
+    // 進捗更新
+    function updateProgress(progress) {
+      const progressFill = document.getElementById('progress-fill');
+      const progressText = document.getElementById('progress-text');
+
+      progressFill.style.width = `${progress}%`;
+      progressText.textContent = `${progress.toFixed(1)}%`;
+    }
+
+    // ステータス表示
+    function showStatus(message, type) {
+      const statusDiv = document.getElementById('upload-status');
+      statusDiv.textContent = message;
+      statusDiv.className = `status ${type}`;
+      statusDiv.style.display = 'block';
+    }
+
+    // 接続状況更新
+    function updateConnectionStatus(status, type) {
+      const statusDiv = document.getElementById('connection-status');
+      statusDiv.textContent = `WebSocket: ${status}`;
+      statusDiv.className = `status ${type}`;
+    }
+
+    // ログ出力
+    function log(message) {
+      const logDiv = document.getElementById('log');
+      const timestamp = new Date().toLocaleTimeString();
+      logDiv.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+      logDiv.scrollTop = logDiv.scrollHeight;
+    }
+
+    // テスト関数
+    function testConnection() {
+      if (socket && socket.connected) {
+        socket.emit('ping', { test: true, timestamp: Date.now() });
+        log('🏓 Ping送信');
+      } else {
+        log('❌ WebSocket未接続');
+      }
+    }
+
+    function generateTestFile() {
+      // 1MBのテストファイルを生成
+      const canvas = document.createElement('canvas');
+      canvas.width = 1000;
+      canvas.height = 1000;
+      const ctx = canvas.getContext('2d');
+
+      // ランダムなパターンを描画
+      for (let i = 0; i < 100; i++) {
+        ctx.fillStyle = `hsl(${Math.random() * 360}, 50%, 50%)`;
+        ctx.fillRect(Math.random() * 1000, Math.random() * 1000, 50, 50);
+      }
+
+      canvas.toBlob((blob) => {
+        const file = new File([blob], 'test-image.png', { type: 'image/png' });
+        log(`🎨 テストファイル生成: ${file.name} (${(file.size / 1024).toFixed(1)}KB)`);
+        uploadFile(file);
+      }, 'image/png');
+    }
+
+    function clearLog() {
+      document.getElementById('log').innerHTML = '';
+      log('🧹 ログクリア');
+    }
+  </script>
+</body>
+
+</html>
