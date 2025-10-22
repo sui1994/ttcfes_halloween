@@ -8,6 +8,7 @@ class HalloweenImageUploader {
     this.socket = socket;
     this.supportedTypes = ["image/png", "image/gif", "image/jpeg", "image/webp"];
     this.maxFileSize = 10 * 1024 * 1024; // 10MB
+    this.imageUpdateCallback = null; // 画像更新コールバック
 
     this.init();
     console.log("📤 Halloween Image Uploader initialized");
@@ -172,6 +173,16 @@ class HalloweenImageUploader {
       this.updateTargetStatus(file.name, "✅ 送信完了", "success");
       this.updateStatus(`✅ ${file.name} を送信しました`, "success");
 
+      // 画像更新コールバックを呼び出し
+      console.log(`🔍 画像更新コールバック呼び出し: ${file.name}`);
+      console.log(`🔍 コールバック関数:`, this.imageUpdateCallback);
+      if (this.imageUpdateCallback) {
+        console.log(`✅ コールバック実行中...`);
+        this.imageUpdateCallback(file.name);
+      } else {
+        console.log(`❌ コールバックが設定されていません`);
+      }
+
       console.log(`📤 Image uploaded: ${file.name} (${(file.size / 1024).toFixed(1)}KB)`);
     } catch (error) {
       console.error("❌ File processing error:", error);
@@ -248,6 +259,11 @@ class HalloweenImageUploader {
         }, 3000);
       }
     }
+  }
+
+  // 画像更新コールバック設定
+  setImageUpdateCallback(callback) {
+    this.imageUpdateCallback = callback;
   }
 }
 

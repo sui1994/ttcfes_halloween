@@ -76,6 +76,14 @@ class HalloweenControlPanel {
     if (window.HalloweenImageUploader && this.socket) {
       this.imageUploader = new HalloweenImageUploader(this.socket);
       this.addLog("画像アップロードシステムが初期化されました", "success");
+
+      // 画像更新コールバックを設定
+      console.log(`🔍 画像更新コールバックを設定中...`);
+      this.imageUploader.setImageUpdateCallback((filename) => {
+        console.log(`🔍 コールバック受信: ${filename}`);
+        this.handleImageUpdate(filename);
+      });
+      console.log(`✅ 画像更新コールバック設定完了`);
     }
 
     // シンプル画像送信システムも初期化
@@ -320,6 +328,184 @@ class HalloweenControlPanel {
     if (activeCount === 0) {
       activeCharactersContainer.innerHTML = '<div style="color: #666; text-align: center; padding: 20px;">現在操作中のキャラクターはありません</div>';
     }
+  }
+
+  // 画像更新処理
+  handleImageUpdate(filename) {
+    const timestamp = new Date().toLocaleTimeString();
+    console.log(`📸 [${timestamp}] 画像更新: ${filename}`);
+
+    // ログに記録
+    this.addLog(`📸 画像更新: ${filename}`, "image-update");
+
+    // 操作パネルの画像を更新
+    this.updateControlPanelImage(filename);
+  }
+
+  // 操作パネルの画像更新
+  updateControlPanelImage(filename) {
+    console.log(`🔍 updateControlPanelImage開始: ${filename}`);
+    try {
+      let targetCard = null;
+      let imageElement = null;
+
+      // 飛行キャラクターの場合
+      const flyingMatch = filename.match(/^character(\d+)\.(png|gif|jpg|jpeg|webp)$/i);
+      console.log(`🔍 飛行キャラクターマッチ結果:`, flyingMatch);
+      if (flyingMatch) {
+        const characterNum = flyingMatch[1];
+        console.log(`🔍 飛行キャラクター番号: ${characterNum}`);
+        targetCard = document.getElementById(`flying-character-${characterNum}`);
+        console.log(`🔍 対象カード要素:`, targetCard);
+        if (targetCard) {
+          imageElement = targetCard.querySelector(".character-image");
+          console.log(`🔍 画像要素:`, imageElement);
+          if (imageElement) {
+            // 現在のsrcを記録
+            console.log(`🔍 現在のsrc: ${imageElement.src}`);
+            // キャッシュバスターを使用して強制リロード
+            const cacheBuster = Date.now();
+            const newSrc = `images/changeable/flying-characters/character${characterNum}.png?v=${cacheBuster}`;
+
+            // 画像読み込み成功/失敗のイベントリスナーを追加
+            imageElement.onload = () => {
+              console.log(`✅ 画像読み込み成功: ${newSrc}`);
+              // 成功時に追加のログ出力
+              this.addLog(`✅ 画像表示更新完了: ${filename}`, "success");
+            };
+            imageElement.onerror = () => {
+              console.log(`❌ 画像読み込み失敗: ${newSrc}`);
+            };
+
+            imageElement.src = newSrc;
+            console.log(`🔄 飛行キャラ${characterNum}の画像を更新: ${newSrc}`);
+
+            // 更新時刻を表示
+            this.addUpdateTimestamp(targetCard, filename);
+          } else {
+            console.log(`❌ 画像要素が見つかりません`);
+          }
+        } else {
+          console.log(`❌ カード要素が見つかりません: flying-character-${characterNum}`);
+        }
+      }
+
+      // 歩行キャラクターの場合
+      const walkingMatch = filename.match(/^walking-(left|right)-(\d+)\.(png|gif|jpg|jpeg|webp)$/i);
+      console.log(`🔍 歩行キャラクターマッチ結果:`, walkingMatch);
+      if (walkingMatch) {
+        const direction = walkingMatch[1];
+        const characterNum = walkingMatch[2];
+        console.log(`🔍 歩行キャラクター: ${direction}${characterNum}`);
+
+        // 歩行キャラクターのインデックスを計算
+        const walkingFiles = [
+          "walking-left-1.png",
+          "walking-right-1.png",
+          "walking-left-2.png",
+          "walking-right-2.png",
+          "walking-left-3.png",
+          "walking-right-3.png",
+          "walking-left-4.png",
+          "walking-right-4.png",
+          "walking-left-5.png",
+          "walking-right-5.png",
+        ];
+
+        const fileIndex = walkingFiles.indexOf(filename.toLowerCase());
+        console.log(`🔍 ファイルインデックス: ${fileIndex} (${filename.toLowerCase()})`);
+        if (fileIndex !== -1) {
+          const cardIndex = fileIndex + 1;
+          console.log(`🔍 カードインデックス: ${cardIndex}`);
+          targetCard = document.getElementById(`walking-character-${cardIndex}`);
+          console.log(`🔍 対象カード要素:`, targetCard);
+          if (targetCard) {
+            imageElement = targetCard.querySelector(".character-image");
+            console.log(`🔍 画像要素:`, imageElement);
+            if (imageElement) {
+              // 現在のsrcを記録
+              console.log(`🔍 現在のsrc: ${imageElement.src}`);
+              // キャッシュバスターを使用して強制リロード
+              const cacheBuster = Date.now();
+              const newSrc = `images/changeable/walking-characters/${filename}?v=${cacheBuster}`;
+
+              // 画像読み込み成功/失敗のイベントリスナーを追加
+              imageElement.onload = () => {
+                console.log(`✅ 画像読み込み成功: ${newSrc}`);
+                // 成功時に追加のログ出力
+                this.addLog(`✅ 画像表示更新完了: ${filename}`, "success");
+              };
+              imageElement.onerror = () => {
+                console.log(`❌ 画像読み込み失敗: ${newSrc}`);
+              };
+
+              imageElement.src = newSrc;
+              console.log(`🔄 歩行キャラ${direction}${characterNum}の画像を更新: ${newSrc}`);
+
+              // 更新時刻を表示
+              this.addUpdateTimestamp(targetCard, filename);
+            } else {
+              console.log(`❌ 画像要素が見つかりません`);
+            }
+          } else {
+            console.log(`❌ カード要素が見つかりません: walking-character-${cardIndex}`);
+          }
+        } else {
+          console.log(`❌ ファイルがリストに見つかりません: ${filename.toLowerCase()}`);
+        }
+      }
+
+      // 視覚的フィードバック
+      if (targetCard) {
+        this.addImageUpdateEffect(targetCard);
+      }
+    } catch (error) {
+      console.error("❌ 画像更新エラー:", error);
+      this.addLog(`❌ 画像更新エラー: ${filename}`, "error");
+    }
+  }
+
+  // 画像更新の視覚的エフェクト
+  addImageUpdateEffect(cardElement) {
+    // 既存のエフェクトをクリア
+    cardElement.classList.remove("image-updated");
+
+    // 少し遅延してからエフェクトを追加（CSSアニメーションのリセット）
+    setTimeout(() => {
+      cardElement.classList.add("image-updated");
+
+      // 3秒後にエフェクトを削除
+      setTimeout(() => {
+        cardElement.classList.remove("image-updated");
+      }, 3000);
+    }, 50);
+  }
+
+  // 更新タイムスタンプを追加
+  addUpdateTimestamp(cardElement, filename) {
+    // 既存のタイムスタンプを削除
+    const existingTimestamp = cardElement.querySelector(".update-timestamp");
+    if (existingTimestamp) {
+      existingTimestamp.remove();
+    }
+
+    // 新しいタイムスタンプを作成
+    const timestamp = document.createElement("div");
+    timestamp.className = "update-timestamp";
+    timestamp.textContent = `更新: ${new Date().toLocaleTimeString()}`;
+
+    // キャラクター名の下に挿入
+    const characterName = cardElement.querySelector(".character-name");
+    if (characterName) {
+      characterName.parentNode.insertBefore(timestamp, characterName.nextSibling);
+    }
+
+    // 10秒後に自動削除
+    setTimeout(() => {
+      if (timestamp.parentNode) {
+        timestamp.remove();
+      }
+    }, 10000);
   }
 }
 
