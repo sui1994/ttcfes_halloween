@@ -263,20 +263,20 @@ let audioPool = [];
 const AUDIO_POOL_SIZE = 3;
 
 function initAudioPool() {
-  for (let i = 0; i < AUDIO_POOL_SIZE; i++) {
-    const audio = new Audio("preset_music/halloween_bgm.mp3");
-    audio.preload = "auto";
-    audio.volume = 0.5;
-    audioPool.push(audio);
-  }
+  // BGM重複を防ぐため、オーディオプールを無効化
+  // 必要に応じて効果音専用ファイルに変更してください
+  console.log("🔇 Audio pool disabled to prevent BGM overlap");
 }
 
 function playClickSound() {
-  const availableAudio = audioPool.find((audio) => audio.paused || audio.ended);
-  if (availableAudio) {
-    availableAudio.currentTime = 0;
-    availableAudio.play().catch((error) => console.log("音楽再生エラー:", error));
-  }
+  // 専用効果音ファイルを再生
+  const audio = new Audio("preset_music/happyhalloween.mp3");
+  audio.volume = 0.25; // 効果音用音量
+  audio.currentTime = 0;
+
+  audio.play().catch((error) => {
+    console.log("音楽再生エラー:", error);
+  });
 }
 
 // DOMが読み込まれてから実行

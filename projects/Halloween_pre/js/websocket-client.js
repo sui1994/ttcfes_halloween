@@ -224,11 +224,13 @@ class HalloweenWebSocketClient {
     element.style.transition = "";
   }
 
-  // クリック音再生
+  // クリック音再生（専用効果音ファイル使用）
   playClickSound() {
-    const audio = new Audio("preset_music/halloween_bgm.mp3");
-    audio.volume = 0.3;
+    // 専用効果音ファイルを再生
+    const audio = new Audio("preset_music/happyhalloween.mp3");
+    audio.volume = 0.3; // 効果音用音量
     audio.currentTime = 0;
+
     audio.play().catch((error) => {
       console.log("Click sound error:", error);
     });
