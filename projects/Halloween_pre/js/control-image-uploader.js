@@ -23,7 +23,7 @@ class HalloweenImageUploader {
     const uploadSection = document.createElement("div");
     uploadSection.className = "control-section";
     uploadSection.innerHTML = `
-      <h2 class="section-title">🖼️ 画像置換システム</h2>
+      <h2 class="section-title">🖼️ 画像置換システム（チャンク分割対応）</h2>
       <div class="image-upload-container">
         <div class="upload-area" id="upload-area">
           <div class="upload-content">
@@ -31,12 +31,11 @@ class HalloweenImageUploader {
             <div class="upload-text">
               <strong>画像をドラッグ&ドロップ</strong><br>
               または<br>
-              <button class="upload-btn" id="file-select-btn">ファイルを選択</button><br>
-              <button class="upload-btn simple-btn" id="simple-send-btn" style="background: #4caf50; margin-top: 10px;">シンプル送信</button><br>
-              <button class="upload-btn chunked-btn" id="chunked-send-btn" style="background: #2196f3; margin-top: 10px;">チャンク分割送信</button>
+              <button class="upload-btn" id="file-select-btn">ファイルを選択</button>
             </div>
             <div class="upload-info">
-              対応形式: PNG, GIF, JPEG, WebP (最大10MB)
+              対応形式: PNG, GIF, JPEG, WebP (最大10MB)<br>
+              <small>自動的にチャンク分割でアップロードされます</small>
             </div>
           </div>
           <input type="file" id="image-input" accept="image/*" multiple style="display: none;">
@@ -114,22 +113,6 @@ class HalloweenImageUploader {
       fileInput.click();
     });
 
-    // シンプル送信ボタン
-    const simpleSendBtn = document.getElementById("simple-send-btn");
-    if (simpleSendBtn) {
-      simpleSendBtn.addEventListener("click", () => {
-        this.openSimpleSend();
-      });
-    }
-
-    // チャンク分割送信ボタン
-    const chunkedSendBtn = document.getElementById("chunked-send-btn");
-    if (chunkedSendBtn) {
-      chunkedSendBtn.addEventListener("click", () => {
-        this.openChunkedUpload();
-      });
-    }
-
     // ファイル選択
     fileInput.addEventListener("change", (e) => {
       this.handleFiles(e.target.files);
@@ -153,17 +136,17 @@ class HalloweenImageUploader {
     });
   }
 
-  // ファイル処理
+  // ファイル処理（チャンク分割アップロードを使用）
   async handleFiles(files) {
     const fileArray = Array.from(files);
 
     for (const file of fileArray) {
-      await this.processFile(file);
+      await this.uploadWithChunking(file);
     }
   }
 
-  // 個別ファイル処理
-  async processFile(file) {
+  // チャンク分割アップロード処理
+  async uploadWithChunking(file) {
     try {
       // バリデーション
       if (!this.validateFile(file)) {
@@ -172,33 +155,18 @@ class HalloweenImageUploader {
 
       this.updateStatus(`📤 ${file.name} をアップロード中...`, "uploading");
 
-      // ファイルサイズチェック（Base64膨張を考慮）
-      const estimatedBase64Size = (file.size * 4) / 3;
-      if (estimatedBase64Size > 14 * 1024 * 1024) {
-        // 14MB制限（10MB PNG対応）
-        this.updateStatus(`❌ ${file.name}: ファイルが大きすぎます (最大: 10MB)`, "error");
-        return;
+      // WebSocketFileUploaderを初期化
+      if (!this.fileUploader) {
+        this.fileUploader = new WebSocketFileUploader(this.socket);
+
+        // 進捗コールバック設定
+        this.fileUploader.setProgressCallback((progress) => {
+          this.updateStatus(`📦 アップロード中: ${file.name} (${progress}%)`, "uploading");
+        });
       }
 
-      // ArrayBufferに変換
-      const arrayBuffer = await file.arrayBuffer();
-
-      // メタデータ準備
-      const metadata = {
-        type: "image_replace",
-        filename: file.name,
-        mimeType: file.type,
-        size: file.size,
-        timestamp: Date.now(),
-      };
-
-      // 分割送信かどうか判定
-      if (file.size > 1 * 1024 * 1024) {
-        // 1MB以上は分割（10MB対応）
-        await this.sendLargeFile(arrayBuffer, metadata);
-      } else {
-        await this.sendSmallFile(arrayBuffer, metadata);
-      }
+      // チャンク分割アップロード実行
+      await this.fileUploader.uploadFile(file);
 
       // ステータス更新
       this.updateTargetStatus(file.name, "✅ 送信完了", "success");
@@ -210,69 +178,6 @@ class HalloweenImageUploader {
       this.updateStatus(`❌ ${file.name} の処理に失敗しました`, "error");
       this.updateTargetStatus(file.name, "❌ エラー", "error");
     }
-  }
-
-  // 小さなファイルの送信
-  async sendSmallFile(arrayBuffer, metadata) {
-    const base64Data = this.arrayBufferToBase64(arrayBuffer);
-
-    const imageMessage = {
-      ...metadata,
-      data: base64Data,
-    };
-
-    console.log("📤 Sending small image:", {
-      filename: metadata.filename,
-      size: metadata.size,
-      base64Length: base64Data.length,
-    });
-
-    this.socket.emit("image-replace", imageMessage);
-    console.log("📨 Image message sent to server");
-  }
-
-  // 大きなファイルの分割送信
-  async sendLargeFile(arrayBuffer, metadata) {
-    const chunkSize = 512 * 1024; // 512KBずつ分割（10MB対応）
-    const totalChunks = Math.ceil(arrayBuffer.byteLength / chunkSize);
-
-    console.log(`📦 Sending large file in ${totalChunks} chunks:`, metadata.filename);
-
-    // 分割送信開始通知
-    this.socket.emit("image-start", {
-      ...metadata,
-      totalChunks: totalChunks,
-      chunkSize: chunkSize,
-    });
-
-    // チャンクごとに送信
-    for (let i = 0; i < totalChunks; i++) {
-      const start = i * chunkSize;
-      const end = Math.min(start + chunkSize, arrayBuffer.byteLength);
-      const chunk = arrayBuffer.slice(start, end);
-      const base64Chunk = this.arrayBufferToBase64(chunk);
-
-      console.log(`📦 Sending chunk ${i + 1}/${totalChunks}: ${start}-${end} (${chunk.byteLength} bytes) -> ${base64Chunk.length} chars`);
-
-      this.socket.emit("image-chunk", {
-        filename: metadata.filename,
-        chunkIndex: i,
-        totalChunks: totalChunks,
-        data: base64Chunk,
-      });
-
-      // 進捗更新
-      const progress = Math.round(((i + 1) / totalChunks) * 100);
-      this.updateStatus(`📤 ${metadata.filename} 送信中... ${progress}%`, "uploading");
-
-      // 少し待機（サーバー負荷軽減）
-      await new Promise((resolve) => setTimeout(resolve, 100));
-    }
-
-    // 送信完了通知
-    this.socket.emit("image-complete", {
-      filename: metadata.filename,
-    });
   }
 
   // ファイルバリデーション
@@ -326,81 +231,6 @@ class HalloweenImageUploader {
         statusDiv.className = "upload-status";
       }, 5000);
     }
-  }
-
-  // ArrayBufferをBase64に変換
-  arrayBufferToBase64(buffer) {
-    const bytes = new Uint8Array(buffer);
-    let binary = "";
-    for (let i = 0; i < bytes.byteLength; i++) {
-      binary += String.fromCharCode(bytes[i]);
-    }
-    return btoa(binary);
-  }
-
-  // シンプル送信を開く
-  openSimpleSend() {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-
-    input.onchange = async (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        try {
-          this.updateStatus(`📤 シンプル送信中: ${file.name}`, "uploading");
-
-          // シンプル送信システムを使用
-          if (window.controlPanel && window.controlPanel.simpleImageSender) {
-            await window.controlPanel.simpleImageSender.processFile(file);
-            this.updateStatus(`✅ シンプル送信完了: ${file.name}`, "success");
-          } else {
-            throw new Error("Simple image sender not available");
-          }
-        } catch (error) {
-          console.error("❌ Simple send failed:", error);
-          this.updateStatus(`❌ シンプル送信失敗: ${file.name}`, "error");
-        }
-      }
-    };
-
-    input.click();
-  }
-
-  // チャンク分割アップロード（新機能）
-  async openChunkedUpload() {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-
-    input.onchange = async (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        try {
-          this.updateStatus(`📦 チャンク分割アップロード開始: ${file.name}`, "uploading");
-
-          // WebSocketFileUploaderを使用
-          if (!this.fileUploader) {
-            this.fileUploader = new WebSocketFileUploader(this.socket);
-
-            // 進捗コールバック設定
-            this.fileUploader.setProgressCallback((progress) => {
-              this.updateStatus(`📦 アップロード中: ${file.name} (${progress}%)`, "uploading");
-            });
-          }
-
-          await this.fileUploader.uploadFile(file);
-          this.updateStatus(`✅ チャンク分割アップロード完了: ${file.name}`, "success");
-          this.updateTargetStatus(file.name, "✅ 送信完了", "success");
-        } catch (error) {
-          console.error("❌ Chunked upload failed:", error);
-          this.updateStatus(`❌ チャンク分割アップロード失敗: ${file.name}`, "error");
-          this.updateTargetStatus(file.name, "❌ エラー", "error");
-        }
-      }
-    };
-
-    input.click();
   }
 
   // 対象ステータス更新
