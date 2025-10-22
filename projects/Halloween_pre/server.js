@@ -330,9 +330,17 @@ function arrayBufferToBase64(buffer) {
 }
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
+const HOST = process.env.HOST || "localhost"; // 'localhost' or '0.0.0.0'
+
+server.listen(PORT, HOST, () => {
   console.log("🎃 Halloween Aquarium Server Started!");
   console.log(`📺 Display URL: http://localhost:${PORT}/`);
   console.log(`🎮 Control URL: http://localhost:${PORT}/control`);
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🚀 Server running on ${HOST}:${PORT}`);
+
+  if (HOST === "0.0.0.0") {
+    console.log(`🌐 Network access available - use your IP address to connect from other devices`);
+  } else {
+    console.log(`🏠 Local access only - set HOST=0.0.0.0 to allow network access`);
+  }
 });
