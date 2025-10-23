@@ -183,6 +183,8 @@ class HalloweenControlPanel {
   generateCharacterControls() {
     // 飛行キャラクター (20体)
     const flyingContainer = document.getElementById("flying-characters");
+    console.log("🎮 飛行キャラクター生成開始 - コンテナ:", flyingContainer);
+
     for (let i = 1; i <= 20; i++) {
       const card = document.createElement("div");
       card.className = "character-card";
@@ -205,10 +207,14 @@ class HalloweenControlPanel {
         </div>
       `;
       flyingContainer.appendChild(card);
+      console.log(`✅ 飛行キャラ${i}を生成しました - ID: flying-character-${i}`);
 
       // 初期状態を設定
       this.characterStatus.flying[i] = { active: false, lastAction: null, operator: null };
     }
+
+    console.log(`🎮 飛行キャラクター生成完了 - 合計20体`);
+    console.log("🎮 生成されたキャラクター数:", flyingContainer.children.length);
 
     // 歩行キャラクター (10体)
     const walkingContainer = document.getElementById("walking-characters");

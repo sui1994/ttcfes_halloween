@@ -15,7 +15,8 @@ body {
 }
 
 .control-container {
-  max-width: 1200px;
+  max-width: 1600px;
+  /* 幅を広げて、より多くのキャラクターを表示 */
   margin: 0 auto;
 }
 
@@ -84,6 +85,10 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 12px;
   margin-bottom: 20px;
+  /* デバッグ用: 最小高さを確保 */
+  min-height: 400px;
+  /* デバッグ用: オーバーフローを表示 */
+  overflow: visible;
 }
 
 .character-card {
