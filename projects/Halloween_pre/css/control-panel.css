@@ -81,8 +81,8 @@ body {
 
 .character-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
   margin-bottom: 20px;
 }
 
@@ -139,16 +139,19 @@ body {
 
 .character-buttons {
   display: flex;
-  gap: 5px;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .control-btn {
   flex: 1;
-  padding: 8px 4px;
+  padding: 12px 16px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 14px;
+  font-weight: bold;
+  min-width: 80px;
   transition: all 0.3s ease;
 }
 
@@ -317,7 +320,7 @@ body {
   }
 
   .character-grid {
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   }
 
   .status-summary {
