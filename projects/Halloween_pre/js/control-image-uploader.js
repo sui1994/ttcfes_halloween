@@ -24,7 +24,7 @@ class HalloweenImageUploader {
     const uploadSection = document.createElement("div");
     uploadSection.className = "control-section";
     uploadSection.innerHTML = `
-      <h2 class="section-title">🖼️ 画像置換システム（チャンク分割対応）</h2>
+      <h2 class="section-title">🖼️ 画像置換システム</h2>
       <div class="image-upload-container">
         <div class="upload-area" id="upload-area">
           <div class="upload-content">
@@ -36,7 +36,7 @@ class HalloweenImageUploader {
             </div>
             <div class="upload-info">
               対応形式: PNG, GIF, JPEG, WebP (最大10MB)<br>
-              <small>自動的にチャンク分割でアップロードされます</small>
+              <small>大きなファイルは自動的にチャンク分割されます</small>
             </div>
           </div>
           <input type="file" id="image-input" accept="image/*" multiple style="display: none;">
@@ -44,11 +44,8 @@ class HalloweenImageUploader {
         
         <div class="upload-status" id="upload-status"></div>
         
-        <div class="image-targets">
-          <h3>📍 置換可能な画像</h3>
-          <div class="target-grid" id="target-grid">
-            <!-- 動的生成 -->
-          </div>
+        <div class="target-grid" id="target-grid">
+          <!-- 動的生成 -->
         </div>
       </div>
     `;
@@ -351,10 +348,7 @@ uploadStyles.textContent = `
     color: #2196f3;
   }
 
-  .image-targets h3 {
-    margin: 20px 0 10px 0;
-    color: #ffd700;
-  }
+
 
   .target-grid {
     display: grid;
