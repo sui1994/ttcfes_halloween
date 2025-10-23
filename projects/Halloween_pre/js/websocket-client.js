@@ -60,6 +60,20 @@ class HalloweenWebSocketClient {
         this.handleCharacterClick(data);
       });
 
+      // キャラクター拡大受信
+      this.socket.on("character-scale", (data) => {
+        console.log("🔍 Received scale:", data);
+        console.log("🎯 Target character:", data.character);
+        this.handleCharacterScale(data);
+      });
+
+      // キャラクター震え受信
+      this.socket.on("character-shake", (data) => {
+        console.log("🌀 Received shake:", data);
+        console.log("🎯 Target character:", data.character);
+        this.handleCharacterShake(data);
+      });
+
       // 特殊エフェクト受信
       this.socket.on("special-effect", (data) => {
         console.log("✨ Received special effect:", data);
@@ -130,21 +144,23 @@ class HalloweenWebSocketClient {
     }
   }
 
-  // キャラクターホバー処理
+  // キャラクターホバー処理（軽量版）
   handleCharacterHover(data) {
+    console.log(`✨ Handling hover for: ${data.character}`);
     const characterElement = this.findCharacterElement(data.character);
+
     if (characterElement) {
-      // ホバーエフェクトを追加
-      characterElement.classList.add("remote-hover");
+      console.log(`✅ Character element found for hover`);
 
-      // 光るエフェクト
-      this.addGlowEffect(characterElement);
+      // 軽量ホバーエフェクト（アニメーションを停止しない）
+      this.addLightGlowEffect(characterElement);
 
-      // 1.5秒後にエフェクト削除
+      // 1秒後にエフェクト削除
       setTimeout(() => {
-        characterElement.classList.remove("remote-hover");
-        this.removeGlowEffect(characterElement);
-      }, 1500);
+        this.removeLightGlowEffect(characterElement);
+      }, 1000);
+    } else {
+      console.error(`❌ Character element NOT found for hover: ${data.character}`);
     }
   }
 
@@ -169,6 +185,64 @@ class HalloweenWebSocketClient {
         characterElement.classList.remove("remote-click");
         this.removeClickEffect(characterElement);
       }, 3000);
+    }
+  }
+
+  // キャラクター拡大処理
+  handleCharacterScale(data) {
+    console.log(`🔍 Handling scale for: ${data.character}`);
+    const characterElement = this.findCharacterElement(data.character);
+
+    if (characterElement) {
+      console.log(`✅ Character element found:`, characterElement);
+
+      // 拡大エフェクトを追加
+      characterElement.classList.add("remote-scale");
+
+      // 拡大エフェクト
+      this.addScaleEffect(characterElement);
+
+      // 効果音再生
+      this.playScaleSound();
+
+      // 3秒後にエフェクト削除
+      setTimeout(() => {
+        characterElement.classList.remove("remote-scale");
+        this.removeScaleEffect(characterElement);
+      }, 3000);
+    } else {
+      console.error(`❌ Character element NOT found for: ${data.character}`);
+      // 利用可能な要素をデバッグ出力
+      this.debugAvailableCharacters();
+    }
+  }
+
+  // キャラクター震え処理
+  handleCharacterShake(data) {
+    console.log(`🌀 Handling shake for: ${data.character}`);
+    const characterElement = this.findCharacterElement(data.character);
+
+    if (characterElement) {
+      console.log(`✅ Character element found:`, characterElement);
+
+      // 震えエフェクトを追加
+      characterElement.classList.add("remote-shake");
+
+      // 震えエフェクト
+      this.addShakeEffect(characterElement);
+
+      // 効果音再生
+      this.playShakeSound();
+
+      // 3秒後にエフェクト削除
+      setTimeout(() => {
+        characterElement.classList.remove("remote-shake");
+        this.removeShakeEffect(characterElement);
+      }, 3000);
+    } else {
+      console.error(`❌ Character element NOT found for: ${data.character}`);
+      // 利用可能な要素をデバッグ出力
+      this.debugAvailableCharacters();
     }
   }
 
@@ -222,42 +296,453 @@ class HalloweenWebSocketClient {
 
     // 歩行キャラクター
     if (characterId.startsWith("walking-")) {
-      const walkingSelectors = [".walking-left", ".walking-right", ".walking-left-2", ".walking-right-2", ".walking-left-3"];
+      const walkingSelectors = [
+        ".walking-left",
+        ".walking-right",
+        ".walking-left-2",
+        ".walking-right-2",
+        ".walking-left-3",
+        ".walking-right-3",
+        ".walking-left-4",
+        ".walking-right-4",
+        ".walking-left-5",
+        ".walking-right-5",
+      ];
       const index = parseInt(characterId.replace("walking-", "")) - 1;
-      return document.querySelector(walkingSelectors[index]);
+      if (index >= 0 && index < walkingSelectors.length) {
+        return document.querySelector(walkingSelectors[index]);
+      }
     }
 
+    console.warn(`Character element not found: ${characterId}`);
     return null;
   }
 
-  // 光るエフェクト追加
-  addGlowEffect(element) {
-    element.style.filter = "drop-shadow(0 0 20px #ffd700) brightness(1.3)";
-    element.style.transform = "scale(1.1)";
-    element.style.transition = "all 0.3s ease";
+  // デバッグ用：利用可能なキャラクター要素を表示
+  debugAvailableCharacters() {
+    console.log("🔍 Available character elements:");
+
+    // 飛行キャラクター
+    for (let i = 1; i <= 20; i++) {
+      const element = document.querySelector(`.character${i}`);
+      if (element) {
+        console.log(`✅ .character${i} found`);
+      } else {
+        console.log(`❌ .character${i} NOT found`);
+      }
+    }
+
+    // 歩行キャラクター
+    const walkingSelectors = [
+      ".walking-left",
+      ".walking-right",
+      ".walking-left-2",
+      ".walking-right-2",
+      ".walking-left-3",
+      ".walking-right-3",
+      ".walking-left-4",
+      ".walking-right-4",
+      ".walking-left-5",
+      ".walking-right-5",
+    ];
+
+    walkingSelectors.forEach((selector, index) => {
+      const element = document.querySelector(selector);
+      if (element) {
+        console.log(`✅ ${selector} found (walking-${index + 1})`);
+      } else {
+        console.log(`❌ ${selector} NOT found (walking-${index + 1})`);
+      }
+    });
   }
 
-  // 光るエフェクト削除
-  removeGlowEffect(element) {
+  // 光るエフェクト追加（7ステップ流れ）
+  addGlowEffect(element, pauseAnimation = true) {
+    console.log(`✨ Starting glow effect (pause: ${pauseAnimation})`);
+
+    if (pauseAnimation) {
+      // Step 1-2: アニメーション一時停止して現在位置を保存
+      this.freezeCharacterPosition(element);
+    }
+
+    // Step 3: エフェクト適用（1.5秒間）
+    element.style.filter = "drop-shadow(0 0 20px #ffd700) brightness(1.3)";
+
+    if (pauseAnimation) {
+      element.style.transform = `${element.style.transform} scale(1.1)`.trim();
+    }
+
+    element.style.transition = "all 0.3s ease";
+    element.style.zIndex = "1000";
+
+    console.log(`✨ Glow effect applied (pause: ${pauseAnimation})`);
+  }
+
+  // 軽量光るエフェクト（アニメーションを停止しない）
+  addLightGlowEffect(element) {
+    console.log(`✨ Adding light glow effect (no animation pause)`);
+
+    // アニメーションを停止せずに、視覚効果のみ追加
+    element.style.filter = "drop-shadow(0 0 15px #ffd700) brightness(1.2)";
+    element.style.transition = "filter 0.2s ease";
+    element.style.zIndex = "999";
+
+    // CSSクラスでも制御
+    element.classList.add("light-hover-effect");
+
+    console.log(`✨ Light glow effect applied`);
+  }
+
+  // 軽量光るエフェクト削除
+  removeLightGlowEffect(element) {
+    console.log(`🔄 Removing light glow effect`);
+
+    // エフェクトを削除
     element.style.filter = "";
-    element.style.transform = "";
+    element.style.transition = "";
+    element.style.zIndex = "";
+
+    // CSSクラスを削除
+    element.classList.remove("light-hover-effect");
+
+    console.log(`✅ Light glow effect removed`);
+  }
+
+  // 光るエフェクト削除（7ステップ流れ）
+  removeGlowEffect(element, wasAnimationPaused = true) {
+    console.log(`🔄 Ending glow effect (was paused: ${wasAnimationPaused})`);
+
+    // Step 4: エフェクト終了準備
+    element.style.filter = "";
+    element.style.transition = "";
+    element.style.zIndex = "";
+
+    if (wasAnimationPaused) {
+      // Step 5-7: アニメーション復元（現在位置から新しいサイクル開始）
+      this.restoreCharacterAnimationSmooth(element);
+    }
   }
 
   // クリックエフェクト追加
   addClickEffect(element) {
-    element.style.filter = "drop-shadow(0 0 30px #ff6b35) brightness(1.5)";
-    // transformは使わずCSSクラスで制御
-    element.style.transition = "all 0.5s ease";
+    // 現在の位置を取得して固定
+    this.freezeCharacterPosition(element);
 
-    // 振動エフェクト
-    element.style.animation = "shake 0.5s ease-in-out";
+    element.style.filter = "drop-shadow(0 0 30px #ff6b35) brightness(1.5)";
+    element.style.transition = "all 0.5s ease";
+    element.style.zIndex = "1000";
+
+    // クリックエフェクト用クラスを追加
+    element.classList.add("click-effect-active");
   }
 
   // クリックエフェクト削除
   removeClickEffect(element) {
     element.style.filter = "";
-    element.style.animation = "";
     element.style.transition = "";
+    element.style.zIndex = "";
+
+    // クリックエフェクト用クラスを削除
+    element.classList.remove("click-effect-active");
+
+    // 元のアニメーションを復元（現在位置から）
+    this.restoreCharacterAnimationSmooth(element);
+  }
+
+  // 拡大エフェクト追加（デバッグ強化版）
+  addScaleEffect(element) {
+    console.log(`🎯 Starting scale effect - 3 seconds pause`);
+    console.log(`🔍 Element before effect:`, element);
+    console.log(`🔍 Current transform before:`, element.style.transform);
+
+    // アニメーション一時停止して現在位置を保存
+    this.freezeCharacterPosition(element);
+
+    // キャラクターを大きくする（枠なし）
+    element.style.filter = "drop-shadow(0 0 25px #00ff88) brightness(1.4)";
+
+    // 既存のtransformをクリアしてから新しく設定
+    element.style.removeProperty("transform");
+
+    // 少し遅延してから確実に適用
+    setTimeout(() => {
+      element.style.setProperty("transform", "scale(1.8)", "important");
+      console.log(`🔍 Transform set with delay:`, element.style.transform);
+    }, 10);
+
+    element.style.transition = "all 0.3s ease";
+    element.style.zIndex = "1000";
+
+    console.log(`🔍 Transform after setting:`, element.style.transform);
+    console.log(`🔍 Computed style:`, window.getComputedStyle(element).transform);
+    console.log(`✨ Scale effect applied - size: 1.8x, duration: 3 seconds, no border`);
+  }
+
+  // 拡大エフェクト削除（3秒後に動き再開）
+  removeScaleEffect(element) {
+    console.log(`🔄 Ending scale effect - resuming movement`);
+
+    // エフェクト終了準備
+    element.style.removeProperty("filter");
+    element.style.removeProperty("transition");
+    element.style.removeProperty("z-index");
+    element.style.removeProperty("transform");
+
+    // アニメーション復元（現在位置から動き再開）
+    this.restoreCharacterAnimationSmooth(element);
+
+    console.log(`✅ Scale effect ended - movement resumed`);
+  }
+
+  // 震えエフェクト追加（修正版）
+  addShakeEffect(element) {
+    console.log(`🌀 Starting shake effect - 3 seconds pause`);
+    console.log(`🔍 Element:`, element.className);
+
+    // アニメーション一時停止して現在位置を保存
+    this.freezeCharacterPosition(element);
+
+    // 震えエフェクト適用
+    element.style.filter = "drop-shadow(0 0 20px #ff4444) brightness(1.3)";
+    element.style.zIndex = "1000";
+
+    // JavaScript で震えアニメーションを実行
+    this.startShakeAnimation(element);
+
+    console.log(`🌀 Shake effect applied for 3 seconds`);
+  }
+
+  // 震えエフェクト削除（修正版）
+  removeShakeEffect(element) {
+    console.log(`🔄 Ending shake effect - resuming movement`);
+
+    // 震えアニメーションを停止
+    this.stopShakeAnimation(element);
+
+    // エフェクト終了準備
+    element.style.removeProperty("filter");
+    element.style.removeProperty("z-index");
+
+    // アニメーション復元（現在位置から動き再開）
+    this.restoreCharacterAnimationSmooth(element);
+
+    console.log(`✅ Shake effect ended - movement resumed`);
+  }
+
+  // キャラクターの現在位置を固定（シンプル版）
+  freezeCharacterPosition(element) {
+    // 1. 現在のアニメーション状態を保存
+    element.dataset.originalAnimationPlayState = element.style.animationPlayState || "running";
+    element.dataset.originalTransform = element.style.transform || "";
+
+    // 2. アニメーションを一時停止（現在位置を保持）
+    element.style.animationPlayState = "paused";
+
+    console.log(`⏸️ Animation paused - original transform: "${element.dataset.originalTransform}"`);
+  }
+
+  // JavaScript による震えアニメーション開始
+  startShakeAnimation(element) {
+    console.log(`🌀 Starting JavaScript shake animation`);
+
+    // 震えアニメーション用のデータを保存
+    element.dataset.shakeInterval = null;
+    element.dataset.shakeStartTime = Date.now();
+
+    // 震えアニメーションを実行
+    const shakeInterval = setInterval(() => {
+      const elapsed = Date.now() - parseInt(element.dataset.shakeStartTime);
+
+      // 3秒経過したら停止
+      if (elapsed >= 3000) {
+        this.stopShakeAnimation(element);
+        return;
+      }
+
+      // ランダムな震え（より強く）
+      const shakeX = (Math.random() - 0.5) * 12; // -6px to 6px
+      const shakeY = (Math.random() - 0.5) * 12; // -6px to 6px
+
+      element.style.setProperty("transform", `translate(${shakeX}px, ${shakeY}px)`, "important");
+    }, 40); // 40ms間隔で震え（より細かく）
+
+    element.dataset.shakeInterval = shakeInterval;
+    console.log(`🌀 Shake animation started - interval ID: ${shakeInterval}`);
+  }
+
+  // JavaScript による震えアニメーション停止
+  stopShakeAnimation(element) {
+    const intervalId = element.dataset.shakeInterval;
+
+    if (intervalId) {
+      clearInterval(parseInt(intervalId));
+      delete element.dataset.shakeInterval;
+      delete element.dataset.shakeStartTime;
+      console.log(`🛑 Shake animation stopped - interval ID: ${intervalId}`);
+    }
+
+    // transformをクリア
+    element.style.removeProperty("transform");
+  }
+
+  // キャラクターのアニメーションを復元
+  restoreCharacterAnimation(element) {
+    // 保存された情報を復元
+    const originalAnimation = element.dataset.originalAnimation;
+    const originalLeft = element.dataset.originalLeft;
+    const originalTop = element.dataset.originalTop;
+    const originalTransform = element.dataset.originalTransform;
+
+    // 現在位置を保持したままアニメーションを再開
+    const currentLeft = element.style.left;
+    const currentTop = element.style.top;
+
+    // アニメーションの進行度を計算して適切な遅延を設定
+    const animationDelay = this.calculateAnimationDelay(element, currentLeft);
+
+    // 元のアニメーションを復元（位置は現在位置から）
+    if (originalAnimation && originalAnimation !== "none") {
+      // 一時的にアニメーションを無効にして位置を調整
+      element.style.animation = "none";
+
+      // 少し遅延してからアニメーションを再開
+      setTimeout(() => {
+        element.style.animation = originalAnimation;
+        // 現在位置から継続するためのアニメーション遅延を設定
+        if (animationDelay !== null) {
+          element.style.animationDelay = `${animationDelay}s`;
+        }
+        console.log(`🔄 Animation resumed from current position with delay: ${animationDelay}s`);
+      }, 100);
+    }
+
+    // 元のスタイルは復元しない（現在位置を維持）
+    // element.style.left = originalLeft || "";
+    // element.style.top = originalTop || "";
+    element.style.transform = originalTransform || "";
+
+    // データ属性をクリア
+    delete element.dataset.originalAnimation;
+    delete element.dataset.originalLeft;
+    delete element.dataset.originalTop;
+    delete element.dataset.originalTransform;
+
+    console.log(`🔓 Animation restored from current position: left=${currentLeft}, top=${currentTop}`);
+  }
+
+  // シンプルなアニメーション復元（修正版）
+  restoreCharacterAnimationSmooth(element) {
+    const originalAnimationPlayState = element.dataset.originalAnimationPlayState;
+    const originalTransform = element.dataset.originalTransform;
+
+    console.log(`🔄 Restoring animation - original transform: "${originalTransform}"`);
+    console.log(`🔄 Original play state: "${originalAnimationPlayState}"`);
+
+    // transformを元に戻す（!importantを削除）
+    element.style.removeProperty("transform");
+    if (originalTransform) {
+      element.style.transform = originalTransform;
+    }
+
+    // transitionを削除
+    element.style.removeProperty("transition");
+
+    // リフロートリガー
+    element.offsetWidth;
+
+    // アニメーションを再開
+    setTimeout(() => {
+      element.style.animationPlayState = originalAnimationPlayState || "running";
+      console.log(`▶️ Animation resumed - play state: ${element.style.animationPlayState}`);
+    }, 100);
+
+    // データ属性をクリア
+    delete element.dataset.originalAnimationPlayState;
+    delete element.dataset.originalTransform;
+  }
+
+  // アニメーションの進行度に基づいて適切な遅延を計算
+  calculateAnimationDelay(element, currentLeft) {
+    try {
+      // 現在の左位置から進行度を推定
+      const leftValue = parseFloat(currentLeft);
+      const viewportWidth = window.innerWidth;
+
+      // 画面幅に対する進行度を計算（0-1の範囲）
+      let progress = 0;
+
+      if (leftValue < 0) {
+        // まだ画面に入っていない
+        progress = 0;
+      } else if (leftValue > viewportWidth) {
+        // 画面を通り過ぎた
+        progress = 1;
+      } else {
+        // 画面内にいる場合の進行度
+        progress = leftValue / viewportWidth;
+      }
+
+      // アニメーション時間を取得（デフォルト15秒と仮定）
+      const animationDuration = this.getAnimationDuration(element) || 15;
+
+      // 進行度に基づいて負の遅延（既に進んでいる分）を計算
+      const delay = -(progress * animationDuration);
+
+      console.log(`📊 Animation progress: ${(progress * 100).toFixed(1)}%, delay: ${delay.toFixed(2)}s`);
+
+      return delay;
+    } catch (error) {
+      console.warn("Failed to calculate animation delay:", error);
+      return 0;
+    }
+  }
+
+  // 要素のアニメーション時間を取得
+  getAnimationDuration(element) {
+    try {
+      const computedStyle = window.getComputedStyle(element);
+      const animationDuration = computedStyle.animationDuration;
+
+      if (animationDuration && animationDuration !== "0s") {
+        // "15s" -> 15 に変換
+        return parseFloat(animationDuration);
+      }
+
+      // クラス名から推定
+      const className = element.className;
+      if (className.includes("character")) {
+        return 15; // デフォルトの飛行キャラクター時間
+      } else if (className.includes("walking")) {
+        return 20; // デフォルトの歩行キャラクター時間
+      }
+
+      return 15; // フォールバック
+    } catch (error) {
+      console.warn("Failed to get animation duration:", error);
+      return 15;
+    }
+  }
+
+  // 拡大音再生
+  playScaleSound() {
+    const audio = new Audio("preset_music/happyhalloween.mp3");
+    audio.volume = 0.2;
+    audio.playbackRate = 0.8; // 少し低めの音
+    audio.currentTime = 0;
+    audio.play().catch((error) => {
+      console.log("Scale sound error:", error);
+    });
+  }
+
+  // 震え音再生
+  playShakeSound() {
+    const audio = new Audio("preset_music/happyhalloween.mp3");
+    audio.volume = 0.25;
+    audio.playbackRate = 1.2; // 少し高めの音
+    audio.currentTime = 0;
+    audio.play().catch((error) => {
+      console.log("Shake sound error:", error);
+    });
   }
 
   // クリック音再生（専用効果音ファイル使用）
@@ -478,6 +963,14 @@ style.textContent = `
     transform: scale(1.2) rotate(10deg) !important;
   }
   
+  .remote-scale {
+    z-index: 1000;
+  }
+  
+  .remote-shake {
+    z-index: 1000;
+  }
+  
   @keyframes pulse {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.1); }
@@ -488,6 +981,95 @@ style.textContent = `
     25% { transform: scale(1.1) rotate(-5deg); }
     50% { transform: scale(1.2) rotate(5deg); }
     75% { transform: scale(1.1) rotate(-2deg); }
+  }
+  
+  @keyframes scaleGlow {
+    0%, 100% { 
+      transform: scale(1.5);
+      filter: drop-shadow(0 0 25px #00ff88) brightness(1.4);
+    }
+    50% { 
+      transform: scale(1.7);
+      filter: drop-shadow(0 0 35px #00ff88) brightness(1.6);
+    }
+  }
+  
+  @keyframes continuousShake {
+    0%, 100% { transform: translateX(0); }
+    2% { transform: translateX(-3px) translateY(1px); }
+    4% { transform: translateX(3px) translateY(-1px); }
+    6% { transform: translateX(-2px) translateY(2px); }
+    8% { transform: translateX(2px) translateY(-2px); }
+    10% { transform: translateX(-1px) translateY(1px); }
+    12% { transform: translateX(1px) translateY(-1px); }
+    14% { transform: translateX(-2px) translateY(0px); }
+    16% { transform: translateX(2px) translateY(1px); }
+    18% { transform: translateX(-1px) translateY(-1px); }
+    20% { transform: translateX(1px) translateY(2px); }
+    22% { transform: translateX(-3px) translateY(-1px); }
+    24% { transform: translateX(3px) translateY(1px); }
+    26% { transform: translateX(-2px) translateY(-2px); }
+    28% { transform: translateX(2px) translateY(2px); }
+    30% { transform: translateX(-1px) translateY(-1px); }
+    32% { transform: translateX(1px) translateY(1px); }
+    34% { transform: translateX(-2px) translateY(0px); }
+    36% { transform: translateX(2px) translateY(-1px); }
+    38% { transform: translateX(-1px) translateY(1px); }
+    40% { transform: translateX(1px) translateY(-2px); }
+    42% { transform: translateX(-3px) translateY(1px); }
+    44% { transform: translateX(3px) translateY(-1px); }
+    46% { transform: translateX(-2px) translateY(2px); }
+    48% { transform: translateX(2px) translateY(-2px); }
+    50% { transform: translateX(-1px) translateY(1px); }
+    52% { transform: translateX(1px) translateY(-1px); }
+    54% { transform: translateX(-2px) translateY(0px); }
+    56% { transform: translateX(2px) translateY(1px); }
+    58% { transform: translateX(-1px) translateY(-1px); }
+    60% { transform: translateX(1px) translateY(2px); }
+    62% { transform: translateX(-3px) translateY(-1px); }
+    64% { transform: translateX(3px) translateY(1px); }
+    66% { transform: translateX(-2px) translateY(-2px); }
+    68% { transform: translateX(2px) translateY(2px); }
+    70% { transform: translateX(-1px) translateY(-1px); }
+    72% { transform: translateX(1px) translateY(1px); }
+    74% { transform: translateX(-2px) translateY(0px); }
+    76% { transform: translateX(2px) translateY(-1px); }
+    78% { transform: translateX(-1px) translateY(1px); }
+    80% { transform: translateX(1px) translateY(-2px); }
+    82% { transform: translateX(-2px) translateY(1px); }
+    84% { transform: translateX(2px) translateY(-1px); }
+    86% { transform: translateX(-1px) translateY(2px); }
+    88% { transform: translateX(1px) translateY(-2px); }
+    90% { transform: translateX(-1px) translateY(1px); }
+    92% { transform: translateX(1px) translateY(-1px); }
+    94% { transform: translateX(-1px) translateY(0px); }
+    96% { transform: translateX(1px) translateY(1px); }
+    98% { transform: translateX(-1px) translateY(-1px); }
+  }
+  
+  /* エフェクト適用時の位置固定用クラス */
+  .character-effect-active {
+    animation-play-state: paused !important;
+  }
+  
+  .walking-character.character-effect-active {
+    animation-play-state: paused !important;
+  }
+  
+  /* 震えエフェクト用クラス */
+  .shake-effect-active {
+    animation: continuousShake 3s ease-in-out !important;
+  }
+  
+  /* クリックエフェクト用クラス */
+  .click-effect-active {
+    animation: shake 0.5s ease-in-out !important;
+  }
+  
+  /* 軽量ホバーエフェクト用クラス */
+  .light-hover-effect {
+    filter: drop-shadow(0 0 15px #ffd700) brightness(1.2) !important;
+    transition: filter 0.2s ease !important;
   }
 `;
 document.head.appendChild(style);

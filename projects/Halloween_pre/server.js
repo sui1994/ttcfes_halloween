@@ -78,6 +78,24 @@ io.on("connection", (socket) => {
     });
   });
 
+  // キャラクター拡大操作
+  socket.on("character-scale", (data) => {
+    console.log(`🔍 Scale: ${data.character} at (${data.x}, ${data.y})`);
+    // 表示画面にのみ送信
+    connectedClients.displays.forEach((displayId) => {
+      io.to(displayId).emit("character-scale", data);
+    });
+  });
+
+  // キャラクター震え操作
+  socket.on("character-shake", (data) => {
+    console.log(`🌀 Shake: ${data.character} at (${data.x}, ${data.y})`);
+    // 表示画面にのみ送信
+    connectedClients.displays.forEach((displayId) => {
+      io.to(displayId).emit("character-shake", data);
+    });
+  });
+
   // 特殊エフェクト
   socket.on("special-effect", (data) => {
     console.log(`✨ Special Effect: ${data.type}`);
@@ -137,6 +155,13 @@ io.on("connection", (socket) => {
   socket.on("test-event", (data) => {
     console.log("🧪 Test event received:", data);
     socket.emit("test-response", { received: true, timestamp: Date.now() });
+  });
+
+  // デバッグ用：すべてのイベントをログ出力
+  socket.onAny((eventName, ...args) => {
+    if (!["ping", "pong"].includes(eventName)) {
+      console.log(`📡 Event received: ${eventName}`, args.length > 0 ? args[0] : "");
+    }
   });
 
   // シンプル画像受信

@@ -172,6 +172,26 @@ body {
   transform: scale(1.05);
 }
 
+.glow-btn {
+  background: linear-gradient(45deg, #00ff88, #00cc66);
+  color: white;
+}
+
+.glow-btn:hover {
+  background: linear-gradient(45deg, #00cc66, #009944);
+  transform: scale(1.05);
+}
+
+.shake-btn {
+  background: linear-gradient(45deg, #ff4444, #cc2222);
+  color: white;
+}
+
+.shake-btn:hover {
+  background: linear-gradient(45deg, #cc2222, #aa1111);
+  transform: scale(1.05);
+}
+
 .special-controls {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -352,6 +372,15 @@ body {
   color: #4caf50;
 }
 
+/* アップロード情報セクション */
+.upload-info {
+  margin: 8px 0;
+  padding: 8px;
+  background: rgba(76, 175, 80, 0.1);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  border-radius: 8px;
+}
+
 /* 更新タイムスタンプ */
 .update-timestamp {
   font-size: 10px;
@@ -362,6 +391,73 @@ body {
   background: rgba(76, 175, 80, 0.2);
   border-radius: 10px;
   animation: fadeInOut 10s ease-in-out;
+}
+
+.update-timestamp.permanent {
+  animation: none;
+  opacity: 1;
+  background: rgba(76, 175, 80, 0.3);
+  font-weight: bold;
+}
+
+/* アップロード画像プレビュー */
+.upload-preview {
+  margin: 5px 0;
+  text-align: center;
+}
+
+.upload-preview-label {
+  font-size: 9px;
+  color: #4caf50;
+  margin-bottom: 3px;
+}
+
+.upload-preview-image {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border: 1px solid #4caf50;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* アクティブ状態インジケーター */
+.upload-active-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.active-dot {
+  width: 8px;
+  height: 8px;
+  background: #4caf50;
+  border-radius: 50%;
+  box-shadow: 0 0 5px #4caf50;
+}
+
+.active-text {
+  font-size: 9px;
+  color: #4caf50;
+  font-weight: bold;
+}
+
+@keyframes activePulse {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 5px #4caf50;
+  }
+
+  50% {
+    opacity: 0.6;
+    transform: scale(1.2);
+    box-shadow: 0 0 15px #4caf50;
+  }
 }
 
 @keyframes fadeInOut {

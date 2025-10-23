@@ -128,8 +128,11 @@ class HalloweenControlPanel {
           <button class="control-btn hover-btn" onclick="controlPanel.controlCharacter('character${i}', 'hover', 'flying', ${i})">
             ホバー
           </button>
-          <button class="control-btn click-btn" onclick="controlPanel.controlCharacter('character${i}', 'click', 'flying', ${i})">
-            クリック
+          <button class="control-btn glow-btn" onclick="controlPanel.controlCharacter('character${i}', 'scale', 'flying', ${i})">
+            大きく
+          </button>
+          <button class="control-btn shake-btn" onclick="controlPanel.controlCharacter('character${i}', 'shake', 'flying', ${i})">
+            震える
           </button>
         </div>
       `;
@@ -167,8 +170,11 @@ class HalloweenControlPanel {
           <button class="control-btn hover-btn" onclick="controlPanel.controlCharacter('walking-${index + 1}', 'hover', 'walking', ${index + 1})">
             ホバー
           </button>
-          <button class="control-btn click-btn" onclick="controlPanel.controlCharacter('walking-${index + 1}', 'click', 'walking', ${index + 1})">
-            クリック
+          <button class="control-btn glow-btn" onclick="controlPanel.controlCharacter('walking-${index + 1}', 'scale', 'walking', ${index + 1})">
+            大きく
+          </button>
+          <button class="control-btn shake-btn" onclick="controlPanel.controlCharacter('walking-${index + 1}', 'shake', 'walking', ${index + 1})">
+            震える
           </button>
         </div>
       `;
@@ -225,9 +231,15 @@ class HalloweenControlPanel {
     if (action === "hover") {
       this.socket.emit("character-hover", data);
       this.addLog(`${characterId} をホバー (操作者: ${data.operator})`, "success");
-    } else if (action === "click") {
-      this.socket.emit("character-click", data);
-      this.addLog(`${characterId} をクリック (操作者: ${data.operator})`, "success");
+      console.log("📤 Sent character-hover:", data);
+    } else if (action === "scale") {
+      this.socket.emit("character-scale", data);
+      this.addLog(`${characterId} を大きく (操作者: ${data.operator})`, "success");
+      console.log("📤 Sent character-scale:", data);
+    } else if (action === "shake") {
+      this.socket.emit("character-shake", data);
+      this.addLog(`${characterId} を震える (操作者: ${data.operator})`, "success");
+      console.log("📤 Sent character-shake:", data);
     }
 
     // 3秒後にアクティブ状態を解除
@@ -247,6 +259,59 @@ class HalloweenControlPanel {
       timestamp: Date.now(),
     });
     this.addLog(`特殊エフェクト: ${effectType}`, "success");
+  }
+
+  // Socket通信テスト機能（強化版）
+  testSocketConnection() {
+    if (!this.isConnected) {
+      this.addLog("サーバーに接続されていません", "error");
+      return;
+    }
+
+    // 複数のテストを実行
+    this.runSocketTests();
+  }
+
+  // 複数のSocket通信テストを実行
+  runSocketTests() {
+    const tests = [
+      {
+        name: "飛行キャラクター1 - 拡大",
+        data: {
+          character: "character1",
+          action: "scale",
+          type: "flying",
+          id: 1,
+          timestamp: Date.now(),
+          x: 50,
+          y: 50,
+          operator: "テスト操作者",
+        },
+        event: "character-scale",
+      },
+      {
+        name: "歩行キャラクター1 - 震え",
+        data: {
+          character: "walking-1",
+          action: "shake",
+          type: "walking",
+          id: 1,
+          timestamp: Date.now(),
+          x: 30,
+          y: 80,
+          operator: "テスト操作者",
+        },
+        event: "character-shake",
+      },
+    ];
+
+    tests.forEach((test, index) => {
+      setTimeout(() => {
+        this.socket.emit(test.event, test.data);
+        this.addLog(`🧪 テスト${index + 1}: ${test.name}`, "success");
+        console.log(`🧪 Test ${index + 1} sent:`, test.data);
+      }, index * 1000);
+    });
   }
 
   controlMusic(action) {
@@ -489,23 +554,76 @@ class HalloweenControlPanel {
       existingTimestamp.remove();
     }
 
-    // 新しいタイムスタンプを作成
-    const timestamp = document.createElement("div");
-    timestamp.className = "update-timestamp";
-    timestamp.textContent = `更新: ${new Date().toLocaleTimeString()}`;
-
-    // キャラクター名の下に挿入
-    const characterName = cardElement.querySelector(".character-name");
-    if (characterName) {
-      characterName.parentNode.insertBefore(timestamp, characterName.nextSibling);
+    // 既存のアップロード情報セクションを削除
+    const existingUploadInfo = cardElement.querySelector(".upload-info");
+    if (existingUploadInfo) {
+      existingUploadInfo.remove();
     }
 
-    // 10秒後に自動削除
-    setTimeout(() => {
-      if (timestamp.parentNode) {
-        timestamp.remove();
-      }
-    }, 10000);
+    // アップロード情報セクションを作成
+    const uploadInfo = document.createElement("div");
+    uploadInfo.className = "upload-info";
+
+    // タイムスタンプ
+    const timestamp = document.createElement("div");
+    timestamp.className = "update-timestamp permanent";
+    timestamp.textContent = `更新: ${new Date().toLocaleTimeString()}`;
+
+    // アップロード画像プレビュー
+    const uploadPreview = document.createElement("div");
+    uploadPreview.className = "upload-preview";
+
+    const previewImg = document.createElement("img");
+    previewImg.className = "upload-preview-image";
+
+    // 画像パスを決定
+    let imagePath = "";
+    if (filename.startsWith("character")) {
+      const num = filename.match(/character(\d+)/)[1];
+      imagePath = `images/changeable/flying-characters/character${num}.png`;
+    } else if (filename.startsWith("walking-")) {
+      imagePath = `images/changeable/walking-characters/${filename}`;
+    }
+
+    previewImg.src = `${imagePath}?v=${Date.now()}`;
+    previewImg.alt = `アップロード画像: ${filename}`;
+
+    const previewLabel = document.createElement("div");
+    previewLabel.className = "upload-preview-label";
+    previewLabel.textContent = "アップロード画像";
+
+    uploadPreview.appendChild(previewLabel);
+    uploadPreview.appendChild(previewImg);
+
+    // アクティブ状態インジケーター
+    const activeIndicator = document.createElement("div");
+    activeIndicator.className = "upload-active-indicator";
+    activeIndicator.innerHTML = `
+      <span class="active-dot"></span>
+      <span class="active-text">アクティブ</span>
+    `;
+
+    // アップロード情報をまとめる
+    uploadInfo.appendChild(timestamp);
+    uploadInfo.appendChild(uploadPreview);
+    uploadInfo.appendChild(activeIndicator);
+
+    // キャラクターボタンの上に挿入
+    const characterButtons = cardElement.querySelector(".character-buttons");
+    if (characterButtons) {
+      characterButtons.parentNode.insertBefore(uploadInfo, characterButtons);
+    }
+
+    // アクティブ状態のアニメーション
+    this.startActiveAnimation(activeIndicator);
+  }
+
+  // アクティブ状態のアニメーション開始
+  startActiveAnimation(indicator) {
+    const dot = indicator.querySelector(".active-dot");
+    if (dot) {
+      dot.style.animation = "activePulse 2s ease-in-out infinite";
+    }
   }
 }
 
