@@ -73,17 +73,40 @@ class HalloweenControlPanel {
   }
 
   initImageUploader() {
+    // Base64アップローダー初期化
     if (window.HalloweenImageUploader && this.socket) {
       this.imageUploader = new HalloweenImageUploader(this.socket);
-      this.addLog("画像アップロードシステムが初期化されました", "success");
+
+      // グローバルインスタンスも設定（ボタンのonclickで使用）
+      window.imageUploader = this.imageUploader;
+
+      this.addLog("Base64画像アップロードシステムが初期化されました", "success");
 
       // 画像更新コールバックを設定
-      console.log(`🔍 画像更新コールバックを設定中...`);
-      this.imageUploader.setImageUpdateCallback((filename) => {
-        console.log(`🔍 コールバック受信: ${filename}`);
-        this.handleImageUpdate(filename);
+      console.log(`🔍 Base64画像更新コールバックを設定中...`);
+      this.imageUploader.setImageUpdateCallback((filename, thumbnailData) => {
+        console.log(`🔍 Base64コールバック受信: ${filename}`, thumbnailData ? "with thumbnail" : "no thumbnail");
+        this.handleImageUpdate(filename, thumbnailData);
       });
-      console.log(`✅ 画像更新コールバック設定完了`);
+      console.log(`✅ Base64画像更新コールバック設定完了`);
+    }
+
+    // バイナリアップローダー初期化
+    if (window.HalloweenBinaryImageUploader && this.socket) {
+      this.binaryImageUploader = new HalloweenBinaryImageUploader(this.socket);
+
+      // グローバルインスタンスも設定
+      window.binaryImageUploader = this.binaryImageUploader;
+
+      this.addLog("⚡ バイナリ画像アップロードシステムが初期化されました", "success");
+
+      // 画像更新コールバックを設定
+      console.log(`🔍 バイナリ画像更新コールバックを設定中...`);
+      this.binaryImageUploader.setImageUpdateCallback((filename, thumbnailData) => {
+        console.log(`🔍 バイナリコールバック受信: ${filename}`, thumbnailData ? "with thumbnail" : "no thumbnail");
+        this.handleImageUpdate(filename, thumbnailData);
+      });
+      console.log(`✅ バイナリ画像更新コールバック設定完了`);
     }
 
     // シンプル画像送信システムも初期化
@@ -396,7 +419,7 @@ class HalloweenControlPanel {
   }
 
   // 画像更新処理
-  handleImageUpdate(filename) {
+  handleImageUpdate(filename, imageData = null) {
     const timestamp = new Date().toLocaleTimeString();
     console.log(`📸 [${timestamp}] 画像更新: ${filename}`);
 
@@ -404,11 +427,11 @@ class HalloweenControlPanel {
     this.addLog(`📸 画像更新: ${filename}`, "image-update");
 
     // 操作パネルの画像を更新
-    this.updateControlPanelImage(filename);
+    this.updateControlPanelImage(filename, imageData);
   }
 
   // 操作パネルの画像更新
-  updateControlPanelImage(filename) {
+  updateControlPanelImage(filename, imageData = null) {
     console.log(`🔍 updateControlPanelImage開始: ${filename}`);
     try {
       let targetCard = null;
@@ -445,8 +468,8 @@ class HalloweenControlPanel {
             imageElement.src = newSrc;
             console.log(`🔄 飛行キャラ${characterNum}の画像を更新: ${newSrc}`);
 
-            // 更新時刻を表示
-            this.addUpdateTimestamp(targetCard, filename);
+            // 更新時刻を表示（アップロード画像データも渡す）
+            this.addUpdateTimestamp(targetCard, filename, imageData);
           } else {
             console.log(`❌ 画像要素が見つかりません`);
           }
@@ -507,8 +530,8 @@ class HalloweenControlPanel {
               imageElement.src = newSrc;
               console.log(`🔄 歩行キャラ${direction}${characterNum}の画像を更新: ${newSrc}`);
 
-              // 更新時刻を表示
-              this.addUpdateTimestamp(targetCard, filename);
+              // 更新時刻を表示（アップロード画像データも渡す）
+              this.addUpdateTimestamp(targetCard, filename, imageData);
             } else {
               console.log(`❌ 画像要素が見つかりません`);
             }
@@ -547,7 +570,7 @@ class HalloweenControlPanel {
   }
 
   // 更新タイムスタンプを追加
-  addUpdateTimestamp(cardElement, filename) {
+  addUpdateTimestamp(cardElement, filename, imageData = null) {
     // 既存のタイムスタンプを削除
     const existingTimestamp = cardElement.querySelector(".update-timestamp");
     if (existingTimestamp) {
@@ -576,17 +599,30 @@ class HalloweenControlPanel {
     const previewImg = document.createElement("img");
     previewImg.className = "upload-preview-image";
 
-    // 画像パスを決定
-    let imagePath = "";
-    if (filename.startsWith("character")) {
-      const num = filename.match(/character(\d+)/)[1];
-      imagePath = `images/changeable/flying-characters/character${num}.png`;
-    } else if (filename.startsWith("walking-")) {
-      imagePath = `images/changeable/walking-characters/${filename}`;
+    // 実際のアップロード画像データがある場合はそれを使用、なければファイルパスを使用
+    if (imageData) {
+      // Base64データまたはBlob URLの場合
+      if (typeof imageData === "string" && imageData.startsWith("data:")) {
+        previewImg.src = imageData;
+        console.log(`🖼️ Base64画像データを使用: ${filename}`);
+      } else if (imageData instanceof Blob) {
+        previewImg.src = URL.createObjectURL(imageData);
+        console.log(`🖼️ Blob画像データを使用: ${filename}`);
+      } else {
+        // フォールバック: ファイルパスを使用
+        this.setPreviewImagePath(previewImg, filename);
+      }
+    } else {
+      // アップロード画像データがない場合はファイルパスを使用
+      this.setPreviewImagePath(previewImg, filename);
     }
 
-    previewImg.src = `${imagePath}?v=${Date.now()}`;
     previewImg.alt = `アップロード画像: ${filename}`;
+    previewImg.onerror = () => {
+      console.log(`❌ プレビュー画像読み込み失敗: ${filename}`);
+      // エラー時はファイルパスにフォールバック
+      this.setPreviewImagePath(previewImg, filename);
+    };
 
     const previewLabel = document.createElement("div");
     previewLabel.className = "upload-preview-label";
@@ -618,6 +654,19 @@ class HalloweenControlPanel {
     this.startActiveAnimation(activeIndicator);
   }
 
+  // プレビュー画像のパスを設定
+  setPreviewImagePath(previewImg, filename) {
+    let imagePath = "";
+    if (filename.startsWith("character")) {
+      const num = filename.match(/character(\d+)/)[1];
+      imagePath = `images/changeable/flying-characters/character${num}.png`;
+    } else if (filename.startsWith("walking-")) {
+      imagePath = `images/changeable/walking-characters/${filename}`;
+    }
+    previewImg.src = `${imagePath}?v=${Date.now()}`;
+    console.log(`🖼️ ファイルパス画像を使用: ${imagePath}`);
+  }
+
   // アクティブ状態のアニメーション開始
   startActiveAnimation(indicator) {
     const dot = indicator.querySelector(".active-dot");
@@ -645,6 +694,107 @@ function refreshStatus() {
     window.controlPanel.refreshStatus();
   }
 }
+
+// アップロード画像表示用CSS
+const uploadImageStyles = document.createElement("style");
+uploadImageStyles.textContent = `
+  /* アップロード情報セクション */
+  .upload-info {
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 8px;
+    padding: 12px;
+    margin: 10px 0;
+    position: relative;
+  }
+
+  .update-timestamp.permanent {
+    font-size: 11px;
+    color: #ffd700;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+
+  /* アップロード画像プレビュー */
+  .upload-preview {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .upload-preview-label {
+    font-size: 12px;
+    color: #ccc;
+    min-width: 80px;
+  }
+
+  .upload-preview-image {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 2px solid rgba(255, 215, 0, 0.5);
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  /* アクティブ状態インジケーター */
+  .upload-active-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+  }
+
+  .active-dot {
+    width: 8px;
+    height: 8px;
+    background: #4caf50;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .active-text {
+    color: #4caf50;
+    font-weight: bold;
+  }
+
+  /* アクティブ状態のアニメーション */
+  @keyframes activePulse {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.6;
+      transform: scale(1.2);
+    }
+  }
+
+  /* 画像更新エフェクト */
+  .character-card.image-updated {
+    animation: imageUpdateGlow 3s ease-in-out;
+    border: 2px solid #ffd700;
+  }
+
+  @keyframes imageUpdateGlow {
+    0%, 100% {
+      box-shadow: 0 0 0 rgba(255, 215, 0, 0);
+    }
+    50% {
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+    }
+  }
+
+  /* ログエントリーの画像更新タイプ */
+  .log-entry.image-update {
+    background: rgba(255, 215, 0, 0.1);
+    border-left: 3px solid #ffd700;
+    color: #ffd700;
+  }
+`;
+
+document.head.appendChild(uploadImageStyles);
 
 // 初期化
 document.addEventListener("DOMContentLoaded", () => {

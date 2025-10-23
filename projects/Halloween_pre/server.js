@@ -15,6 +15,12 @@ const io = socketIo(server, {
     origin: "*",
     methods: ["GET", "POST"],
   },
+  // 画像アップロード対応の設定
+  maxHttpBufferSize: 50 * 1024 * 1024, // 50MB (Base64膨張を考慮)
+  pingTimeout: 60000, // 60秒
+  pingInterval: 25000, // 25秒
+  upgradeTimeout: 30000, // 30秒
+  allowEIO3: true, // 互換性向上
 });
 
 // 静的ファイル配信（現在のディレクトリから）
@@ -114,13 +120,25 @@ io.on("connection", (socket) => {
 
   // 画像置換メッセージ受信（Base64対応）
   socket.on("image-replace", (imageMessage) => {
-    console.log(`📥 Image replace received: ${imageMessage.filename} (${imageMessage.mimeType})`);
-    console.log(`📤 Broadcasting to displays: ${(imageMessage.data.length / 1024).toFixed(1)}KB`);
+    try {
+      console.log(`📥 Image replace received: ${imageMessage.filename} (${imageMessage.mimeType})`);
+      console.log(`📤 Broadcasting to displays: ${(imageMessage.data.length / 1024).toFixed(1)}KB`);
 
-    // 表示画面に画像メッセージを転送
-    connectedClients.displays.forEach((displayId) => {
-      io.to(displayId).emit("image-replace", imageMessage);
-    });
+      // データサイズチェック
+      const dataSizeKB = imageMessage.data.length / 1024;
+      if (dataSizeKB > 10 * 1024) {
+        // 10MB制限
+        console.warn(`⚠️ Large image data: ${dataSizeKB.toFixed(1)}KB`);
+      }
+
+      // 表示画面に画像メッセージを転送
+      connectedClients.displays.forEach((displayId) => {
+        io.to(displayId).emit("image-replace", imageMessage);
+      });
+    } catch (error) {
+      console.error("❌ Image replace error:", error);
+      socket.emit("image-error", { message: "Image processing failed" });
+    }
   });
 
   // 分割画像送信対応
@@ -315,15 +333,16 @@ function handleCompleteFileUpload(socket, sessionId, session) {
 
   // Base64に変換して既存の画像置換システムに送信
   const base64Data = arrayBufferToBase64(completeFile.buffer);
+  const dataUrl = `data:${session.mimeType};base64,${base64Data}`;
 
   const imageMessage = {
     type: "image_replace",
     filename: session.filename,
     mimeType: session.mimeType,
     size: session.filesize,
-    data: base64Data,
+    data: dataUrl,
     timestamp: Date.now(),
-    uploadMethod: "chunked",
+    uploadMethod: "binary-chunked",
   };
 
   console.log(`📤 Broadcasting chunked image to displays: ${session.filename} (${(session.filesize / 1024).toFixed(1)}KB)`);

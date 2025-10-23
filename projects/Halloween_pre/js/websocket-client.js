@@ -41,11 +41,21 @@ class HalloweenWebSocketClient {
       });
 
       // 切断イベント
-      this.socket.on("disconnect", () => {
-        console.log("❌ WebSocket disconnected from server");
+      this.socket.on("disconnect", (reason) => {
+        console.log("❌ WebSocket disconnected from server. Reason:", reason);
         this.isConnected = false;
-        this.showConnectionStatus(false);
-        this.attemptReconnect();
+        this.showConnectionStatus(false, reason);
+
+        // 自動再接続が必要な場合のみ手動で再接続
+        if (reason === "io server disconnect" || reason === "transport close") {
+          this.attemptReconnect();
+        }
+      });
+
+      // 接続エラーイベント
+      this.socket.on("connect_error", (error) => {
+        console.error("❌ WebSocket connection error:", error);
+        this.showConnectionStatus(false, "Connection error");
       });
 
       // キャラクターホバー受信
