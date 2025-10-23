@@ -315,49 +315,49 @@ document.head.appendChild(storageStyles);
 
 // グローバルに公開
 window.StorageMonitor = StorageMonitor;
-  // 強制クリーンアップ（緊急時用）
-  forceCleanup() {
-    const usage = this.getCurrentUsage();
 
-    console.log('🚨 強制クリーンアップを実行中...');
+// StorageMonitorクラスにメソッドを追加
+StorageMonitor.prototype.forceCleanup = function () {
+  const usage = this.getCurrentUsage();
 
-    // 1. アップロード履歴を最新3件のみ保持
-    this.cleanupUploadHistory('halloween_upload_history', 3);
-    this.cleanupUploadHistory('halloween_binary_upload_history', 3);
+  console.log("🚨 強制クリーンアップを実行中...");
 
-    // 2. ログを最新20件のみ保持
-    const logs = JSON.parse(localStorage.getItem('halloween_control_logs') || '[]');
-    if (logs.length > 20) {
-      const recentLogs = logs.slice(-20); // 最新20件
-      localStorage.setItem('halloween_control_logs', JSON.stringify(recentLogs));
-    }
+  // 1. アップロード履歴を最新3件のみ保持
+  this.cleanupUploadHistory("halloween_upload_history", 3);
+  this.cleanupUploadHistory("halloween_binary_upload_history", 3);
 
-    // 3. 古いセッション情報を削除
-    localStorage.removeItem('halloween_session_info');
-
-    const newUsage = this.getCurrentUsage();
-    const savedSize = usage.total - newUsage.total;
-
-    if (window.controlPanel) {
-      window.controlPanel.addLog(`🚨 強制クリーンアップ完了: ${(savedSize / 1024).toFixed(1)}KB削減`, 'success');
-      window.controlPanel.addLog(`💾 現在の使用量: ${(newUsage.total / 1024).toFixed(1)}KB`, 'info');
-    }
-
-    console.log(`🚨 強制クリーンアップ完了: ${(savedSize / 1024).toFixed(1)}KB削減`);
+  // 2. ログを最新20件のみ保持
+  const logs = JSON.parse(localStorage.getItem("halloween_control_logs") || "[]");
+  if (logs.length > 20) {
+    const recentLogs = logs.slice(-20); // 最新20件
+    localStorage.setItem("halloween_control_logs", JSON.stringify(recentLogs));
   }
-} 
- // 容量表示をリセット
-  resetStorageDisplay() {
-    const storageDisplay = document.getElementById('storage-usage-display');
-    if (storageDisplay) {
-      storageDisplay.remove();
-    }
-    
-    // 使用量を再チェック
-    setTimeout(() => {
-      this.checkStorageUsage();
-    }, 100);
-    
-    console.log('🔄 容量表示をリセット');
+
+  // 3. 古いセッション情報を削除
+  localStorage.removeItem("halloween_session_info");
+
+  const newUsage = this.getCurrentUsage();
+  const savedSize = usage.total - newUsage.total;
+
+  if (window.controlPanel) {
+    window.controlPanel.addLog(`🚨 強制クリーンアップ完了: ${(savedSize / 1024).toFixed(1)}KB削減`, "success");
+    window.controlPanel.addLog(`💾 現在の使用量: ${(newUsage.total / 1024).toFixed(1)}KB`, "info");
   }
-}
+
+  console.log(`🚨 強制クリーンアップ完了: ${(savedSize / 1024).toFixed(1)}KB削減`);
+};
+
+// 容量表示をリセット
+StorageMonitor.prototype.resetStorageDisplay = function () {
+  const storageDisplay = document.getElementById("storage-usage-display");
+  if (storageDisplay) {
+    storageDisplay.remove();
+  }
+
+  // 使用量を再チェック
+  setTimeout(() => {
+    this.checkStorageUsage();
+  }, 100);
+
+  console.log("🔄 容量表示をリセット");
+};
