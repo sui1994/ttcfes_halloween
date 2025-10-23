@@ -70,6 +70,15 @@
         <button class="special-btn effect-btn" onclick="controlPanel.testSocketConnection()" style="background: linear-gradient(45deg, #ff9800, #f57c00);">
           🧪 Socket通信テスト
         </button>
+        <button class="special-btn effect-btn" onclick="togglePersistence()" style="background: linear-gradient(45deg, #4caf50, #388e3c);">
+          💾 データ保存切替
+        </button>
+        <button class="special-btn effect-btn danger-btn" onclick="clearPersistedData()" style="background: linear-gradient(45deg, #f44336, #d32f2f); border: 2px solid #ff5722;">
+          🗑️ 完全リセット
+        </button>
+        <button class="special-btn effect-btn" onclick="window.location.reload()" style="background: linear-gradient(45deg, #2196f3, #1976d2);">
+          🔄 手動リロード
+        </button>
       </div>
     </div>
 
@@ -109,8 +118,62 @@
   <!-- Binary Image Upload System -->
   <script src="js/binary-image-uploader.js"></script>
 
+  <!-- Storage Monitor System -->
+  <script src="js/storage-monitor.js"></script>
+
   <!-- Control Panel専用JavaScript -->
   <script src="js/control-panel.js"></script>
 </body>
 
 </html>
+<style>
+  /* 危険ボタンのスタイル */
+  .danger-btn {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .danger-btn:hover {
+    animation: dangerPulse 0.5s ease-in-out;
+    box-shadow: 0 0 20px rgba(244, 67, 54, 0.6);
+  }
+
+  .danger-btn:active {
+    transform: scale(0.95);
+  }
+
+  @keyframes dangerPulse {
+
+    0%,
+    100% {
+      transform: scale(1);
+    }
+
+    50% {
+      transform: scale(1.05);
+    }
+  }
+
+  /* 確認ダイアログのスタイル改善 */
+  .danger-btn::before {
+    content: "⚠️";
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ff5722;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .danger-btn:hover::before {
+    opacity: 1;
+  }
+</style>

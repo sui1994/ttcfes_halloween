@@ -16,14 +16,42 @@ class HalloweenImageReplacer {
   handleImageMessage(imageMessage) {
     try {
       console.log(`📥 Image replace request: ${imageMessage.filename} (${imageMessage.mimeType})`);
+      console.log(`📊 Data type: ${typeof imageMessage.data}, Length: ${imageMessage.data ? imageMessage.data.length : "null"}`);
+
+      // データURL形式かBase64文字列かを判定
+      let base64Data = imageMessage.data;
+      if (typeof base64Data === "string" && base64Data.startsWith("data:")) {
+        // データURL形式の場合、Base64部分のみを抽出
+        const base64Index = base64Data.indexOf("base64,");
+        if (base64Index !== -1) {
+          base64Data = base64Data.substring(base64Index + 7);
+          console.log(`🔧 Extracted Base64 from data URL, length: ${base64Data.length}`);
+        } else {
+          console.error("❌ Invalid data URL format");
+          return;
+        }
+      }
+
+      // 空のデータチェック
+      if (!base64Data || base64Data.length === 0) {
+        console.error("❌ Empty image data received");
+        return;
+      }
 
       // Base64をArrayBufferに変換
-      const arrayBuffer = this.base64ToArrayBuffer(imageMessage.data);
+      const arrayBuffer = this.base64ToArrayBuffer(base64Data);
 
       // 画像を処理
       this.processImageData(arrayBuffer, imageMessage);
     } catch (error) {
       console.error("❌ Failed to process image message:", error);
+      console.log("Debug - imageMessage:", {
+        filename: imageMessage.filename,
+        mimeType: imageMessage.mimeType,
+        dataType: typeof imageMessage.data,
+        dataLength: imageMessage.data ? imageMessage.data.length : "null",
+        dataSample: imageMessage.data ? imageMessage.data.substring(0, 100) + "..." : "null",
+      });
     }
   }
 
@@ -99,6 +127,36 @@ class HalloweenImageReplacer {
       console.log(`✅ Image replaced: ${metadata.filename} (${(arrayBuffer.byteLength / 1024).toFixed(1)}KB)`);
     } catch (error) {
       console.error("❌ Failed to process image data:", error);
+    }
+  }
+
+  // ArrayBufferを直接処理（最高効率版）
+  processImageDataDirect(arrayBuffer, metadata) {
+    try {
+      console.log(`⚡ Processing binary image directly: ${metadata.filename} (${(arrayBuffer.byteLength / 1024).toFixed(1)}KB)`);
+
+      // MIMEタイプ検証
+      if (!this.supportedTypes.includes(metadata.mimeType)) {
+        console.warn(`⚠️ Unsupported image type: ${metadata.mimeType}`);
+        return;
+      }
+
+      // Blobを作成（Base64変換なし）
+      const blob = new Blob([arrayBuffer], { type: metadata.mimeType });
+      const imageUrl = URL.createObjectURL(blob);
+
+      // 画像を置換
+      this.replaceImage(metadata.filename, imageUrl, metadata.mimeType);
+
+      // 古いURLをクリーンアップ
+      this.cleanupOldImage(metadata.filename);
+
+      // 新しいURLをキャッシュ
+      this.imageCache.set(metadata.filename, imageUrl);
+
+      console.log(`⚡ Binary image replaced directly: ${metadata.filename} (${(arrayBuffer.byteLength / 1024).toFixed(1)}KB)`);
+    } catch (error) {
+      console.error("❌ Failed to process binary image data:", error);
     }
   }
 

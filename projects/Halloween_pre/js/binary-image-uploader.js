@@ -88,9 +88,34 @@ class HalloweenBinaryImageUploader {
         <div class="upload-history-section">
           <div class="history-header">
             <h3 class="history-title">📸 バイナリアップロード履歴</h3>
-            <button class="clear-history-btn" onclick="window.binaryImageUploader.clearAllHistory()">
-              🗑️ 履歴をクリア
-            </button>
+            <div class="history-controls">
+              <button class="history-stats-btn" onclick="window.binaryImageUploader.showUploadStats()">
+                📊 統計表示
+              </button>
+              <button class="clear-history-btn" onclick="window.binaryImageUploader.clearAllHistory()">
+                🗑️ 履歴をクリア
+              </button>
+            </div>
+          </div>
+          <div class="upload-stats" id="binary-upload-stats" style="display: none;">
+            <div class="stats-grid">
+              <div class="stat-item">
+                <span class="stat-label">総アップロード数:</span>
+                <span class="stat-value" id="total-uploads">0</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">総データ量:</span>
+                <span class="stat-value" id="total-data-size">0 KB</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">平均ファイルサイズ:</span>
+                <span class="stat-value" id="average-file-size">0 KB</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">バイナリ転送効率:</span>
+                <span class="stat-value" id="transfer-efficiency">33% 高速</span>
+              </div>
+            </div>
           </div>
           <div class="upload-history" id="binary-upload-history">
             <div class="no-history-message">まだアップロードされた画像がありません</div>
@@ -240,11 +265,27 @@ class HalloweenBinaryImageUploader {
         }
       }
 
-      // サムネイル用にBase64データも生成（表示用のみ）
-      const thumbnailDataUrl = await this.readFileAsDataURL(file);
+      // 大容量画像対応：サムネイルのみ生成・保存
+      const thumbnailDataUrl = await this.createThumbnail(file, 150, 150); // 150x150の小さなサムネイル
 
-      // アップロード履歴に追加
+      // サムネイル情報をSocketで送信（通常のアップローダーと同様）
+      const thumbnailData = {
+        filename: file.name,
+        thumbnailBase64: thumbnailDataUrl,
+        timestamp: Date.now(),
+        uploadMethod: "binary",
+      };
+
+      this.socket.emit("image-thumbnail", thumbnailData);
+      console.log(`📸 サムネイル情報送信: ${file.name} (バイナリ方式)`);
+
+      // アップロード履歴に追加（サムネイルのみ保存）
       this.addToUploadHistory(file.name, thumbnailDataUrl, file.size, "binary");
+
+      // 画像更新コールバックを呼び出し（通常のアップローダーと同様）
+      if (this.imageUpdateCallback) {
+        this.imageUpdateCallback(file.name, thumbnailDataUrl);
+      }
 
       const uploadTime = ((Date.now() - session.startTime) / 1000).toFixed(1);
       console.log(`✅ Binary upload completed: ${file.name} in ${uploadTime}s`);
@@ -273,6 +314,77 @@ class HalloweenBinaryImageUploader {
       reader.onerror = (e) => reject(e);
       reader.readAsDataURL(file);
     });
+  }
+
+  // 大容量画像対応：小さなサムネイルを生成
+  createThumbnail(file, maxWidth = 150, maxHeight = 150, quality = 0.7) {
+    return new Promise((resolve, reject) => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      const img = new Image();
+
+      img.onload = () => {
+        // アスペクト比を保持してリサイズ
+        const { width, height } = this.calculateThumbnailSize(img.width, img.height, maxWidth, maxHeight);
+
+        canvas.width = width;
+        canvas.height = height;
+
+        // 高品質リサイズ
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // 小さなJPEGとして出力（容量削減）
+        const thumbnailDataUrl = canvas.toDataURL("image/jpeg", quality);
+
+        const originalSize = file.size;
+        const thumbnailSize = thumbnailDataUrl.length * 0.75; // Base64デコード後のサイズ
+        const compressionRatio = (((originalSize - thumbnailSize) / originalSize) * 100).toFixed(1);
+
+        console.log(`🖼️ サムネイル生成: ${file.name}`);
+        console.log(`📊 元サイズ: ${(originalSize / 1024).toFixed(1)}KB → サムネイル: ${(thumbnailSize / 1024).toFixed(1)}KB (${compressionRatio}%削減)`);
+
+        resolve(thumbnailDataUrl);
+      };
+
+      img.onerror = () => {
+        console.warn(`⚠️ サムネイル生成失敗: ${file.name}, フルサイズを使用`);
+        // フォールバック：元画像をそのまま使用
+        this.readFileAsDataURL(file).then(resolve).catch(reject);
+      };
+
+      // 画像を読み込み
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // サムネイルサイズを計算（アスペクト比保持）
+  calculateThumbnailSize(originalWidth, originalHeight, maxWidth, maxHeight) {
+    let width = originalWidth;
+    let height = originalHeight;
+
+    // 幅が制限を超える場合
+    if (width > maxWidth) {
+      height = (height * maxWidth) / width;
+      width = maxWidth;
+    }
+
+    // 高さが制限を超える場合
+    if (height > maxHeight) {
+      width = (width * maxHeight) / height;
+      height = maxHeight;
+    }
+
+    return {
+      width: Math.round(width),
+      height: Math.round(height),
+    };
   }
 
   // セッションID生成
@@ -367,19 +479,29 @@ class HalloweenBinaryImageUploader {
       method,
     });
 
+    // 転送効率計算
+    const base64Size = Math.ceil(fileSize * 1.33); // Base64は約33%増加
+    const savedBytes = base64Size - fileSize;
+    const efficiencyText = method === "binary" ? `💾 ${(savedBytes / 1024).toFixed(1)}KB節約` : "";
+
     historyEntry.innerHTML = `
       <div class="history-thumbnail" onclick="window.binaryImageUploader.viewFullImage('${filename}')">
         <img src="${imageDataUrl}" alt="${filename}" class="thumbnail-image">
         <div class="thumbnail-overlay">🔍</div>
+        ${method === "binary" ? '<div class="binary-badge">⚡</div>' : ""}
       </div>
       <div class="history-info">
         <div class="history-filename">${filename}${fileSizeText}</div>
         <div class="history-timestamp">アップロード: ${timestamp}</div>
         <div class="history-status">✅ ${methodBadge} 送信完了</div>
+        ${efficiencyText ? `<div class="history-efficiency">${efficiencyText}</div>` : ""}
       </div>
       <div class="history-actions">
         <button class="history-btn view-btn" onclick="window.binaryImageUploader.viewFullImage('${filename}')">
           👁️ 表示
+        </button>
+        <button class="history-btn copy-btn" onclick="window.binaryImageUploader.copyImageToClipboard('${filename}')">
+          📋 コピー
         </button>
         <button class="history-btn delete-btn" onclick="window.binaryImageUploader.removeFromHistory('${filename}')">
           🗑️ 削除
@@ -487,6 +609,41 @@ class HalloweenBinaryImageUploader {
     console.log(`💾 画像ダウンロード: ${filename}`);
   }
 
+  // アップロード統計表示
+  showUploadStats() {
+    const statsContainer = document.getElementById("binary-upload-stats");
+    const isVisible = statsContainer.style.display !== "none";
+
+    if (isVisible) {
+      statsContainer.style.display = "none";
+      return;
+    }
+
+    // 統計計算
+    const totalUploads = this.uploadHistory.size;
+    let totalDataSize = 0;
+    let binaryUploads = 0;
+
+    this.uploadHistory.forEach((data) => {
+      totalDataSize += data.fileSize || 0;
+      if (data.method === "binary") {
+        binaryUploads++;
+      }
+    });
+
+    const averageFileSize = totalUploads > 0 ? totalDataSize / totalUploads : 0;
+    const binaryPercentage = totalUploads > 0 ? Math.round((binaryUploads / totalUploads) * 100) : 0;
+
+    // 統計更新
+    document.getElementById("total-uploads").textContent = totalUploads;
+    document.getElementById("total-data-size").textContent = `${(totalDataSize / 1024).toFixed(1)} KB`;
+    document.getElementById("average-file-size").textContent = `${(averageFileSize / 1024).toFixed(1)} KB`;
+    document.getElementById("transfer-efficiency").textContent = `${binaryPercentage}% バイナリ転送`;
+
+    statsContainer.style.display = "block";
+    console.log(`📊 統計表示: ${totalUploads}件, ${(totalDataSize / 1024).toFixed(1)}KB`);
+  }
+
   // 全履歴をクリア
   clearAllHistory() {
     if (this.uploadHistory.size === 0) {
@@ -500,10 +657,53 @@ class HalloweenBinaryImageUploader {
       const historyContainer = document.getElementById("binary-upload-history");
       historyContainer.innerHTML = '<div class="no-history-message">まだアップロードされた画像がありません</div>';
 
+      // 統計も非表示にする
+      const statsContainer = document.getElementById("binary-upload-stats");
+      if (statsContainer) {
+        statsContainer.style.display = "none";
+      }
+
       this.uploadHistory.clear();
 
       console.log(`🗑️ 全履歴をクリア: ${count}件`);
       this.updateStatus(`✅ ${count}件の履歴を削除しました`, "success");
+    }
+  }
+
+  // 画像をクリップボードにコピー
+  async copyImageToClipboard(filename) {
+    try {
+      const historyData = this.uploadHistory.get(filename);
+      if (!historyData) {
+        console.warn(`⚠️ コピー用データが見つかりません: ${filename}`);
+        return;
+      }
+
+      // Data URLからBlobを作成
+      const response = await fetch(historyData.imageDataUrl);
+      const blob = await response.blob();
+
+      // クリップボードに書き込み
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          [blob.type]: blob,
+        }),
+      ]);
+
+      this.updateStatus(`📋 ${filename} をクリップボードにコピーしました`, "success");
+      console.log(`📋 画像クリップボードコピー: ${filename}`);
+    } catch (error) {
+      console.error("❌ クリップボードコピーエラー:", error);
+      this.updateStatus(`❌ クリップボードコピーに失敗しました`, "error");
+
+      // フォールバック: 画像URLをテキストとしてコピー
+      try {
+        const historyData = this.uploadHistory.get(filename);
+        await navigator.clipboard.writeText(historyData.imageDataUrl);
+        this.updateStatus(`📋 ${filename} のデータURLをコピーしました`, "success");
+      } catch (fallbackError) {
+        console.error("❌ フォールバックコピーも失敗:", fallbackError);
+      }
     }
   }
 
@@ -598,6 +798,131 @@ binaryUploadStyles.textContent = `
 
   .binary-upload-container .history-status {
     color: #00ff88;
+  }
+
+  /* バイナリ転送専用スタイル */
+  .binary-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: linear-gradient(45deg, #00ff88, #00e577);
+    color: #000;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 255, 136, 0.3);
+  }
+
+  .history-efficiency {
+    font-size: 10px;
+    color: #00ff88;
+    font-weight: bold;
+    margin-top: 2px;
+  }
+
+  .upload-stats {
+    background: rgba(0, 255, 136, 0.1);
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+  }
+
+  .stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(0, 255, 136, 0.05);
+    border-radius: 6px;
+    border: 1px solid rgba(0, 255, 136, 0.2);
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: #ccc;
+  }
+
+  .stat-value {
+    font-size: 14px;
+    font-weight: bold;
+    color: #00ff88;
+  }
+
+  .history-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .history-stats-btn {
+    background: #2196f3;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+  }
+
+  .history-stats-btn:hover {
+    background: #1976d2;
+    transform: scale(1.05);
+  }
+
+  .copy-btn {
+    background: #9c27b0;
+    color: white;
+  }
+
+  .copy-btn:hover {
+    background: #7b1fa2;
+    transform: scale(1.05);
+  }
+
+  /* バイナリアップロード履歴のアニメーション */
+  .binary-upload-container .history-entry {
+    animation: slideInFromRight 0.3s ease-out;
+  }
+
+  @keyframes slideInFromRight {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* バイナリ転送効率の強調 */
+  .binary-upload-container .history-entry:hover .binary-badge {
+    animation: pulse 1s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+      box-shadow: 0 2px 4px rgba(0, 255, 136, 0.3);
+    }
+    50% {
+      transform: scale(1.1);
+      box-shadow: 0 4px 8px rgba(0, 255, 136, 0.5);
+    }
   }
 `;
 

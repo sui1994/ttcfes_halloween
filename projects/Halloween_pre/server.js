@@ -331,23 +331,37 @@ function handleCompleteFileUpload(socket, sessionId, session) {
     offset += chunk.length;
   }
 
-  // Base64に変換して既存の画像置換システムに送信
-  const base64Data = arrayBufferToBase64(completeFile.buffer);
-  const dataUrl = `data:${session.mimeType};base64,${base64Data}`;
+  // 高速バイナリ配信: ArrayBufferを直接送信（さらなる最適化）
+  const binaryMessage = {
+    type: "image_replace_binary",
+    filename: session.filename,
+    mimeType: session.mimeType,
+    size: session.filesize,
+    timestamp: Date.now(),
+    uploadMethod: "binary-chunked",
+  };
 
+  console.log(`📤 Broadcasting binary image to displays: ${session.filename} (${(session.filesize / 1024).toFixed(1)}KB)`);
+
+  // 表示画面にバイナリデータを直接送信（最高効率）
+  connectedClients.displays.forEach((displayId) => {
+    io.to(displayId).emit("image-replace-binary-metadata", binaryMessage);
+    io.to(displayId).emit("image-replace-binary-data", completeFile.buffer);
+  });
+
+  // 互換性のため、Base64版も送信（既存システム用）
+  const base64Data = arrayBufferToBase64(completeFile.buffer);
   const imageMessage = {
     type: "image_replace",
     filename: session.filename,
     mimeType: session.mimeType,
     size: session.filesize,
-    data: dataUrl,
+    data: base64Data,
     timestamp: Date.now(),
     uploadMethod: "binary-chunked",
   };
 
-  console.log(`📤 Broadcasting chunked image to displays: ${session.filename} (${(session.filesize / 1024).toFixed(1)}KB)`);
-
-  // 表示画面に画像メッセージを転送
+  // Base64版も送信（フォールバック）
   connectedClients.displays.forEach((displayId) => {
     io.to(displayId).emit("image-replace", imageMessage);
   });

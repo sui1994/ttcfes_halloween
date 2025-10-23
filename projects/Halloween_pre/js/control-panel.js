@@ -12,6 +12,19 @@ class HalloweenControlPanel {
       walking: {},
     };
 
+    // データ永続化設定
+    this.persistenceEnabled = true;
+    this.storageKeys = {
+      logs: "halloween_control_logs",
+      characterStatus: "halloween_character_status",
+      uploadHistory: "halloween_upload_history",
+      binaryUploadHistory: "halloween_binary_upload_history",
+      sessionInfo: "halloween_session_info",
+    };
+
+    // ページ離脱時の確認
+    this.setupBeforeUnloadHandler();
+
     this.init();
   }
 
@@ -25,19 +38,30 @@ class HalloweenControlPanel {
     this.controllerCount = document.getElementById("controller-count");
     this.operationLog = document.getElementById("operation-log");
 
+    // 保存されたデータを復元
+    this.restorePersistedData();
+
     // WebSocket接続
     this.initWebSocket();
 
     // キャラクターUI生成
     this.generateCharacterControls();
 
-    // 定期的な状況更新
-    setInterval(() => this.refreshStatus(), 2000);
+    // 定期的な状況更新とデータ保存
+    setInterval(() => {
+      this.refreshStatus();
+      this.saveCurrentState();
+    }, 2000);
 
     // 初期状況表示
     setTimeout(() => this.refreshStatus(), 1000);
 
     this.addLog("コントロールパネル初期化完了", "success");
+
+    // データ永続化機能の通知
+    if (this.persistenceEnabled) {
+      this.addLog("💾 データ永続化機能が有効です（ログ・状態が保存されます）", "info");
+    }
   }
 
   initWebSocket() {
@@ -130,9 +154,30 @@ class HalloweenControlPanel {
   addLog(message, type = "info") {
     const logEntry = document.createElement("div");
     logEntry.className = `log-entry ${type}`;
-    logEntry.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
+
+    const timestamp = new Date().toLocaleTimeString();
+    const fullTimestamp = new Date().toISOString();
+
+    logEntry.textContent = `${timestamp} - ${message}`;
+
+    // データ属性に完全なタイムスタンプを保存
+    logEntry.dataset.timestamp = fullTimestamp;
+    logEntry.dataset.message = message;
+    logEntry.dataset.type = type;
+
     this.operationLog.appendChild(logEntry);
     this.operationLog.scrollTop = this.operationLog.scrollHeight;
+
+    // ログ数制限（最新100件まで）
+    const logEntries = this.operationLog.querySelectorAll(".log-entry");
+    if (logEntries.length > 100) {
+      logEntries[0].remove();
+    }
+
+    // ログをLocalStorageに保存
+    this.saveLogsToStorage();
+
+    console.log(`📋 Log: [${type}] ${message}`);
   }
 
   generateCharacterControls() {
@@ -799,4 +844,536 @@ document.head.appendChild(uploadImageStyles);
 // 初期化
 document.addEventListener("DOMContentLoaded", () => {
   window.controlPanel = new HalloweenControlPanel();
+
+  // 容量監視システムを初期化
+  window.storageMonitor = new StorageMonitor();
 });
+
+// ===== データ永続化機能拡張 =====
+
+// HalloweenControlPanelクラスにデータ永続化メソッドを追加
+HalloweenControlPanel.prototype.setupBeforeUnloadHandler = function () {
+  window.addEventListener("beforeunload", (e) => {
+    // 現在の状態を保存
+    this.saveCurrentState();
+
+    // 重要なデータがある場合は確認ダイアログを表示
+    if (this.hasImportantData()) {
+      e.preventDefault();
+      e.returnValue = "アップロードした画像やログが失われる可能性があります。本当にページを離れますか？";
+      return e.returnValue;
+    }
+  });
+
+  // ページ表示時にデータ復元
+  window.addEventListener("pageshow", (e) => {
+    if (e.persisted) {
+      // ブラウザキャッシュから復元された場合
+      this.restorePersistedData();
+    }
+  });
+};
+
+// 重要なデータがあるかチェック
+HalloweenControlPanel.prototype.hasImportantData = function () {
+  const logs = this.operationLog.querySelectorAll(".log-entry");
+  const hasLogs = logs.length > 1; // 初期化ログ以外があるか
+
+  const hasUploadHistory = (window.imageUploader && window.imageUploader.uploadHistory.size > 0) || (window.binaryImageUploader && window.binaryImageUploader.uploadHistory.size > 0);
+
+  return hasLogs || hasUploadHistory;
+};
+
+// 現在の状態を保存
+HalloweenControlPanel.prototype.saveCurrentState = function () {
+  if (!this.persistenceEnabled) return;
+
+  try {
+    // セッション情報を保存
+    const sessionInfo = {
+      timestamp: new Date().toISOString(),
+      isConnected: this.isConnected,
+      displayCount: this.displayCount?.textContent || "0",
+      controllerCount: this.controllerCount?.textContent || "0",
+    };
+    localStorage.setItem(this.storageKeys.sessionInfo, JSON.stringify(sessionInfo));
+
+    // キャラクター状態を保存
+    localStorage.setItem(this.storageKeys.characterStatus, JSON.stringify(this.characterStatus));
+
+    // アップロード履歴を保存
+    if (window.imageUploader && window.imageUploader.uploadHistory) {
+      const uploadHistoryData = Array.from(window.imageUploader.uploadHistory.entries());
+      localStorage.setItem(this.storageKeys.uploadHistory, JSON.stringify(uploadHistoryData));
+    }
+
+    if (window.binaryImageUploader && window.binaryImageUploader.uploadHistory) {
+      const binaryUploadHistoryData = Array.from(window.binaryImageUploader.uploadHistory.entries());
+      localStorage.setItem(this.storageKeys.binaryUploadHistory, JSON.stringify(binaryUploadHistoryData));
+    }
+
+    console.log("💾 状態を保存しました");
+  } catch (error) {
+    console.error("❌ 状態保存エラー:", error);
+  }
+};
+
+// ログをLocalStorageに保存
+HalloweenControlPanel.prototype.saveLogsToStorage = function () {
+  if (!this.persistenceEnabled) return;
+
+  try {
+    const logEntries = Array.from(this.operationLog.querySelectorAll(".log-entry")).map((entry) => ({
+      timestamp: entry.dataset.timestamp,
+      message: entry.dataset.message,
+      type: entry.dataset.type,
+      displayTime: entry.textContent,
+    }));
+
+    localStorage.setItem(this.storageKeys.logs, JSON.stringify(logEntries));
+  } catch (error) {
+    console.error("❌ ログ保存エラー:", error);
+  }
+};
+
+// 保存されたデータを復元
+HalloweenControlPanel.prototype.restorePersistedData = function () {
+  if (!this.persistenceEnabled) return;
+
+  try {
+    // ログを復元
+    this.restoreLogs();
+
+    // セッション情報を復元
+    this.restoreSessionInfo();
+
+    // キャラクター状態を復元
+    this.restoreCharacterStatus();
+
+    // アップロード履歴は各アップローダーの初期化後に復元
+    setTimeout(() => {
+      this.restoreUploadHistory();
+    }, 1000);
+
+    console.log("🔄 保存されたデータを復元しました");
+  } catch (error) {
+    console.error("❌ データ復元エラー:", error);
+  }
+};
+
+// ログを復元
+HalloweenControlPanel.prototype.restoreLogs = function () {
+  try {
+    const savedLogs = localStorage.getItem(this.storageKeys.logs);
+    if (!savedLogs) return;
+
+    const logEntries = JSON.parse(savedLogs);
+
+    // 既存のログをクリア（初期化メッセージ以外）
+    this.operationLog.innerHTML = "";
+
+    // 保存されたログを復元（古い順に追加）
+    logEntries.forEach((logData) => {
+      const logEntry = document.createElement("div");
+      logEntry.className = `log-entry ${logData.type}`;
+      logEntry.textContent = logData.displayTime;
+      logEntry.dataset.timestamp = logData.timestamp;
+      logEntry.dataset.message = logData.message;
+      logEntry.dataset.type = logData.type;
+
+      this.operationLog.appendChild(logEntry);
+    });
+
+    this.operationLog.scrollTop = this.operationLog.scrollHeight;
+
+    // 復元完了のログを追加
+    this.addLog("🔄 前回のログを復元しました", "info");
+  } catch (error) {
+    console.error("❌ ログ復元エラー:", error);
+  }
+};
+
+// セッション情報を復元
+HalloweenControlPanel.prototype.restoreSessionInfo = function () {
+  try {
+    const savedSession = localStorage.getItem(this.storageKeys.sessionInfo);
+    if (!savedSession) return;
+
+    const sessionInfo = JSON.parse(savedSession);
+
+    // 前回のセッション時刻を表示
+    const lastSession = new Date(sessionInfo.timestamp);
+    const timeDiff = Math.round((Date.now() - lastSession.getTime()) / 1000);
+
+    let timeText = "";
+    if (timeDiff < 60) {
+      timeText = `${timeDiff}秒前`;
+    } else if (timeDiff < 3600) {
+      timeText = `${Math.round(timeDiff / 60)}分前`;
+    } else {
+      timeText = `${Math.round(timeDiff / 3600)}時間前`;
+    }
+
+    this.addLog(`📅 前回のセッション: ${timeText} (${lastSession.toLocaleString()})`, "info");
+  } catch (error) {
+    console.error("❌ セッション情報復元エラー:", error);
+  }
+};
+
+// キャラクター状態を復元
+HalloweenControlPanel.prototype.restoreCharacterStatus = function () {
+  try {
+    const savedStatus = localStorage.getItem(this.storageKeys.characterStatus);
+    if (!savedStatus) return;
+
+    this.characterStatus = JSON.parse(savedStatus);
+    console.log("🎮 キャラクター状態を復元しました");
+  } catch (error) {
+    console.error("❌ キャラクター状態復元エラー:", error);
+  }
+};
+
+// アップロード履歴を復元
+HalloweenControlPanel.prototype.restoreUploadHistory = function () {
+  try {
+    // 通常のアップロード履歴を復元
+    const savedUploadHistory = localStorage.getItem(this.storageKeys.uploadHistory);
+    if (savedUploadHistory && window.imageUploader) {
+      const uploadHistoryData = JSON.parse(savedUploadHistory);
+      window.imageUploader.uploadHistory = new Map(uploadHistoryData);
+
+      // UI を再構築
+      this.rebuildUploadHistoryUI(window.imageUploader, "upload-history");
+      this.addLog(`📸 通常アップロード履歴を復元: ${uploadHistoryData.length}件`, "info");
+    }
+
+    // バイナリアップロード履歴を復元
+    const savedBinaryHistory = localStorage.getItem(this.storageKeys.binaryUploadHistory);
+    if (savedBinaryHistory && window.binaryImageUploader) {
+      const binaryHistoryData = JSON.parse(savedBinaryHistory);
+      window.binaryImageUploader.uploadHistory = new Map(binaryHistoryData);
+
+      // UI を再構築
+      this.rebuildUploadHistoryUI(window.binaryImageUploader, "binary-upload-history");
+      this.addLog(`⚡ バイナリアップロード履歴を復元: ${binaryHistoryData.length}件`, "info");
+    }
+  } catch (error) {
+    console.error("❌ アップロード履歴復元エラー:", error);
+  }
+};
+
+// アップロード履歴UIを再構築
+HalloweenControlPanel.prototype.rebuildUploadHistoryUI = function (uploader, containerId) {
+  const container = document.getElementById(containerId);
+  if (!container || !uploader.uploadHistory.size) return;
+
+  // 既存の履歴をクリア
+  container.innerHTML = "";
+
+  // 履歴を再構築
+  uploader.uploadHistory.forEach((historyData, filename) => {
+    uploader.addToUploadHistory(filename, historyData.imageDataUrl, historyData.fileSize, historyData.method);
+  });
+};
+
+// データ永続化設定の切り替え
+HalloweenControlPanel.prototype.togglePersistence = function () {
+  this.persistenceEnabled = !this.persistenceEnabled;
+
+  if (this.persistenceEnabled) {
+    this.addLog("💾 データ永続化機能を有効にしました", "success");
+    this.saveCurrentState();
+  } else {
+    this.addLog("🚫 データ永続化機能を無効にしました", "warning");
+  }
+
+  return this.persistenceEnabled;
+};
+
+// 保存されたデータをクリア（完全リセット版）
+HalloweenControlPanel.prototype.clearPersistedData = function () {
+  if (
+    confirm(
+      "保存されたすべてのデータ（ログ、履歴、状態）を削除し、画面をリセットしますか？\n\n削除対象:\n• 操作ログ\n• アップロード履歴\n• バイナリアップロード履歴\n• キャラクター状態\n• セッション情報\n\n⚠️ 注意: リセット後、WebSocket接続復旧のため自動でページがリロードされます。"
+    )
+  ) {
+    console.log("🗑️ 完全データリセットを開始...");
+
+    // 1. LocalStorageからすべての保存データを削除
+    Object.values(this.storageKeys).forEach((key) => {
+      localStorage.removeItem(key);
+      console.log(`🗑️ LocalStorage削除: ${key}`);
+    });
+
+    // 2. 操作ログをクリア
+    this.clearOperationLogs();
+
+    // 3. アップロード履歴をクリア
+    this.clearAllUploadHistory();
+
+    // 4. キャラクター状態をリセット
+    this.resetCharacterStatus();
+
+    // 5. 接続状況をリセット
+    this.resetConnectionStatus();
+
+    // 6. 容量監視をリセット
+    if (window.storageMonitor) {
+      window.storageMonitor.resetStorageDisplay();
+    }
+
+    // 完了メッセージと自動リロード
+    setTimeout(() => {
+      this.addLog("🗑️ すべてのデータを削除し、システムをリセットしました", "warning");
+      this.addLog("🔄 WebSocket接続を復旧するため、3秒後に自動リロードします", "info");
+
+      // カウントダウン表示
+      this.showReloadCountdown(3);
+    }, 100);
+
+    console.log("✅ 完全データリセット完了");
+  }
+};
+
+// グローバル関数として公開
+window.togglePersistence = function () {
+  if (window.controlPanel) {
+    return window.controlPanel.togglePersistence();
+  }
+};
+
+// 操作ログをクリア
+HalloweenControlPanel.prototype.clearOperationLogs = function () {
+  if (this.operationLog) {
+    this.operationLog.innerHTML = "";
+    console.log("🗑️ 操作ログをクリア");
+  }
+};
+
+// すべてのアップロード履歴をクリア
+HalloweenControlPanel.prototype.clearAllUploadHistory = function () {
+  // 通常のアップロード履歴をクリア
+  if (window.imageUploader) {
+    window.imageUploader.uploadHistory.clear();
+    const historyContainer = document.getElementById("upload-history");
+    if (historyContainer) {
+      historyContainer.innerHTML = '<div class="no-history-message">まだアップロードされた画像がありません</div>';
+    }
+    console.log("🗑️ 通常アップロード履歴をクリア");
+  }
+
+  // バイナリアップロード履歴をクリア
+  if (window.binaryImageUploader) {
+    window.binaryImageUploader.uploadHistory.clear();
+    const binaryHistoryContainer = document.getElementById("binary-upload-history");
+    if (binaryHistoryContainer) {
+      binaryHistoryContainer.innerHTML = '<div class="no-history-message">まだアップロードされた画像がありません</div>';
+    }
+    console.log("🗑️ バイナリアップロード履歴をクリア");
+  }
+};
+
+// キャラクター状態をリセット
+HalloweenControlPanel.prototype.resetCharacterStatus = function () {
+  this.characterStatus = {
+    flying: {},
+    walking: {},
+  };
+
+  // キャラクターカードの更新情報をクリア
+  const characterCards = document.querySelectorAll(".character-card");
+  characterCards.forEach((card) => {
+    // 更新タイムスタンプを削除
+    const timestamp = card.querySelector(".update-timestamp");
+    if (timestamp) {
+      timestamp.remove();
+    }
+
+    // アップロード情報を削除
+    const uploadInfo = card.querySelector(".upload-info");
+    if (uploadInfo) {
+      uploadInfo.remove();
+    }
+
+    // 画像更新エフェクトを削除
+    card.classList.remove("image-updated");
+  });
+
+  console.log("🗑️ キャラクター状態をリセット");
+};
+
+// 接続状況をリセット
+HalloweenControlPanel.prototype.resetConnectionStatus = function () {
+  if (this.displayCount) {
+    this.displayCount.textContent = "0";
+  }
+  if (this.controllerCount) {
+    this.controllerCount.textContent = "0";
+  }
+  console.log("🗑️ 接続状況をリセット");
+};
+
+// リロードカウントダウン表示
+HalloweenControlPanel.prototype.showReloadCountdown = function (seconds) {
+  // カウントダウン表示用の要素を作成
+  const countdownOverlay = document.createElement("div");
+  countdownOverlay.id = "reload-countdown-overlay";
+  countdownOverlay.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    color: white;
+    font-family: Arial, sans-serif;
+  `;
+
+  const countdownContent = document.createElement("div");
+  countdownContent.style.cssText = `
+    text-align: center;
+    background: rgba(244, 67, 54, 0.9);
+    padding: 40px;
+    border-radius: 15px;
+    border: 3px solid #ff5722;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  `;
+
+  const title = document.createElement("h2");
+  title.textContent = "🔄 システムリセット完了";
+  title.style.cssText = `
+    margin: 0 0 20px 0;
+    font-size: 24px;
+    color: #fff;
+  `;
+
+  const message = document.createElement("p");
+  message.textContent = "WebSocket接続を復旧するため、ページを自動リロードします";
+  message.style.cssText = `
+    margin: 0 0 30px 0;
+    font-size: 16px;
+    color: #ffcdd2;
+  `;
+
+  const countdownDisplay = document.createElement("div");
+  countdownDisplay.id = "countdown-number";
+  countdownDisplay.style.cssText = `
+    font-size: 48px;
+    font-weight: bold;
+    color: #fff;
+    margin: 20px 0;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  `;
+
+  const cancelButton = document.createElement("button");
+  cancelButton.textContent = "❌ キャンセル";
+  cancelButton.style.cssText = `
+    background: #666;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+  `;
+
+  cancelButton.addEventListener("click", () => {
+    this.cancelAutoReload();
+  });
+
+  cancelButton.addEventListener("mouseenter", () => {
+    cancelButton.style.background = "#888";
+  });
+
+  cancelButton.addEventListener("mouseleave", () => {
+    cancelButton.style.background = "#666";
+  });
+
+  countdownContent.appendChild(title);
+  countdownContent.appendChild(message);
+  countdownContent.appendChild(countdownDisplay);
+  countdownContent.appendChild(cancelButton);
+  countdownOverlay.appendChild(countdownContent);
+  document.body.appendChild(countdownOverlay);
+
+  // カウントダウン開始
+  this.startCountdown(seconds);
+};
+
+// カウントダウン実行
+HalloweenControlPanel.prototype.startCountdown = function (seconds) {
+  const countdownDisplay = document.getElementById("countdown-number");
+  let remaining = seconds;
+
+  const updateCountdown = () => {
+    if (countdownDisplay) {
+      countdownDisplay.textContent = remaining;
+
+      // カウントダウンアニメーション
+      countdownDisplay.style.transform = "scale(1.2)";
+      setTimeout(() => {
+        if (countdownDisplay) {
+          countdownDisplay.style.transform = "scale(1)";
+        }
+      }, 200);
+    }
+
+    if (remaining <= 0) {
+      this.executeAutoReload();
+      return;
+    }
+
+    remaining--;
+    this.countdownTimer = setTimeout(updateCountdown, 1000);
+  };
+
+  // 即座に最初の表示を更新
+  updateCountdown();
+};
+
+// 自動リロード実行
+HalloweenControlPanel.prototype.executeAutoReload = function () {
+  console.log("🔄 自動リロードを実行中...");
+
+  // WebSocket接続を明示的に切断
+  if (this.socket && this.socket.connected) {
+    this.socket.disconnect();
+  }
+
+  // リロード実行
+  window.location.reload();
+};
+
+// 自動リロードキャンセル
+HalloweenControlPanel.prototype.cancelAutoReload = function () {
+  console.log("❌ 自動リロードをキャンセル");
+
+  // カウントダウンタイマーを停止
+  if (this.countdownTimer) {
+    clearTimeout(this.countdownTimer);
+    this.countdownTimer = null;
+  }
+
+  // オーバーレイを削除
+  const overlay = document.getElementById("reload-countdown-overlay");
+  if (overlay) {
+    overlay.remove();
+  }
+
+  // キャンセルログを追加
+  this.addLog("❌ 自動リロードをキャンセルしました", "warning");
+  this.addLog("⚠️ WebSocket接続に問題がある場合は手動でリロードしてください", "warning");
+};
+
+window.clearPersistedData = function () {
+  if (window.controlPanel) {
+    window.controlPanel.clearPersistedData();
+  }
+};

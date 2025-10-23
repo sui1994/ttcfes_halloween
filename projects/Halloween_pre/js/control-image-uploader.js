@@ -126,34 +126,34 @@ class HalloweenImageUploader {
 
       this.updateStatus(`📤 ${file.name} をアップロード中...`, "uploading");
 
-      // 画像データをBase64として読み込み（サムネイル用）
-      const imageDataUrl = await this.readFileAsDataURL(file);
+      // 大容量画像対応：サムネイルのみ生成・送信
+      const thumbnailDataUrl = await this.createThumbnail(file, 150, 150);
+      const fullImageDataUrl = await this.readFileAsDataURL(file);
 
       // サムネイル情報をSocketで送信
       const thumbnailData = {
         filename: file.name,
-        thumbnailBase64: imageDataUrl,
+        thumbnailBase64: thumbnailDataUrl, // 小さなサムネイル
         timestamp: Date.now(),
       };
 
       this.socket.emit("image-thumbnail", thumbnailData);
       console.log(`📸 サムネイル情報送信: ${file.name}`);
 
-      // ファイルサイズに応じて送信方法を選択
-      const fileSizeKB = file.size / 1024;
-      const base64Data = imageDataUrl.split(",")[1]; // data:image/...;base64, を除去
-      const base64SizeKB = (base64Data.length * 3) / 4 / 1024; // Base64デコード後のサイズ
+      // フルサイズ画像の送信処理
+      const base64Data = fullImageDataUrl.split(",")[1];
+      const base64SizeKB = (base64Data.length * 3) / 4 / 1024;
 
       if (base64SizeKB > 1024) {
         // 1MB以上はチャンク送信
         console.log(`📦 Large file detected (${base64SizeKB.toFixed(1)}KB), using chunked upload`);
-        await this.uploadFileChunked(file, imageDataUrl);
+        await this.uploadFileChunked(file, fullImageDataUrl);
       } else {
         // 小さなファイルは従来通り一括送信
         console.log(`📤 Small file (${base64SizeKB.toFixed(1)}KB), using direct upload`);
         const fileData = {
           filename: file.name,
-          data: imageDataUrl,
+          data: fullImageDataUrl,
           mimeType: file.type,
           size: file.size,
         };
@@ -164,12 +164,12 @@ class HalloweenImageUploader {
       // ステータス更新
       this.updateStatus(`✅ ${file.name} を送信しました`, "success");
 
-      // アップロード履歴にサムネイル追加
-      this.addToUploadHistory(file.name, imageDataUrl, file.size);
+      // アップロード履歴にサムネイル追加（小さなサムネイルのみ保存）
+      this.addToUploadHistory(file.name, thumbnailDataUrl, file.size);
 
       // 画像更新コールバックを呼び出し
       if (this.imageUpdateCallback) {
-        this.imageUpdateCallback(file.name, imageDataUrl);
+        this.imageUpdateCallback(file.name, thumbnailDataUrl);
       }
 
       console.log(`📤 Image uploaded: ${file.name} (${(file.size / 1024).toFixed(1)}KB)`);
@@ -444,6 +444,73 @@ class HalloweenImageUploader {
       console.log(`🗑️ 全履歴をクリア: ${count}件`);
       this.updateStatus(`✅ ${count}件の履歴を削除しました`, "success");
     }
+  }
+
+  // 大容量画像対応：小さなサムネイルを生成
+  createThumbnail(file, maxWidth = 150, maxHeight = 150, quality = 0.7) {
+    return new Promise((resolve, reject) => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      const img = new Image();
+
+      img.onload = () => {
+        // アスペクト比を保持してリサイズ
+        const { width, height } = this.calculateThumbnailSize(img.width, img.height, maxWidth, maxHeight);
+
+        canvas.width = width;
+        canvas.height = height;
+
+        // 高品質リサイズ
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // 小さなJPEGとして出力（容量削減）
+        const thumbnailDataUrl = canvas.toDataURL("image/jpeg", quality);
+
+        const originalSize = file.size;
+        const thumbnailSize = thumbnailDataUrl.length * 0.75;
+        const compressionRatio = (((originalSize - thumbnailSize) / originalSize) * 100).toFixed(1);
+
+        console.log(`🖼️ サムネイル生成: ${file.name}`);
+        console.log(`📊 元サイズ: ${(originalSize / 1024).toFixed(1)}KB → サムネイル: ${(thumbnailSize / 1024).toFixed(1)}KB (${compressionRatio}%削減)`);
+
+        resolve(thumbnailDataUrl);
+      };
+
+      img.onerror = () => {
+        console.warn(`⚠️ サムネイル生成失敗: ${file.name}, フルサイズを使用`);
+        this.readFileAsDataURL(file).then(resolve).catch(reject);
+      };
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // サムネイルサイズを計算（アスペクト比保持）
+  calculateThumbnailSize(originalWidth, originalHeight, maxWidth, maxHeight) {
+    let width = originalWidth;
+    let height = originalHeight;
+
+    if (width > maxWidth) {
+      height = (height * maxWidth) / width;
+      width = maxWidth;
+    }
+
+    if (height > maxHeight) {
+      width = (width * maxHeight) / height;
+      height = maxHeight;
+    }
+
+    return {
+      width: Math.round(width),
+      height: Math.round(height),
+    };
   }
 
   // 画像更新コールバック設定

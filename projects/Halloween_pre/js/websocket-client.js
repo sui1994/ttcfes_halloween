@@ -102,10 +102,37 @@ class HalloweenWebSocketClient {
         this.updateClientCount(data);
       });
 
-      // 画像置換受信（Base64対応）
+      // 高速バイナリ画像受信（最適化版）
+      let pendingBinaryImage = null;
+
+      this.socket.on("image-replace-binary-metadata", (metadata) => {
+        console.log("⚡ Received binary image metadata:", metadata.filename);
+        pendingBinaryImage = metadata;
+      });
+
+      this.socket.on("image-replace-binary-data", (arrayBuffer) => {
+        if (pendingBinaryImage) {
+          console.log("⚡ Received binary image data:", pendingBinaryImage.filename, `(${(arrayBuffer.byteLength / 1024).toFixed(1)}KB)`);
+
+          // ArrayBufferを直接処理（Base64変換なし）
+          this.imageReplacer.processImageDataDirect(arrayBuffer, pendingBinaryImage);
+          pendingBinaryImage = null;
+        }
+      });
+
+      // 画像置換受信（Base64対応・フォールバック）
       this.socket.on("image-replace", (imageMessage) => {
         console.log("🖼️ Received image replace:", imageMessage.filename);
         console.log("📊 Image data size:", imageMessage.data ? imageMessage.data.length : "No data");
+        console.log("📊 Upload method:", imageMessage.uploadMethod || "standard");
+        console.log("📊 Data type:", typeof imageMessage.data);
+
+        // データの先頭をサンプル表示
+        if (imageMessage.data && typeof imageMessage.data === "string") {
+          const sample = imageMessage.data.substring(0, 50);
+          console.log("📊 Data sample:", sample + "...");
+        }
+
         this.imageReplacer.handleImageMessage(imageMessage);
       });
 
