@@ -49,8 +49,8 @@ const FESTIVAL_CONFIG = {
 
   // 展示用特別設定
   exhibition: {
-    // 無操作時の自動リセット時間（分）
-    autoResetMinutes: 10,
+    // 無操作時の自動リセット時間（分）- 展示用のため無効化
+    autoResetMinutes: 0,
     // 省電力モード（長時間展示用）
     powerSaveMode: true,
     // 夜間モード（暗い環境用）
@@ -116,6 +116,12 @@ function setupFestivalFeatures(config) {
   let autoResetTimer;
 
   function resetAutoResetTimer() {
+    // 展示用のため自動リロードタイマーを無効化
+    if (config.exhibition.autoResetMinutes <= 0) {
+      console.log("🚫 Auto reset disabled for exhibition mode");
+      return;
+    }
+
     lastInteractionTime = Date.now();
     if (autoResetTimer) {
       clearTimeout(autoResetTimer);
