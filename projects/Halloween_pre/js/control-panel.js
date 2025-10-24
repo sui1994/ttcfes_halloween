@@ -401,6 +401,47 @@ class HalloweenControlPanel {
     this.addLog(`音楽制御: ${action}`, "success");
   }
 
+  controlFixedCharacter(characterId, action) {
+    if (!this.isConnected) {
+      this.addLog("サーバーに接続されていません", "error");
+      return;
+    }
+
+    // 固定キャラクター専用メッセージで送信
+    this.socket.emit("fixed-character-control", {
+      characterId: `${characterId}-static`, // bat1-static, bat2-static
+      action: action,
+      timestamp: Date.now(),
+    });
+
+    // ステータス表示を更新
+    const statusElement = document.getElementById(`status-${characterId}`);
+    if (statusElement) {
+      statusElement.textContent = this.getActionDisplayName(action);
+      statusElement.className = `character-status active`;
+    }
+
+    // カードにアクティブ効果を追加
+    const cardElement = document.getElementById(`${characterId}-control`);
+    if (cardElement) {
+      cardElement.classList.add("character-active");
+      setTimeout(() => {
+        cardElement.classList.remove("character-active");
+      }, 2000);
+    }
+
+    this.addLog(`固定キャラクター制御: ${characterId} - ${this.getActionDisplayName(action)}`, "success");
+  }
+
+  getActionDisplayName(action) {
+    const actionNames = {
+      hover: "ホバー中",
+      scale: "拡大中",
+      shake: "震え中",
+    };
+    return actionNames[action] || action;
+  }
+
   refreshStatus() {
     const activeCharactersContainer = document.getElementById("active-characters");
     const activeCountElement = document.getElementById("active-count");
@@ -780,14 +821,7 @@ uploadImageStyles.textContent = `
     min-width: 80px;
   }
 
-  .upload-preview-image {
-    width: 40px;
-    height: 40px;
-    object-fit: cover;
-    border-radius: 6px;
-    border: 2px solid rgba(255, 215, 0, 0.5);
-    background: rgba(0, 0, 0, 0.2);
-  }
+
 
   /* アクティブ状態インジケーター */
   .upload-active-indicator {
